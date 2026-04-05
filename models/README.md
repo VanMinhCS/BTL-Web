@@ -1,1 +1,1 @@
-# Thư mục này chứa mô hình của trang web
+# Thư mục này chứa mô hình của trang web, chứa các class xử lý tương tác với database — mỗi bảng trong DB thường có 1 Model tương ứng.
