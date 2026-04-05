@@ -1,0 +1,86 @@
+/* ===== FOOTER - chỉnh màu tại đây ===== */
+:root {
+    --footer-bg: #1a1a1a;
+    --footer-text: #aaaaaa;
+    --footer-heading: #ffffff;
+    --footer-link-hover: #ffffff;
+    --footer-border: #333333;
+}
+
+.main-footer {
+    background-color: var(--footer-bg);
+}
+
+.footer-heading {
+    color: var(--footer-heading);
+    letter-spacing: 0.08em;
+    font-size: 0.85rem;
+}
+
+.footer-brand {
+    color: var(--footer-heading);
+    font-size: 1.5rem;
+}
+
+.footer-muted {
+    color: var(--footer-text);
+}
+
+.footer-link {
+    color: var(--footer-text);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.4rem;
+    transition: color 0.2s;
+}
+
+.footer-link:hover {
+    color: var(--footer-link-hover);
+}
+
+.footer-divider {
+    border-color: var(--footer-border);
+}
+
+/* Newsletter */
+.newsletter-form {
+    border-bottom: 1px solid var(--footer-text);
+    padding-bottom: 4px;
+}
+
+.newsletter-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--footer-heading);
+    font-size: 0.95rem;
+    width: 100%;
+}
+
+.newsletter-input::placeholder {
+    color: var(--footer-text);
+}
+
+.newsletter-btn {
+    background: transparent;
+    border: none;
+    color: var(--footer-heading);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 8px;
+    transition: transform 0.2s;
+}
+
+.newsletter-btn:hover {
+    transform: translateX(4px);
+}
+
+/* Social icons */
+.social-icon {
+    color: var(--footer-text);
+    transition: color 0.2s;
+}
+
+.social-icon:hover {
+    color: var(--footer-link-hover);
+}

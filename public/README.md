@@ -1,0 +1,1 @@
+# Thư mục này chứa những nơi mà guest có thể truy cập, là web root của dự án. Cho đơn giản thì cái gì public sẽ được đặt ở đây. File index ở đây chỉ mang tính chất điều hướng thôi, những gì hiện lên web sẽ ở folder view. Sở dĩ assets đặt ở đây là vì lười sửa lại config :))

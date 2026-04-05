@@ -1,0 +1,1 @@
+# Thư mục này chứa file cấu hình, có thể là tới database hoặc gì đó. Hiện tại đang dùng để cài url mặc định phục vụ cho việc điều hướng của web.
