@@ -1,8 +1,8 @@
 /* ===== MÀU SẮC NAVBAR - chỉnh tại đây ===== */
 :root {
-    --navbar-bg: #0d6efd;       /* màu nền navbar */
-    --navbar-text: #ffffff;     /* màu chữ */
-    --navbar-active: #e63946;   /* màu active/hover */
+    --navbar-bg: #0d6efd;      
+    --navbar-text: #ffffff;    
+    --navbar-height: 70px;
 }
 
 .top-bar {
@@ -11,6 +11,7 @@
 
 .main-navbar {
     background-color: var(--navbar-bg) !important;
+    min-height: var(--navbar-height);
 }
 
 .main-navbar .nav-link {

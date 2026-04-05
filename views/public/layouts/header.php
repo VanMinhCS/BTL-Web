@@ -11,16 +11,16 @@
 <body class="d-flex flex-column min-vh-100">
 
 <!-- ===== NAVBAR CHÍNH ===== -->
-<nav class="navbar navbar-expand-lg sticky-top shadow-sm main-navbar">
+<nav class="navbar navbar-expand-lg shadow-sm main-navbar">
     <div class="container">
 
         <!-- LOGO -->
-        <a class="navbar-brand" href="<?php echo BASE_URL; ?>home">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="<?php echo BASE_URL; ?>home">
             <img src="<?php echo BASE_URL; ?>assets/img/logoBK.png"
                  alt="Logo"
                  height="40"
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <span class="brand-text fst-iatalic">BK88</span>
+            <span class="brand-text fw-bold">BK88</span>
             <!-- Fallback text nếu không có file logo -->
             <span class="brand-text fw-bold fst-italic" style="display:none">BK88-logo</span>
         </a>

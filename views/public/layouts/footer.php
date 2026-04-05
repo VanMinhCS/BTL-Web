@@ -6,12 +6,15 @@
 
             <!-- CỘT 1: LOGO + MÔ TẢ -->
             <div class="col-12 col-md-3 mb-4">
-                <!-- Logo ảnh -->
-                <img src="<?php echo BASE_URL; ?>assets/img/logoBK.png"
-                     alt="Logo" height="50"
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                <!-- Fallback text nếu không có logo -->
-                <span class="footer-brand fw-bold fst-italic" style="display:none">BK88-logo</span>
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Logo ảnh -->
+                    <img src="<?php echo BASE_URL; ?>assets/img/logoBK.png"
+                         alt="Logo" height="50"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <!-- Fallback text nếu không có logo -->
+                    <span class="footer-brand fw-bold fst-italic" style="display:none">BK88-logo</span>
+                    <span class="footer-brand fw-bold">BK88</span>
+                </div>
 
                 <p class="footer-muted mt-3 small">
                     Chưa tới 18h30 chưa biết ai giàu hơn ai.
