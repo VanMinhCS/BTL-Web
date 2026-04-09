@@ -1,4 +1,4 @@
 <?php
 // File: config/config.php
-define('BASE_URL', 'http://localhost/');
+define('BASE_URL', 'http://localhost/assignment/');
 ?>
