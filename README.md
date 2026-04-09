@@ -6,3 +6,5 @@
 ## Nhớ đọc file README trong từng folder
 
 # Ông nào siêng thì sau này sửa lại file README này cho đẹp :))
+
+NOTE để đồng bộ quá trình làm: Đưa phần source vào xampp/htdocs. Sau khi đưa source code vào thì vào cái folder apache/conf/httpd.conf rồi kéo xuống dòng 252 và 253 sửa cái đường dẫn thành C:/xampp/htdocs. Sau khi chạy XAMPP control panel thì để chạy web thì paste http://localhost/đường_dẫn_đến_source_code/abcxyz.php
