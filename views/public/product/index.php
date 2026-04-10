@@ -28,17 +28,17 @@
 
     <?php
     $products = [
-        ['img' => 'gt1.png', 'name' => 'Giải Tích 1', 'price' => '70.000₫', 'reviews' => 105, 'badge' => ''],
-        ['img' => 'gt2.png', 'name' => 'Giải Tích 2', 'price' => '70.000₫', 'reviews' => 89, 'badge' => ''],
-        ['img' => 'dstt.png', 'name' => 'Đại Số Tuyến Tính', 'price' => '65.000₫', 'reviews' => 120, 'badge' => ''],
-        ['img' => 'hdc.png', 'name' => 'Hóa Đại Cương', 'price' => '75.000₫', 'reviews' => 75, 'badge' => ''],
-        ['img' => 'triethoc.png', 'name' => 'Triết Học Mác - Lênin', 'price' => '78.000₫', 'reviews' => 666, 'badge' => ''],
-        ['img' => 'ktct.png', 'name' => 'Kinh Tế Chính Trị Mác - Lênin', 'price' => '48.000₫', 'reviews' => 404, 'badge' => ''],
-        ['img' => 'cnxhkh.png', 'name' => 'Chủ Nghĩa Xã Hội Khoa Học', 'price' => '46.000₫', 'reviews' => 200, 'badge' => ''],
-        ['img' => 'lsd.png', 'name' => 'Lịch Sử Đảng Cộng Sản Việt Nam', 'price' => '70.000₫', 'reviews' => 300, 'badge' => ''],
-        ['img' => 'tthcm.png', 'name' => 'Tư Tưởng Hồ Chí Minh', 'price' => '45.000₫', 'reviews' => 500, 'badge' => ''],
-        ['img' => 'ktlt.png', 'name' => 'Kỹ Thuật Lập Trình', 'price' => '150.000₫', 'reviews' => 999, 'badge' => ''],
-        ['img' => 'ctdlgt.png', 'name' => 'Cấu Trúc Dữ Liệu & Giải Thuật', 'price' => '100.000₫', 'reviews' => 888, 'badge' => ''],
+        ['id' => 1, 'img' => 'gt1.png', 'name' => 'Giải Tích 1', 'price' => '70.000₫', 'reviews' => 105, 'badge' => 'BEST SELLER'],
+        ['id' => 2, 'img' => 'gt2.png', 'name' => 'Giải Tích 2', 'price' => '70.000₫', 'reviews' => 89, 'badge' => 'BEST SELLER'],
+        ['id' => 3, 'img' => 'dstt.png', 'name' => 'Đại Số Tuyến Tính', 'price' => '65.000₫', 'reviews' => 120, 'badge' => ''],
+        ['id' => 4, 'img' => 'hdc.png', 'name' => 'Hóa Đại Cương', 'price' => '75.000₫', 'reviews' => 75, 'badge' => ''],
+        ['id' => 5, 'img' => 'triethoc.png', 'name' => 'Triết Học Mác - Lênin', 'price' => '78.000₫', 'reviews' => 666, 'badge' => ''],
+        ['id' => 6, 'img' => 'ktct.png', 'name' => 'Kinh Tế Chính Trị Mác - Lênin', 'price' => '48.000₫', 'reviews' => 404, 'badge' => ''],
+        ['id' => 7, 'img' => 'cnxhkh.png', 'name' => 'Chủ Nghĩa Xã Hội Khoa Học', 'price' => '46.000₫', 'reviews' => 200, 'badge' => ''],
+        ['id' => 8, 'img' => 'lsd.png', 'name' => 'Lịch Sử Đảng Cộng Sản Việt Nam', 'price' => '70.000₫', 'reviews' => 300, 'badge' => ''],
+        ['id' => 9, 'img' => 'tthcm.png', 'name' => 'Tư Tưởng Hồ Chí Minh', 'price' => '45.000₫', 'reviews' => 500, 'badge' => ''],
+        ['id' => 10, 'img' => 'ktlt.png', 'name' => 'Kỹ Thuật Lập Trình', 'price' => '150.000₫', 'reviews' => 999, 'badge' => 'BEST SELLER'],
+        ['id' => 11, 'img' => 'ctdlgt.png', 'name' => 'Cấu Trúc Dữ Liệu & Giải Thuật', 'price' => '100.000₫', 'reviews' => 888, 'badge' => ''],
     ];
     ?>
 
@@ -47,24 +47,28 @@
         <?php foreach ($products as $item): ?>
         <div class="col">
             <div class="card h-100 border-0 shadow-sm">
-                <div class="position-relative bg-light" style="aspect-ratio: 1/1.2; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                    
-                    <?php if (!empty($item['badge'])): ?>
-                        <span class="badge bg-danger position-absolute top-0 start-0 m-3 p-2 rounded-0 border border-white" style="z-index: 2;">
-                            <?php echo $item['badge']; ?>
-                        </span>
-                    <?php endif; ?>
-                    
-                    <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['img']; ?>" 
-                         alt="<?php echo $item['name']; ?>" 
-                         class="w-100 h-100 object-fit-contain p-3"
-                         onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($item['name']); ?>'">
-                </div>
+                <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['id']; ?>" class="text-decoration-none">
+                    <div class="position-relative bg-light" style="aspect-ratio: 1/1.2; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        
+                        <?php if (!empty($item['badge'])): ?>
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-3 p-2 rounded-0 border border-white" style="z-index: 2;">
+                                <?php echo $item['badge']; ?>
+                            </span>
+                        <?php endif; ?>
+                        
+                        <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['img']; ?>" 
+                             alt="<?php echo $item['name']; ?>" 
+                             class="w-100 h-100 object-fit-contain p-3"
+                             onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($item['name']); ?>'">
+                    </div>
+                </a>
                 
                 <div class="card-body text-center pt-4">
-                    <h5 class="card-title fw-bold text-uppercase mb-2" style="font-size: 1.1rem; height: 48px;">
-                        <?php echo $item['name']; ?>
-                    </h5>
+                    <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['id']; ?>" class="text-decoration-none text-dark">
+                        <h5 class="card-title fw-bold text-uppercase mb-2" style="font-size: 1.1rem; height: 48px;">
+                            <?php echo $item['name']; ?>
+                        </h5>
+                    </a>
                     <p class="card-text mb-2">
                         <span class="fw-bold text-primary fs-5"><?php echo $item['price']; ?></span>
                     </p>
