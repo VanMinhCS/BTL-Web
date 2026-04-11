@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Bài viết</title>
 
-  <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/article.css">
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/public/article.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap&subset=vietnamese" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap&subset=vietnamese" rel="stylesheet">
 </head>
@@ -30,7 +30,7 @@
       
       <form class="mb-4" id="commentForm">
         <div class="mb-3">
-          <textarea class="form-control" rows="3" placeholder="Viết bình luận..."></textarea>
+          <textarea class="form-control form_area" rows="3" placeholder="Viết bình luận..."></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Gửi bình luận</button>
       </form>
@@ -84,10 +84,10 @@
         
       </div>
       <div class="col-4 text-center">
-        <a href="#" class="hvr-icon">Bài viết mới nhất ></a>
-      </div>
+          <a href="#" class="hvr-icon">Bài viết mới nhất &gt;</a>
+        </div>
+  </div>
 </div>
-</div>
-  <script src="<?php echo BASE_URL; ?>assets/js/article.js"></script>
+  <script src="<?php echo BASE_URL; ?>assets/js/public/article.js"></script>
 </body>
 </html>

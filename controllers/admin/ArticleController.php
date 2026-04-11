@@ -1,7 +1,7 @@
 <?php
 class ArticleController extends Controller {
     public function index() {
-        $data['title'] = "Trang tin tức của BK88";
-        $this->view('public/news/index', $data);
+        $data['title'] = "Bài viết của BK88";
+        $this->view('admin/article/index', $data);
     }
 }

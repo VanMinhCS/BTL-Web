@@ -30,15 +30,17 @@
     color:black;
 }
 
-a{
+a#openEditor, a.like-btn, a.dislike-btn {
     text-decoration: none;
     color: black;
     font-weight: bold;
 }
 
-textarea {
-  resize: none;   /* tắt chức năng kéo giãn */
+textarea.form_area {
+  resize: none;   /* tắt kéo giãn */
+  overflow: auto; /* cho phép cuộn nội dung */
 }
+
 
 .disabled {
   pointer-events: none;
@@ -71,5 +73,19 @@ textarea {
     background-color: #ffe0e0;
   }
 }
+
+.edit-btn, .delete-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+.edit-btn:hover, .delete-btn:hover {
+  text-decoration: underline;
+}
+
+
 
 

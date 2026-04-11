@@ -1,14 +1,13 @@
 // Giả lập role: "guest" hoặc "member"
-let userRole = "guest"; // đổi thành "member" để thử
+let userRole = "member"; // đổi thành "member" để thử
 
 // Hàm xử lý giao diện theo role
 function applyRolePermissions() {
-  const commentForm = document.querySelector(".comments form");
+  const commentForm = document.getElementById("commentForm");
   if (userRole === "guest") {
-    // Guest không được nhập bình luận
-    commentForm.style.display = "none";
+    commentForm.style.display = "none";   // Guest không thấy form
   } else {
-    commentForm.style.display = "block";
+    commentForm.style.display = "block";  // Member thấy form
   }
 }
 
@@ -16,10 +15,26 @@ const articleData = {
   title: "Bài viết mẫu về BK88",
   time_upload: "12/05/2025",
   content: [
-    "Đây là trang bài viết của BK88. Tại đây, bạn sẽ tìm thấy những bài viết mới nhất về các chủ đề liên quan đến BK88, bao gồm tin tức, hướng dẫn, đánh giá sản phẩm và nhiều hơn nữa. Chúng tôi cam kết cung cấp thông tin chính xác và hữu ích để giúp bạn có trải nghiệm tốt nhất khi sử dụng dịch vụ của chúng tôi.",
-    "Hãy thường xuyên truy cập trang này để cập nhật những bài viết mới nhất và đừng quên chia sẻ những bài viết mà bạn thấy hữu ích với bạn bè và người thân của mình. Cảm ơn bạn đã quan tâm đến BK88!"
+    `<p><strong>Đây là đoạn văn bản in đậm</strong> và <em>đây là đoạn văn bản in nghiêng</em>.</p>`,
+    `<p><span style="background-color:yellow;">Đoạn này có nền vàng</span> và <span style="color:red;">chữ màu đỏ</span>.</p>`,
+    `<p style="text-align:right;">Đoạn này căn phải.</p>`,
+    `<ul>
+       <li>Một mục danh sách bullet</li>
+       <li>Mục thứ hai</li>
+     </ul>`,
+    `<ol>
+       <li>Mục số 1</li>
+       <li>Mục số 2</li>
+     </ol>`,
+    `<p>Ví dụ công thức: H<sub>2</sub>O, x<sup>2</sup> + y<sup>2</sup>.</p>`,
+    `<table border="1" style="width:100%; text-align:center;">
+       <tr><th>Cột 1</th><th>Cột 2</th></tr>
+       <tr><td>Ô 1</td><td>Ô 2</td></tr>
+     </table>`,
+    `<p><a href="https://bk88.com">Đây là một liên kết tới BK88</a></p>`,
+    `<p><img src="https://via.placeholder.com/150" alt="Ảnh minh họa" style="display:block; margin:auto;"></p>`
   ],
-  background: "../../assets/img/mountain.jpg" // thêm đường dẫn ảnh nền
+  background: "../../assets/img/mountain.jpg"
 };
 
 // Hàm load dữ liệu vào HTML
@@ -34,9 +49,9 @@ function loadArticle() {
   const contentDiv = document.querySelector(".row.content");
   contentDiv.innerHTML = ""; // xóa nội dung cũ
   articleData.content.forEach(paragraph => {
-    const p = document.createElement("p");
-    p.textContent = paragraph;
-    contentDiv.appendChild(p);
+    const div = document.createElement("div");
+    div.innerHTML = paragraph; // giữ nguyên HTML định dạng
+    contentDiv.appendChild(div);
   });
 
   // Background image
@@ -45,7 +60,6 @@ function loadArticle() {
   bgDiv.style.backgroundSize = "cover";
   bgDiv.style.backgroundPosition = "center";
 }
-
 
 // Gọi hàm khi trang load
 document.addEventListener("DOMContentLoaded", loadArticle);
@@ -178,10 +192,6 @@ document.getElementById("sortComments").addEventListener("change", e=>{
 document.addEventListener("DOMContentLoaded", ()=>{
   loadArticle();
   applyRolePermissions();
-  if(userRole==="member"){
-    renderComments();
-  }
+  renderComments();
 });
 
-// Load mặc định
-renderComments();

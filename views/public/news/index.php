@@ -6,7 +6,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css-lib/Hover/css/hover-min.css">
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css-lib/imagehover.css/css/imagehover.min.css">
-  <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/news.css">
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/public/news.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap&subset=vietnamese" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap&subset=vietnamese" rel="stylesheet">
 </head>
@@ -40,6 +40,6 @@
     </nav>
   </div>
 
-  <script src="<?php echo BASE_URL; ?>assets/js/news.js"></script>
+  <script src="<?php echo BASE_URL; ?>assets/js/public/news.js"></script>
 </body>
 </html>
