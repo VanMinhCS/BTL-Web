@@ -61,13 +61,37 @@
             </ul>
 
             <!-- PHẦN PHẢI: tìm kiếm + đăng nhập -->
-            <ul class="navbar-nav align-items-center gap-2">
+            <ul class="navbar-nav align-items-center gap-3">
+                
                 <li class="nav-item">
-                    <a class="nav-link" href="#" title="Tìm kiếm">🔍</a>
+                    <a class="nav-link" href="#" title="Tìm kiếm">
+                        <img src="<?php echo BASE_URL; ?>assets/img/search.png" alt="Search" style="width: 20px; height: 20px; filter: invert(1);">
+                    </a>
                 </li>
+
                 <li class="nav-item">
                     <a class="btn btn-outline-light btn-sm px-3"
                        href="<?php echo BASE_URL; ?>auth/login">Đăng nhập</a>
+                </li>
+
+                <li class="nav-item me-2">
+                    <a class="nav-link position-relative" href="<?php echo BASE_URL; ?>cart" title="Giỏ hàng">
+                        <img src="<?php echo BASE_URL; ?>assets/img/shopping-cart.png" alt="Cart" style="width: 24px; height: 24px; filter: invert(1);">
+                        
+                        <?php 
+                            // Tính tổng số lượng sản phẩm trong giỏ hàng
+                            $cartCount = 0;
+                            if(isset($_SESSION['cart'])) {
+                                foreach($_SESSION['cart'] as $item) { $cartCount += $item['quantity']; }
+                            }
+                        ?>
+                        <?php if($cartCount > 0): ?>
+                            <span class="position-absolute badge rounded-pill bg-danger" 
+                                  style="font-size: 0.65rem; top: 0px; right: -5px; padding: 0.25em 0.5em; border: 1px solid #0d6efd;">
+                                <?php echo $cartCount; ?>
+                            </span>
+                        <?php endif; ?>
+                    </a>
                 </li>
             </ul>
         </div>

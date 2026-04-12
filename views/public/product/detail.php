@@ -69,23 +69,32 @@ if (!$currentProduct) {
 
             <h3 class="fw-bold mb-4"><?php echo $currentProduct['price']; ?></h3>
 
-            <div class="mb-4">
-                <label class="fw-bold mb-2">Số lượng</label>
-                <div class="d-flex">
-                    <button class="qty-btn rounded-start" onclick="decreaseQty()">-</button>
-                    <input type="text" id="quantity" value="1" class="qty-input" readonly>
-                    <button class="qty-btn rounded-end" onclick="increaseQty()">+</button>
-                </div>
-            </div>
+            <form action="<?php echo BASE_URL; ?>cart/add" method="POST">
+                
+                <input type="hidden" name="product_id" value="<?php echo $currentProduct['id']; ?>">
 
-            <div class="d-grid gap-3">
-                <button class="btn btn-outline-dark py-3 fw-bold text-uppercase" style="border-width: 2px; letter-spacing: 1px;">
-                    Thêm vào giỏ hàng
-                </button>
-                <button class="btn py-3 fw-bold text-uppercase text-white" style="background-color: #5a31f4; letter-spacing: 1px;">
-                    Mua ngay
-                </button>
-            </div>
+                <div class="mb-4">
+                    <label class="fw-bold mb-2">Số lượng</label>
+                    <div class="d-flex">
+                        <button type="button" class="qty-btn rounded-start" onclick="decreaseQty()">-</button>
+                        
+                        <input type="text" id="quantity" name="quantity" value="1" class="qty-input" readonly>
+                        
+                        <button type="button" class="qty-btn rounded-end" onclick="increaseQty()">+</button>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-3">
+                    <button type="submit" class="btn btn-outline-dark py-3 fw-bold text-uppercase" style="border-width: 2px; letter-spacing: 1px;">
+                        Thêm vào giỏ hàng
+                    </button>
+                    
+                    <button type="button" class="btn py-3 fw-bold text-uppercase text-white" style="background-color: #5a31f4; letter-spacing: 1px;">
+                        Mua ngay
+                    </button>
+                </div>
+                
+            </form>
 
             <div class="mt-5">
                 <h6 class="fw-bold">Mô tả sản phẩm:</h6>
@@ -171,6 +180,75 @@ if (!$currentProduct) {
                     settings: { slidesToShow: 1, arrows: false }
                 }
             ]
+        });
+    });
+</script>
+
+<script>
+    // Bắt sự kiện khi bấm nút Thêm vào giỏ hàng
+    document.querySelector('form[action*="cart/add"]').addEventListener('submit', function(e) {
+        e.preventDefault(); // Phanh gấp! Ngăn không cho trình duyệt load lại trang
+
+        let form = this;
+        let formData = new FormData(form);
+        formData.append('ajax', 1); // Đính kèm cờ báo hiệu đây là gửi ngầm (AJAX)
+
+        // Gửi dữ liệu đi một cách âm thầm
+        fetch(form.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(cartCount => {
+            // 1. CẬP NHẬT CON SỐ TRÊN ICON GIỎ HÀNG
+            let badge = document.querySelector('.badge.bg-danger');
+            let cartLink = document.querySelector('a[href*="cart"]');
+            
+            if (badge) {
+                badge.innerText = cartCount; // Đã có số rồi thì cập nhật số mới
+            } else if (cartLink) {
+                // Nếu giỏ hàng đang trống, tạo ra cục màu đỏ và nhét vào
+                cartLink.innerHTML += `<span class="position-absolute badge rounded-pill bg-danger" style="font-size: 0.65rem; top: 0px; right: -5px; padding: 0.25em 0.5em; border: 1px solid #0d6efd;">${cartCount}</span>`;
+            }
+
+            // 2. HIỆU ỨNG UX: HIỂN THỊ POPUP (TOAST NOTIFICATION)
+            let toast = document.getElementById('cart-toast');
+            
+            // Nếu chưa có popup trong trang thì tạo mới
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'cart-toast';
+                
+                // CSS cho popup nằm đè lên mọi thứ ở góc trên bên phải
+                toast.style.position = 'fixed';
+                toast.style.top = '100px'; // Cách mép trên (tránh bị che bởi Header)
+                toast.style.right = '20px'; // Cách mép phải
+                toast.style.backgroundColor = '#198754'; // Màu xanh lá mạ (success)
+                toast.style.color = '#fff';
+                toast.style.padding = '12px 24px';
+                toast.style.borderRadius = '8px';
+                toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                toast.style.zIndex = '9999';
+                toast.style.fontWeight = 'bold';
+                toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                toast.style.transform = 'translateY(-20px)'; // Hơi dịch lên trên để làm hiệu ứng trượt
+                toast.style.opacity = '0';
+                
+                toast.innerHTML = '✓ Đã thêm vào giỏ hàng!';
+                document.body.appendChild(toast);
+            }
+
+            // Kích hoạt hiệu ứng hiện popup (Trượt xuống và rõ dần)
+            setTimeout(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateY(0)';
+            }, 10);
+
+            // Tự động mờ đi và biến mất sau 1 giây (1000 ms)
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-20px)';
+            }, 1000);
         });
     });
 </script>
