@@ -43,9 +43,25 @@
                                 <label class="form-label fw-bold small">Số điện thoại <span class="text-danger">*</span></label>
                                 <input type="tel" name="receiver_phone" class="form-control" required value="<?php echo htmlspecialchars($userPhone); ?>" placeholder="Nhập số điện thoại">
                             </div>
-                            <div class="col-12">
-                                <label class="form-label fw-bold small">Địa chỉ chi tiết <span class="text-danger">*</span></label>
-                                <input type="text" name="receiver_address" class="form-control" required placeholder="Số nhà, Tên đường, Phường/Xã, Quận/Huyện, Tỉnh/Thành phố">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                                <input type="text" name="city" class="form-control" required placeholder="VD: TP.HCM">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Quận/Huyện <span class="text-danger">*</span></label>
+                                <input type="text" name="district" class="form-control" required placeholder="VD: Quận 10">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Phường/Xã <span class="text-danger">*</span></label>
+                                <input type="text" name="ward" class="form-control" required placeholder="VD: Phường 14">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small">Số nhà <span class="text-danger">*</span></label>
+                                <input type="text" name="house_number" class="form-control" required placeholder="VD: 268">
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold small">Tên đường <span class="text-danger">*</span></label>
+                                <input type="text" name="street" class="form-control" required placeholder="VD: Lý Thường Kiệt">
                             </div>
                             <div class="col-12">
                                 <label class="form-label fw-bold small">Ghi chú đơn hàng</label>
