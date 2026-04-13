@@ -35,14 +35,27 @@ class UserModel extends Database {
     }
 
     // ====================================================
-    // 3. Lấy thông tin người dùng bằng Email (ĐĂNG NHẬP)
+    // 3. Lấy thông tin người dùng bằng Email hoặc SĐT
     // ====================================================
-    public function getUserByEmail($email) {
-        $sql = "SELECT * FROM users WHERE email = :email LIMIT 1";
+    public function getUserByEmailOrPhone($login_id) {
+        // Tách riêng thành 2 biến :email và :phone cho rành mạch
+        $sql = "SELECT * FROM users WHERE email = :email OR phone = :phone LIMIT 1";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['email' => $email]);
         
-        // Trả về 1 mảng chứa thông tin user, hoặc false nếu không tìm thấy
+        // Truyền đủ 2 giá trị vào mảng (dù cả 2 đều lấy từ $login_id)
+        $stmt->execute([
+            'email' => $login_id,
+            'phone' => $login_id
+        ]);
+        
         return $stmt->fetch(); 
+    }
+
+    // Lấy thông tin user bằng ID
+    public function getUserById($id) {
+        $sql = "SELECT * FROM users WHERE id = :id LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

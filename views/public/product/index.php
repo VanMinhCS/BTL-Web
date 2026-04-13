@@ -30,24 +30,14 @@
     </div>
 
     <?php
-    $products = [
-        ['id' => 1, 'img' => 'gt1.png', 'name' => 'Giải Tích 1', 'price' => '70.000₫', 'reviews' => 105, 'badge' => 'BEST SELLER'],
-        ['id' => 2, 'img' => 'gt2.png', 'name' => 'Giải Tích 2', 'price' => '70.000₫', 'reviews' => 89, 'badge' => 'BEST SELLER'],
-        ['id' => 3, 'img' => 'dstt.png', 'name' => 'Đại Số Tuyến Tính', 'price' => '65.000₫', 'reviews' => 120, 'badge' => ''],
-        ['id' => 4, 'img' => 'hdc.png', 'name' => 'Hóa Đại Cương', 'price' => '75.000₫', 'reviews' => 75, 'badge' => ''],
-        ['id' => 5, 'img' => 'triethoc.png', 'name' => 'Triết Học Mác - Lênin', 'price' => '78.000₫', 'reviews' => 666, 'badge' => ''],
-        ['id' => 6, 'img' => 'ktct.png', 'name' => 'Kinh Tế Chính Trị Mác - Lênin', 'price' => '48.000₫', 'reviews' => 404, 'badge' => ''],
-        ['id' => 7, 'img' => 'cnxhkh.png', 'name' => 'Chủ Nghĩa Xã Hội Khoa Học', 'price' => '46.000₫', 'reviews' => 200, 'badge' => ''],
-        ['id' => 8, 'img' => 'lsd.png', 'name' => 'Lịch Sử Đảng Cộng Sản Việt Nam', 'price' => '70.000₫', 'reviews' => 300, 'badge' => ''],
-        ['id' => 9, 'img' => 'tthcm.png', 'name' => 'Tư Tưởng Hồ Chí Minh', 'price' => '45.000₫', 'reviews' => 500, 'badge' => ''],
-        ['id' => 10, 'img' => 'ktlt.png', 'name' => 'Kỹ Thuật Lập Trình', 'price' => '150.000₫', 'reviews' => 999, 'badge' => 'BEST SELLER'],
-        ['id' => 11, 'img' => 'ctdlgt.png', 'name' => 'Cấu Trúc Dữ Liệu & Giải Thuật', 'price' => '100.000₫', 'reviews' => 888, 'badge' => ''],
-    ];
+        require_once __DIR__ . '/../../../models/ProductModel.php';
+        $productModel = new ProductModel();
+        $products = $productModel->getAllProducts();
     ?>
 
     <div class="row row-cols-1 row-cols-md-3 g-4" id="productList">
         <?php foreach ($products as $item): ?>
-        <?php $rawPrice = preg_replace('/[^0-9]/', '', $item['price']); ?>
+        <?php $rawPrice = $item['price']; ?>
         <div class="col product-item" data-name="<?php echo mb_strtolower($item['name'], 'UTF-8'); ?>" data-price="<?php echo $rawPrice; ?>" data-id="<?php echo $item['id']; ?>">
             <div class="card h-100 border-0 shadow-sm">
                 <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['id']; ?>" class="text-decoration-none">
@@ -62,7 +52,7 @@
                     <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['id']; ?>" class="text-decoration-none text-dark">
                         <h5 class="card-title fw-bold text-uppercase mb-2" style="font-size: 1.1rem; height: 48px;"><?php echo $item['name']; ?></h5>
                     </a>
-                    <p class="card-text mb-2"><span class="fw-bold text-primary fs-5"><?php echo $item['price']; ?></span></p>
+                    <p class="card-text mb-2"><span class="fw-bold text-primary fs-5"><?php echo number_format($item['price'], 0, ',', '.') . '₫'; ?></span></p>
                     <div class="text-warning small mb-3">★★★★★ <span class="text-muted">(<?php echo $item['reviews']; ?> Reviews)</span></div>
                     
                     <form action="<?php echo BASE_URL; ?>cart/add" method="POST">
@@ -127,15 +117,11 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(response => response.text())
             .then(cartCount => {
-                // 1. CẬP NHẬT CON SỐ TRÊN ICON GIỎ HÀNG (HEADER)
-                let badge = document.querySelector('.badge.bg-danger');
-                let cartLink = document.querySelector('a[href*="cart"]');
-                
+                // 1. TÌM VÀ ĐÁNH THỨC CỤC BADGE MÀU ĐỎ TRÊN HEADER
+                let badge = document.getElementById('cart-badge');
                 if (badge) {
-                    badge.innerText = cartCount;
-                } else if (cartLink) {
-                    // Nếu giỏ hàng đang trống, tạo mới badge số lượng
-                    cartLink.innerHTML += `<span class="position-absolute badge rounded-pill bg-danger" style="font-size: 0.65rem; top: 0px; right: -5px; padding: 0.25em 0.5em; border: 1px solid #0d6efd;">${cartCount}</span>`;
+                    badge.innerText = cartCount;         // Cập nhật số lượng mới
+                    badge.classList.remove('d-none');    // Gỡ bỏ trạng thái tàng hình (nếu có)
                 }
 
                 // 2. HIỂN THỊ POPUP THÔNG BÁO (TOAST)

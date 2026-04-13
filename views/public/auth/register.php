@@ -1,4 +1,4 @@
-<div class="container py-5 mt-5 mb-5">
+<div id="mainAuthWrapper" class="container py-5 mt-5 mb-5" style="transition: opacity 0.3s ease;">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm p-4">
@@ -37,7 +37,7 @@
                     </div>
 
                     <button type="submit" class="btn w-100 py-3 fw-bold text-white text-uppercase" style="background-color: #5a31f4; letter-spacing: 1px;">
-                        Đăng ký ngay
+                        Đăng ký
                     </button>
                 </form>
 

@@ -1,4 +1,4 @@
-<div class="container py-5 mt-5 mb-5">
+<div id="mainAuthWrapper" class="container py-5 mt-5 mb-5" style="transition: opacity 0.3s ease;">
     <div class="row justify-content-center">
         <div class="col-md-5">
             <div class="card border-0 shadow-sm p-4">
@@ -12,10 +12,15 @@
                     <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
                 <?php endif; ?>
 
+                <?php 
+                    $old_login_id = $_SESSION['old_login_id'] ?? ''; 
+                    unset($_SESSION['old_login_id']); 
+                ?>
+
                 <form action="<?php echo BASE_URL; ?>auth/processLogin" method="POST">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Email</label>
-                        <input type="email" name="email" class="form-control py-2" required placeholder="Nhập email của bạn">
+                        <label class="form-label fw-bold">Số điện thoại/Email</label>
+                        <input type="text" name="login_id" value="<?php echo htmlspecialchars($old_login_id); ?>" class="form-control py-2" required placeholder="Nhập SĐT hoặc Email">
                     </div>
                     
                     <div class="mb-4">
@@ -24,7 +29,7 @@
                     </div>
 
                     <button type="submit" class="btn w-100 py-3 fw-bold text-white text-uppercase" style="background-color: #5a31f4; letter-spacing: 1px;">
-                        Đăng nhập ngay
+                        Đăng nhập
                     </button>
                 </form>
 
