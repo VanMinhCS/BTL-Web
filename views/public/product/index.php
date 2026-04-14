@@ -38,25 +38,26 @@
     <div class="row row-cols-1 row-cols-md-3 g-4" id="productList">
         <?php foreach ($products as $item): ?>
         <?php $rawPrice = $item['price']; ?>
-        <div class="col product-item" data-name="<?php echo mb_strtolower($item['name'], 'UTF-8'); ?>" data-price="<?php echo $rawPrice; ?>" data-id="<?php echo $item['id']; ?>">
+        <div class="col product-item" data-name="<?php echo mb_strtolower($item['item_name'], 'UTF-8'); ?>" data-price="<?php echo $rawPrice; ?>" data-id="<?php echo $item['item_id']; ?>">
             <div class="card h-100 border-0 shadow-sm">
-                <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['id']; ?>" class="text-decoration-none">
+                <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['item_id']; ?>" class="text-decoration-none">
                     <div class="position-relative bg-light" style="aspect-ratio: 1/1.2; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                        <?php if (!empty($item['badge'])): ?>
+                        <?php if (!empty($item['badge'] ?? '')): ?>
                             <span class="badge bg-danger position-absolute top-0 start-0 m-3 p-2 rounded-0 border border-white" style="z-index: 2;"><?php echo $item['badge']; ?></span>
                         <?php endif; ?>
-                        <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" class="w-100 h-100 object-fit-contain p-3" onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=BK88'">
+                        <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['item_image']; ?>" alt="<?php echo $item['item_name']; ?>" class="w-100 h-100 object-fit-contain p-3" onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=BK88'">
                     </div>
                 </a>
                 <div class="card-body text-center pt-4">
-                    <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['id']; ?>" class="text-decoration-none text-dark">
-                        <h5 class="card-title fw-bold text-uppercase mb-2" style="font-size: 1.1rem; height: 48px;"><?php echo $item['name']; ?></h5>
+                    <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['item_id']; ?>" class="text-decoration-none text-dark">
+                        <h5 class="card-title fw-bold text-uppercase mb-2" style="font-size: 1.1rem; height: 48px;"><?php echo $item['item_name']; ?></h5>
                     </a>
                     <p class="card-text mb-2"><span class="fw-bold text-primary fs-5"><?php echo number_format($item['price'], 0, ',', '.') . '₫'; ?></span></p>
-                    <div class="text-warning small mb-3">★★★★★ <span class="text-muted">(<?php echo $item['reviews']; ?> Reviews)</span></div>
+                    
+                    <div class="text-warning small mb-3">★★★★★ <span class="text-muted">(<?php echo $item['reviews'] ?? rand(50, 300); ?> Reviews)</span></div>
                     
                     <form action="<?php echo BASE_URL; ?>cart/add" method="POST">
-                        <input type="hidden" name="product_id" value="<?php echo $item['id']; ?>">
+                        <input type="hidden" name="product_id" value="<?php echo $item['item_id']; ?>">
                         <input type="hidden" name="quantity" value="1">
                         <button type="submit" class="btn btn-outline-dark w-100 fw-bold">Thêm vào giỏ hàng</button>
                     </form>

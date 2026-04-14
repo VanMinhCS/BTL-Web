@@ -124,8 +124,8 @@
                         <?php if(isset($_SESSION['user_id'])): ?>
                             <div class="p-3">
                                 <li><h6 class="dropdown-header text-primary fw-bold p-0 mb-3 fs-6">Xin chào, <?php echo $_SESSION['user_name']; ?></h6></li>
-                                <li><a class="dropdown-item py-2 rounded" href="#">Tài khoản của tôi</a></li>
-                                <li><a class="dropdown-item py-2 rounded" href="#">Đơn mua</a></li>
+                                <li><a class="dropdown-item py-2 rounded" href="<?php echo BASE_URL; ?>profile">Tài khoản của tôi</a></li>
+                                <li><a class="dropdown-item py-2 rounded" href="<?php echo BASE_URL; ?>order">Đơn mua</a></li>
                                 <li><hr class="dropdown-divider my-2"></li>
                                 <li><a class="dropdown-item py-2 text-danger fw-bold rounded" href="<?php echo BASE_URL; ?>auth/logout">Đăng xuất</a></li>
                             </div>

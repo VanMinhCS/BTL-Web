@@ -1,5 +1,4 @@
 <style>
-    /* Màu xanh dương đậm hơn khi hover */
     .btn-confirm-checkout {
         background-color: #0d6efd;
         border-radius: 8px;
@@ -7,7 +6,7 @@
     }
     
     .btn-confirm-checkout:hover {
-        background-color: #0b5ed7 !important; /* Xanh đậm hơn */
+        background-color: #0b5ed7 !important;
         box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
         transform: translateY(-1px);
     }
@@ -23,12 +22,12 @@
             $userModel = new UserModel();
             $currentUser = $userModel->getUserById($_SESSION['user_id']);
             $userPhone = $currentUser['phone'] ?? '';
+            // Tự động ghép nối Họ và Tên từ DB để Fill vào form
+            $userFullName = trim(($currentUser['lastname'] ?? '') . ' ' . ($currentUser['firstname'] ?? ''));
         ?>
 
         <div class="row g-5">
-            
             <div class="col-lg-7">
-                
                 <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
                     <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
                         <h5 class="fw-bold text-primary mb-0"><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ giao hàng</h5>
@@ -37,32 +36,26 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small">Họ và tên người nhận <span class="text-danger">*</span></label>
-                                <input type="text" name="receiver_name" class="form-control" required value="<?php echo $_SESSION['user_name'] ?? ''; ?>" placeholder="Nhập họ tên">
+                                <input type="text" name="receiver_name" class="form-control" required value="<?php echo htmlspecialchars($userFullName); ?>" placeholder="Nhập họ tên">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small">Số điện thoại <span class="text-danger">*</span></label>
                                 <input type="tel" name="receiver_phone" class="form-control" required value="<?php echo htmlspecialchars($userPhone); ?>" placeholder="Nhập số điện thoại">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold small">Tỉnh/Thành phố <span class="text-danger">*</span></label>
-                                <input type="text" name="city" class="form-control" required placeholder="VD: TP.HCM">
+                            
+                            <div class="col-12">
+                                <label class="form-label fw-bold small">Số nhà & Tên đường <span class="text-danger">*</span></label>
+                                <input type="text" name="street" class="form-control" required placeholder="VD: 268 Lý Thường Kiệt">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold small">Quận/Huyện <span class="text-danger">*</span></label>
-                                <input type="text" name="district" class="form-control" required placeholder="VD: Quận 10">
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label fw-bold small">Phường/Xã <span class="text-danger">*</span></label>
                                 <input type="text" name="ward" class="form-control" required placeholder="VD: Phường 14">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold small">Số nhà <span class="text-danger">*</span></label>
-                                <input type="text" name="house_number" class="form-control" required placeholder="VD: 268">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                                <input type="text" name="city" class="form-control" required placeholder="VD: TP.HCM">
                             </div>
-                            <div class="col-md-8">
-                                <label class="form-label fw-bold small">Tên đường <span class="text-danger">*</span></label>
-                                <input type="text" name="street" class="form-control" required placeholder="VD: Lý Thường Kiệt">
-                            </div>
+                            
                             <div class="col-12">
                                 <label class="form-label fw-bold small">Ghi chú đơn hàng</label>
                                 <textarea name="note" class="form-control" rows="2" placeholder="Ghi chú thêm cho người giao hàng (không bắt buộc)"></textarea>
@@ -77,15 +70,11 @@
                         <div class="d-flex gap-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="delivery_method" id="deliveryHome" value="home" checked>
-                                <label class="form-check-label fw-medium" for="deliveryHome">
-                                    Giao hàng tận nơi
-                                </label>
+                                <label class="form-check-label fw-medium" for="deliveryHome">Giao hàng tận nơi</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="delivery_method" id="deliveryStore" value="store">
-                                <label class="form-check-label fw-medium" for="deliveryStore">
-                                    Nhận tại cửa hàng
-                                </label>
+                                <label class="form-check-label fw-medium" for="deliveryStore">Nhận tại cửa hàng</label>
                             </div>
                         </div>
                     </div>
@@ -113,14 +102,13 @@
                             <input class="form-check-input m-0 me-3" type="radio" name="payment_method" id="paymentCOD" value="cod" checked>
                             <label class="form-check-label w-100 m-0" for="paymentCOD">
                                 <div class="d-flex align-items-center">
-                                    <img src="<?php echo BASE_URL; ?>assets/img/cod.png" alt="COD" style="width: 32px; height: 32px; margin-right: 12px; object-fit: contain;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2800/2800185.png'">
                                     <span class="fw-medium">Thanh toán bằng tiền mặt khi nhận hàng</span>
                                 </div>
                             </label>
                         </div>
                     </div>
                 </div>
-                </div>
+            </div>
 
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm sticky-top" style="border-radius: 12px; top: 100px;">
@@ -136,9 +124,10 @@
                             $allProducts = $productModel->getAllProducts();
                             
                             $productReference = [];
+                            // Đã Đổi sang item_id và item_name để khớp với DB
                             foreach ($allProducts as $p) {
-                                $productReference[$p['id']] = [
-                                    'name' => $p['name'], 
+                                $productReference[$p['item_id']] = [
+                                    'name' => $p['item_name'], 
                                     'price' => $p['price']
                                 ];
                             }
@@ -146,7 +135,6 @@
                             $subTotal = 0;
                             if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])): 
                                 foreach ($_SESSION['cart'] as $item):
-                                    
                                     $pId = $item['product_id'] ?? $item['id'] ?? 0;
                                     $qty = $item['quantity'] ?? 1;
 
@@ -200,7 +188,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </form>
 </div>
@@ -224,7 +211,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCheckoutState() {
         if (deliveryStore.checked) {
-            // Nhận tại cửa hàng
             shippingMethodCard.style.display = 'none'; 
             shippingFeeRow.style.display = 'none'; 
             shippingStandardInput.disabled = true; 
@@ -232,7 +218,6 @@ document.addEventListener('DOMContentLoaded', function() {
             totalPriceDisplay.innerText = formatCurrency(subTotal);
             totalAmountInput.value = subTotal;
         } else {
-            // Giao hàng tận nơi
             shippingMethodCard.style.display = 'block'; 
             shippingFeeRow.style.display = 'flex'; 
             shippingStandardInput.disabled = false; 
@@ -244,7 +229,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     deliveryHome.addEventListener('change', updateCheckoutState);
     deliveryStore.addEventListener('change', updateCheckoutState);
-
     updateCheckoutState();
 });
 </script>

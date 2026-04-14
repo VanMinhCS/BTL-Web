@@ -16,7 +16,6 @@ class AuthController extends Controller {
     // ==========================================
     // 1. CÁC HÀM HIỂN THỊ GIAO DIỆN (VIEW)
     // ==========================================
-    
     public function login() {
         $data['title'] = "Đăng nhập - BK88";
         $this->view('public/auth/login', $data);
@@ -28,7 +27,7 @@ class AuthController extends Controller {
     }
 
     // ==========================================
-    // 2. XỬ LÝ LOGIC ĐĂNG KÝ (Nhận dữ liệu từ form)
+    // 2. XỬ LÝ LOGIC ĐĂNG KÝ
     // ==========================================
     public function processRegister() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -77,18 +76,18 @@ class AuthController extends Controller {
     // ==========================================
     public function processLogin() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Nhận biến login_id (có thể là email hoặc sđt)
             $login_id = trim($_POST['login_id'] ?? '');
             $password = $_POST['password'] ?? '';
             $isAjax = isset($_POST['ajax']) && $_POST['ajax'] == 1;
 
-            // Gọi hàm mới vừa tạo ở Model
             $user = $this->userModel->getUserByEmailOrPhone($login_id);
 
-            if ($user && password_verify($password, $user['password'])) {
+            // MẸO: Chấp nhận cả mật khẩu đã hash VÀ mật khẩu thô ('1') từ file SQL của nhóm
+            if ($user && (password_verify($password, $user['password']) || $password === $user['password'])) {
                 
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_name'] = $user['fullname'];
+                // ĐÃ SỬA: Dùng đúng tên cột mới của DB (user_id, lastname, firstname)
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['user_name'] = trim(($user['lastname'] ?? '') . ' ' . ($user['firstname'] ?? ''));
                 $_SESSION['user_role'] = $user['role'];
 
                 $redirectUrl = isset($_SESSION['redirect_after_login']) ? $_SESSION['redirect_after_login'] : BASE_URL . "home";
@@ -100,14 +99,11 @@ class AuthController extends Controller {
                 }
                 header("Location: " . $redirectUrl);
             } else {
-                // XỬ LÝ LỖI
                 if ($isAjax) {
-                    // Nếu là AJAX (Popup), Form mặc định SẼ KHÔNG BỊ XÓA chữ, chỉ hiện câu thông báo này:
                     echo json_encode(['status' => 'error', 'message' => 'Email hoặc mật khẩu không chính xác.']);
                     exit;
                 }
                 
-                // Nếu là trang Đăng nhập rời (login.php): Lưu lại chữ user vừa nhập để in ra lại, tránh bị trắng ô
                 $_SESSION['error'] = "Email hoặc mật khẩu không chính xác.";
                 $_SESSION['old_login_id'] = $login_id; 
                 header("Location: " . BASE_URL . "auth/login");
@@ -120,7 +116,6 @@ class AuthController extends Controller {
     // 4. ĐĂNG XUẤT
     // ==========================================
     public function logout() {
-        // Xóa toàn bộ Session
         session_destroy();
         header("Location: " . BASE_URL . "home");
         exit;

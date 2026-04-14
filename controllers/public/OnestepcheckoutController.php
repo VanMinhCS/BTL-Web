@@ -4,7 +4,6 @@
 class OnestepcheckoutController extends Controller {
 
     public function __construct() {
-        // Kiểm tra đăng nhập
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -16,55 +15,89 @@ class OnestepcheckoutController extends Controller {
         }
     }
 
-    // Hàm mặc định khi truy cập http://localhost/onestepcheckout
     public function index() {
         $data['title'] = "Thanh toán đơn hàng - BK88";
         $this->view('public/onestepcheckout/index', $data);
     }
 
     // ========================================================
-    // HÀM XỬ LÝ KHI NGƯỜI DÙNG BẤM NÚT "XÁC NHẬN THANH TOÁN"
+    // HÀM XỬ LÝ LƯU ĐƠN HÀNG VÀO DATABASE
     // ========================================================
     public function processOrder() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
-            // 1. Nhận thông tin cơ bản
-            $receiver_name = trim($_POST['receiver_name'] ?? '');
-            $receiver_phone = trim($_POST['receiver_phone'] ?? '');
-            $note = trim($_POST['note'] ?? '');
+            // 1. Nhúng các class bằng đường dẫn TƯƠNG ĐỐI TỪ THƯ MỤC GỐC để tránh lỗi
+            require_once __DIR__ . '/../../models/Information.php'; // Chứa Address, Information
+            require_once __DIR__ . '/../../models/Order.php';       // Chứa Order, OrderDetail, Item
 
-            // 2. NHẬN 5 Ô ĐỊA CHỈ TỪ FORM
+            // 2. Lấy dữ liệu từ Form (Đã bỏ district và house_number)
+            $user_id = $_SESSION['user_id'];
             $city = trim($_POST['city'] ?? '');
-            $district = trim($_POST['district'] ?? '');
             $ward = trim($_POST['ward'] ?? '');
-            $house_number = trim($_POST['house_number'] ?? '');
-            $street = trim($_POST['street'] ?? '');
-
-            // 3. THỰC HIỆN NỐI CHUỖI ĐỊA CHỈ
-            // Kết quả sẽ ra dạng: "268 Lý Thường Kiệt, Phường 14, Quận 10, TP.HCM"
-            $full_address = $house_number . ' ' . $street . ', ' . $ward . ', ' . $district . ', ' . $city;
-
-            // 4. Nhận thông tin thanh toán & vận chuyển
-            $delivery_method = $_POST['delivery_method'] ?? 'home'; // home hoặc store
-            $payment_method = $_POST['payment_method'] ?? 'cod';
+            $street = trim($_POST['street'] ?? ''); // Ô này giờ đã chứa sẵn "Số nhà & Tên đường"
+            
+            $payment_method_raw = $_POST['payment_method'] ?? 'cod';
             $total_amount = $_POST['total_amount'] ?? 0;
 
-            // ====================================================
-            // IN THỬ RA MÀN HÌNH ĐỂ KIỂM TRA DỮ LIỆU ĐÃ CHUẨN CHƯA
-            // ====================================================
-            echo "<div style='font-family: sans-serif; padding: 20px;'>";
-            echo "<h2 style='color: #0d6efd;'>Đã nhận thông tin đặt hàng!</h2>";
-            echo "<p><b>Họ tên:</b> $receiver_name</p>";
-            echo "<p><b>Số điện thoại:</b> $receiver_phone</p>";
-            echo "<p><b>Địa chỉ hoàn chỉnh:</b> <span style='color: red;'>$full_address</span></p>";
-            echo "<p><b>Ghi chú:</b> $note</p>";
-            echo "<p><b>Hình thức nhận hàng:</b> $delivery_method</p>";
-            echo "<p><b>Tổng thanh toán:</b> " . number_format($total_amount, 0, ',', '.') . " đ</p>";
-            echo "<hr>";
-            echo "<p><i>Bước tiếp theo: Chúng ta sẽ tạo bảng `orders` và `order_details` trong Database để Insert đống dữ liệu này vào!</i></p>";
-            echo "</div>";
-            
-            exit; // Dừng tạm ở đây để bạn kiểm tra chữ in ra
+            try {
+                // --- BƯỚC 1: LƯU ĐỊA CHỈ MỚI ---
+                $addressObj = new Address();
+                $addressObj->setStreet($street); 
+                $addressObj->setWard($ward);
+                $addressObj->setCity($city);
+                
+                // Hứng ID ngay khi chạy lệnh create()
+                $address_id = $addressObj->create(); 
+
+                // --- BƯỚC 2: TẠO ĐƠN HÀNG (ORDER) ---
+                
+                date_default_timezone_set('Asia/Ho_Chi_Minh'); 
+                
+                $orderObj = new Order();
+                $orderObj->setUserId($user_id);
+                $orderObj->setOrderDate(date("Y-m-d H:i:s")); // Bây giờ hàm date() sẽ chạy đúng giờ VN
+                $orderObj->setStatus(0); 
+                $orderObj->setIsPaid(0); 
+                $orderObj->setPaymentMethod($payment_method_raw == 'cod' ? 0 : 1);
+                
+                // Hứng ID ngay khi chạy lệnh create()
+                $order_id = $orderObj->create();
+
+                // --- BƯỚC 3: LƯU CHI TIẾT ĐƠN HÀNG (ORDER DETAILS) ---
+                if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+                    foreach ($_SESSION['cart'] as $item) {
+                        $detailObj = new OrderDetail();
+                        $detailObj->setOrderId($order_id);
+                        
+                        // 1. Lấy ID sản phẩm từ giỏ hàng
+                        $itemId = $item['product_id'] ?? $item['item_id'] ?? $item['id'] ?? 0;
+                        $detailObj->setItemId($itemId); 
+                        $detailObj->setQuantity($item['quantity'] ?? 1);
+                        
+                        // 2. LẤY GIÁ GỐC TỪ DATABASE (Bảo mật tuyệt đối, chống gian lận giá)
+                        $itemDb = new Item();
+                        $itemDb->setItemId($itemId); // Khi set ID, class Item sẽ tự động lấy dữ liệu từ DB
+                        $currentPrice = $itemDb->getPrice(); // Rút giá tiền chuẩn ra
+                        
+                        $detailObj->setPrice($currentPrice); 
+                        
+                        // 3. Lưu vào chi tiết đơn hàng
+                        $detailObj->create();
+                    }
+                }
+
+                // --- BƯỚC 4: HOÀN TẤT ---
+                // Xóa giỏ hàng sau khi đặt thành công
+                unset($_SESSION['cart']);
+
+                // Chuyển hướng sang trang thông báo thành công
+                $_SESSION['success_order'] = "Chúc mừng! Đơn hàng #$order_id của bạn đã được đặt thành công.";
+                header("Location: " . BASE_URL . "home"); 
+                exit;
+
+            } catch (Exception $e) {
+                die("Lỗi hệ thống: " . $e->getMessage());
+            }
         }
     }
 }
