@@ -1,7 +1,32 @@
-// Giả lập role: "guest" hoặc "member"
-let userRole = "member"; // đổi thành "member" để thử
+// Khai báo ở đầu file article.js
+const urlParams = new URLSearchParams(window.location.search);
+const articleId = urlParams.get("id"); // sẽ là "1" trong ví dụ
 
-// Hàm xử lý giao diện theo role
+let userRole = "member"; // mặc định
+const perPage = 5;
+let currentPage = 1;
+let sortType = "newest";
+let comments = [];   // thêm dòng này
+
+function fetchUserRole() {
+  fetch("/article/getRole")
+    .then(res => res.json())
+    .then(data => {
+      // giả sử API trả về { "role": 1 } hoặc { "role": 0 }
+      if (data.role == 1) {
+        userRole = "admin"; // hoặc "admin" nếu bạn muốn phân quyền cao hơn
+      } else {
+        userRole = "member";
+      }
+      applyRolePermissions();
+      renderComments();
+    })
+    .catch(err => {
+      console.error("Lỗi khi lấy role:", err);
+      userRole = "guest";
+    });
+}
+
 function applyRolePermissions() {
   const commentForm = document.getElementById("commentForm");
   if (userRole === "guest") {
@@ -11,72 +36,55 @@ function applyRolePermissions() {
   }
 }
 
-const articleData = {
-  title: "Bài viết mẫu về BK88",
-  time_upload: "12/05/2025",
-  content: [
-    `<p><strong>Đây là đoạn văn bản in đậm</strong> và <em>đây là đoạn văn bản in nghiêng</em>.</p>`,
-    `<p><span style="background-color:yellow;">Đoạn này có nền vàng</span> và <span style="color:red;">chữ màu đỏ</span>.</p>`,
-    `<p style="text-align:right;">Đoạn này căn phải.</p>`,
-    `<ul>
-       <li>Một mục danh sách bullet</li>
-       <li>Mục thứ hai</li>
-     </ul>`,
-    `<ol>
-       <li>Mục số 1</li>
-       <li>Mục số 2</li>
-     </ol>`,
-    `<p>Ví dụ công thức: H<sub>2</sub>O, x<sup>2</sup> + y<sup>2</sup>.</p>`,
-    `<table border="1" style="width:100%; text-align:center;">
-       <tr><th>Cột 1</th><th>Cột 2</th></tr>
-       <tr><td>Ô 1</td><td>Ô 2</td></tr>
-     </table>`,
-    `<p><a href="https://bk88.com">Đây là một liên kết tới BK88</a></p>`,
-    `<p><img src="https://via.placeholder.com/150" alt="Ảnh minh họa" style="display:block; margin:auto;"></p>`
-  ],
-  background: "../../assets/img/mountain.jpg"
-};
+async function fetchArticle() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
 
-// Hàm load dữ liệu vào HTML
-function loadArticle() {
-  // Title
-  document.querySelector(".title").textContent = articleData.title;
+  try {
+    const response = await fetch(`/article/getArticle?id=${id}`);
+    const articleData = await response.json();
 
-  // Time upload
-  document.querySelector(".time_upload").textContent = articleData.time_upload;
+    if (articleData.error) {
+      document.querySelector(".title").textContent = articleData.error;
+      return;
+    }
 
-  // Content
-  const contentDiv = document.querySelector(".row.content");
-  contentDiv.innerHTML = ""; // xóa nội dung cũ
-  articleData.content.forEach(paragraph => {
-    const div = document.createElement("div");
-    div.innerHTML = paragraph; // giữ nguyên HTML định dạng
-    contentDiv.appendChild(div);
-  });
+    // Title
+    document.querySelector(".title").textContent = articleData.title;
 
-  // Background image
-  const bgDiv = document.querySelector(".background_image");
-  bgDiv.style.backgroundImage = `url('${articleData.background}')`;
-  bgDiv.style.backgroundSize = "cover";
-  bgDiv.style.backgroundPosition = "center";
+    // Time upload (chỉ ngày/tháng/năm)
+    document.querySelector(".time_upload").textContent = articleData.upload_date;
+
+    // Content (giữ nguyên HTML)
+    const contentDiv = document.querySelector(".row.content");
+    contentDiv.innerHTML = articleData.content;
+
+    // Background image
+    const bgDiv = document.querySelector(".background_image");
+    bgDiv.style.backgroundImage = `url('${articleData.background}')`;
+    bgDiv.style.backgroundSize = "cover";
+    bgDiv.style.backgroundPosition = "center";
+  } catch (error) {
+    console.error("Lỗi khi tải bài viết:", error);
+  }
 }
 
-// Gọi hàm khi trang load
-document.addEventListener("DOMContentLoaded", loadArticle);
-
-let comments = [
-  {id:1, user:"Người dùng A", text:"Bài viết rất hữu ích!", likes:10, dislikes:2, date:"2025-05-12"},
-  {id:2, user:"Người dùng B", text:"Mình thấy phần hướng dẫn khá rõ ràng.", likes:5, dislikes:1, date:"2025-05-11"},
-  {id:3, user:"Người dùng C", text:"Thông tin khá đầy đủ.", likes:2, dislikes:0, date:"2025-05-10"},
-  {id:4, user:"Người dùng D", text:"Hay lắm!", likes:8, dislikes:3, date:"2025-05-09"},
-  {id:5, user:"Người dùng E", text:"Cần thêm ví dụ.", likes:1, dislikes:4, date:"2025-05-08"},
-  {id:6, user:"Người dùng F", text:"Rất chi tiết.", likes:12, dislikes:0, date:"2025-05-07"},
-];
+document.addEventListener("DOMContentLoaded", fetchArticle);
 
 
-const perPage = 5;
-let currentPage = 1;
-let sortType = "newest";
+async function fetchComments(articleId) {
+  try {
+    const response = await fetch(`article/getComments?id=${articleId}`);
+    const data = await response.json();
+
+    // Gán dữ liệu vào mảng comments toàn cục
+    comments = data.items;
+    currentPage = 1;
+    renderComments();
+  } catch (error) {
+    console.error("Lỗi khi tải comments:", error);
+  }
+}
 
 function renderComments() {
   const list = document.getElementById("commentList");
@@ -90,6 +98,16 @@ function renderComments() {
     sorted.sort((a, b) => b.likes - a.likes);
   }
 
+    // Nếu có query ?comment=ID thì tính lại currentPage
+  const urlParams = new URLSearchParams(window.location.search);
+  const commentId = urlParams.get("comment");
+  if(commentId){
+    const idx = sorted.findIndex(c => c.id == commentId);
+    if(idx !== -1){
+      currentPage = Math.floor(idx / perPage) + 1;
+    }
+  }
+  
   // Phân trang
   const start = (currentPage - 1) * perPage;
   const pageComments = sorted.slice(start, start + perPage);
@@ -97,37 +115,95 @@ function renderComments() {
   pageComments.forEach(c => {
     const div = document.createElement("div");
     div.className = "comment mb-3 text-start border p-3 rounded";
+    div.dataset.commentId = c.id; 
     div.innerHTML = `
-      <div class="d-flex justify-content-between">
-        <p class="mb-1"><strong>${c.user}</strong></p>
-        <small class="text-muted">${c.date}</small>
+      <div class="d-flex justify-content-between align-items-center">
+        <p class="mb-1">
+          <strong>${c.user}</strong>
+          ${c.isAdmin ? '<span class="badge bg-primary ms-2">Admin</span>' : ''}
+        </p>
+        <small class="text-muted">
+          ${new Date(c.date).toLocaleDateString("vi-VN")}
+          ${c.isEdited ? '<em class="ms-2">(Đã chỉnh sửa)</em>' : ''}
+        </small>
       </div>
+
       <p class="mb-2">${c.text}</p>
+
       <div class="d-flex gap-4 align-items-center">
-        <a href="javascript:void(0)" class="like-btn ${userRole==='guest'?'disabled':''}" data-id="${c.id}" title="Like">
+        <!-- Nút Like -->
+        <a href="javascript:void(0)" 
+          class="like-btn ${userRole==='guest'?'disabled':''} ${c.userVote==='like'?'active-vote':''}" 
+          data-id="${c.id}" title="Like">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
             <path d="M2 21h4V9H2v12zm20-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32
-                     c0-.41-.17-.79-.44-1.06L13.17 1 6.59 7.59C6.22 7.95 6 8.45 6 9v10
-                     c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05
-                     c.09-.23.14-.47.14-.73v-1z"/>
+                    c0-.41-.17-.79-.44-1.06L13.17 1 6.59 7.59C6.22 7.95 6 8.45 6 9v10
+                    c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05
+                    c.09-.23.14-.47.14-.73v-1z"/>
           </svg> ${c.likes}
         </a>
-        <a href="javascript:void(0)" class="dislike-btn ${userRole==='guest'?'disabled':''}" data-id="${c.id}" title="Dislike">
+
+        <!-- Nút Dislike -->
+        <a href="javascript:void(0)" 
+          class="dislike-btn ${userRole==='guest'?'disabled':''} ${c.userVote==='dislike'?'active-vote':''}" 
+          data-id="${c.id}" title="Dislike">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
             <path d="M22 3H18v12h4V3zm-6 0H7c-.83 0-1.54.5-1.84 1.22L2.14 11.27
-                     c-.09.23-.14.47-.14.73v1c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32
-                     c0 .41.17.79.44 1.06l1.12 1.12 6.59-6.59c.37-.36.59-.86.59-1.41V5
-                     c0-1.1-.9-2-2-2z"/>
+                    c-.09.23-.14.47-.14.73v1c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32
+                    c0 .41.17-.79.44-1.06l1.12 1.12 6.59-6.59c.37-.36.59-.86.59-1.41V5
+                    c0-1.1-.9-2-2-2z"/>
           </svg> ${c.dislikes}
         </a>
+
+        <!-- Menu hành động -->
+        <div class="dropdown ms-auto">
+          <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            ...
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item reply-btn" data-id="${c.id}" href="#">Phản hồi</a></li>
+            ${c.isOwner ? `
+              <li><a class="dropdown-item edit-btn" data-id="${c.id}" href="#">Chỉnh sửa</a></li>
+              <li><a class="dropdown-item delete-btn" data-id="${c.id}" href="#">Xóa</a></li>
+            ` : ''}
+            <li><a class="dropdown-item report-btn" data-id="${c.id}" href="#">Báo cáo</a></li>
+          </ul>
+        </div>
       </div>
+      ${c.repliedId 
+    ? `<span class="text-muted replied-link" data-id="${c.repliedId}">
+          Phản hồi: ${c.repliedUser}
+      </span>` 
+    : ''}
     `;
     list.appendChild(div);
   });
 
   renderPagination(sorted.length);
+  
+  if(commentId){
+    setTimeout(() => {
+      const targetComment = document.querySelector(`[data-comment-id="${commentId}"]`);
+      if(targetComment){
+        targetComment.scrollIntoView({behavior:"smooth"});
+      }
+    }, 300);
+  }
 }
 
+// Listener click cho replied-link
+document.addEventListener("click", e => {
+  if(e.target.classList.contains("replied-link")){
+    const targetId = e.target.dataset.id;
+    const targetComment = document.querySelector(`[data-comment-id="${targetId}"]`);
+    if(targetComment){
+      targetComment.scrollIntoView({behavior:"smooth"});
+    } else {
+      // Nếu comment nằm ở trang khác
+      window.location.href = `/article?id=${articleId}&comment=${targetId}`;
+    }
+  }
+});
 
 function renderPagination(total) {
   const ul = document.getElementById("commentPagination");
@@ -137,50 +213,161 @@ function renderPagination(total) {
     const li = document.createElement("li");
     li.className = "page-item"+(i===currentPage?" active":"");
     li.innerHTML = `<a class="page-link" href="javascript:void(0)">${i}</a>`;
-    li.addEventListener("click", ()=>{currentPage=i; renderComments();});
+    li.addEventListener("click", ()=>{
+      currentPage = i;
+      // Xóa tham số comment khỏi URL
+      const url = new URL(window.location);
+      url.searchParams.delete("comment");
+      url.searchParams.set("page", i); // nếu muốn lưu page vào URL
+      window.history.pushState({}, "", url);
+
+      renderComments();
+    });
     ul.appendChild(li);
   }
 }
 
-document.addEventListener("click", e=>{
-  if(userRole==="guest") return; // guest không được ghi nhận
-  if(e.target.closest(".like-btn")){
-    const id = e.target.closest(".like-btn").dataset.id;
-    const c = comments.find(x=>x.id==id);
-    c.likes++;
-    renderComments();
+
+document.addEventListener("click", async e => {
+  if (userRole === "guest") return;
+
+  const likeBtn = e.target.closest(".like-btn");
+  const dislikeBtn = e.target.closest(".dislike-btn");
+
+  if (likeBtn) {
+    const id = likeBtn.dataset.id;
+    await sendVote(id, "like");
   }
-  if(e.target.closest(".dislike-btn")){
-    const id = e.target.closest(".dislike-btn").dataset.id;
-    const c = comments.find(x=>x.id==id);
-    c.dislikes++;
-    renderComments();
+
+  if (dislikeBtn) {
+    const id = dislikeBtn.dataset.id;
+    await sendVote(id, "dislike");
   }
+
+  if(e.target.classList.contains("reply-btn")){
+    e.preventDefault(); 
+
+    const id = e.target.dataset.id;
+    const c = comments.find(x=>x.id==id);
+    const parent = e.target.closest(".comment");
+
+    // nếu đã có form reply thì không thêm nữa
+    if(parent.querySelector(".reply-area")) return;
+
+    const textarea = document.createElement("textarea");
+    textarea.className = "reply-area form-control mt-2";
+    textarea.placeholder = "Nhập phản hồi...";
+    parent.appendChild(textarea);
+
+    const sendBtn = document.createElement("button");
+    sendBtn.type = "button";
+    sendBtn.textContent = "Gửi phản hồi";
+    sendBtn.className = "btn btn-sm btn-primary mt-2 me-2";
+    parent.appendChild(sendBtn);
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.type = "button";
+    cancelBtn.textContent = "Cancel";
+    cancelBtn.className = "btn btn-sm btn-secondary mt-2";
+    parent.appendChild(cancelBtn);
+
+    sendBtn.addEventListener("click", () => {
+      const replyText = textarea.value.trim();
+      if(replyText){
+        fetch("/article/replyComment", {
+          method: "POST",
+          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          body: `article_id=${articleId}&parent_id=${id}&text=${encodeURIComponent(replyText)}`
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.success){
+            comments.push(data.comment); // thêm phản hồi vào mảng
+            renderComments();
+          } else {
+            alert(data.error);
+          }
+        });
+      }
+    });
+
+    cancelBtn.addEventListener("click", () => {
+      // Xóa textarea và nút đi
+      textarea.remove();
+      sendBtn.remove();
+      cancelBtn.remove();
+    });
+  }
+
+
+  if(e.target.classList.contains("report-btn")){
+    const id = e.target.dataset.id;
+    alert("Bạn đã báo cáo comment #" + id);
+    // TODO: gọi API báo cáo
+  }
+
 });
 
+
+async function sendVote(commentId, voteType) {
+  try {
+    const response = await fetch("/article/voteComment", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `comment_id=${commentId}&vote=${voteType}`
+    });
+
+    const text = await response.text();
+    console.log("Raw response:", text);
+
+    const data = JSON.parse(text);
+
+    if (data.success) {
+      const c = comments.find(x => x.id == commentId);
+      c.likes = data.likes;
+      c.dislikes = data.dislikes;
+      c.userVote = data.userVote; // lấy từ server, có thể null/like/dislike
+      renderComments();
+    } else {
+      console.error("Vote lỗi:", data.error);
+    }
+  } catch (err) {
+    console.error("Vote lỗi:", err);
+  }
+}
+
 // Xử lý gửi bình luận mới
-document.getElementById("commentForm").addEventListener("submit", e => {
+document.getElementById("commentForm").addEventListener("submit", async e => {
   e.preventDefault();
-  if(userRole === "guest") return; // guest không được gửi
+  if (userRole === "guest") return;
 
   const textarea = e.target.querySelector("textarea");
   const text = textarea.value.trim();
-  if(text){
-    const newComment = {
-      id: comments.length+1,
-      user: "Bạn", // giả lập tên người dùng
-      text: text,
-      likes: 0,
-      dislikes: 0,
-      date: new Date().toISOString().split("T")[0] // yyyy-mm-dd
-    };
-    comments.unshift(newComment); // thêm vào đầu danh sách
-    textarea.value = "";
-    currentPage = 1;
-    renderComments();
+  if (text) {
+    try {
+      const response = await fetch("http://localhost:8080/article/addComment", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `article_id=${articleId}&text=${encodeURIComponent(text)}`
+      });
+
+      const raw = await response.text();
+      console.log("Raw response:", raw);
+      const data = JSON.parse(raw);
+
+      if (data.success) {
+        comments.unshift(data.comment); // thêm comment mới từ server
+        textarea.value = "";
+        currentPage = 1;
+        renderComments();
+      } else {
+        console.error("Lỗi thêm bình luận:", data.error);
+      }
+    } catch (err) {
+      console.error("Lỗi AJAX:", err);
+    }
   }
 });
-
 
 // Sort handler
 document.getElementById("sortComments").addEventListener("change", e=>{
@@ -190,8 +377,11 @@ document.getElementById("sortComments").addEventListener("change", e=>{
 });
 
 document.addEventListener("DOMContentLoaded", ()=>{
-  loadArticle();
-  applyRolePermissions();
-  renderComments();
+  const params = new URLSearchParams(window.location.search);
+  const articleId = params.get("id");
+  fetchArticle();
+  fetchUserRole();
+  fetchComments(articleId); // sẽ gán comments và gọi renderComments bên trong
 });
+
 

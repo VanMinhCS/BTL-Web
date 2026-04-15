@@ -73,4 +73,9 @@ textarea.form_area {
   }
 }
 
+.like-btn.active-vote,
+.dislike-btn.active-vote {
+  color: #0d6efd; /* màu xanh bạn muốn */
+  font-weight: bold;
+}
 
