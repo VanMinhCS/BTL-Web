@@ -26,18 +26,15 @@ class OnestepcheckoutController extends Controller {
     public function processOrder() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
-            // 1. Nhúng các class bằng đường dẫn TƯƠNG ĐỐI TỪ THƯ MỤC GỐC để tránh lỗi
-            require_once __DIR__ . '/../../models/Information.php'; // Chứa Address, Information
-            require_once __DIR__ . '/../../models/Order.php';       // Chứa Order, OrderDetail, Item
+            require_once __DIR__ . '/../../models/Information.php'; 
+            require_once __DIR__ . '/../../models/Order.php';       
 
-            // 2. Lấy dữ liệu từ Form (Đã bỏ district và house_number)
             $user_id = $_SESSION['user_id'];
             $city = trim($_POST['city'] ?? '');
             $ward = trim($_POST['ward'] ?? '');
-            $street = trim($_POST['street'] ?? ''); // Ô này giờ đã chứa sẵn "Số nhà & Tên đường"
+            $street = trim($_POST['street'] ?? ''); 
             
             $payment_method_raw = $_POST['payment_method'] ?? 'cod';
-            $total_amount = $_POST['total_amount'] ?? 0;
 
             try {
                 // --- BƯỚC 1: LƯU ĐỊA CHỈ MỚI ---
@@ -45,22 +42,22 @@ class OnestepcheckoutController extends Controller {
                 $addressObj->setStreet($street); 
                 $addressObj->setWard($ward);
                 $addressObj->setCity($city);
-                
-                // Hứng ID ngay khi chạy lệnh create()
                 $address_id = $addressObj->create(); 
 
+                // Bắt phương thức giao hàng từ form
+                $delivery_method = $_POST['delivery_method'] ?? 'home';
+                $shipping_fee = ($delivery_method === 'home') ? 22000 : 0;
+
                 // --- BƯỚC 2: TẠO ĐƠN HÀNG (ORDER) ---
-                
                 date_default_timezone_set('Asia/Ho_Chi_Minh'); 
-                
                 $orderObj = new Order();
                 $orderObj->setUserId($user_id);
-                $orderObj->setOrderDate(date("Y-m-d H:i:s")); // Bây giờ hàm date() sẽ chạy đúng giờ VN
+                $orderObj->setOrderDate(date("Y-m-d H:i:s"));
                 $orderObj->setStatus(0); 
                 $orderObj->setIsPaid(0); 
                 $orderObj->setPaymentMethod($payment_method_raw == 'cod' ? 0 : 1);
+                $orderObj->setShippingFee($shipping_fee);
                 
-                // Hứng ID ngay khi chạy lệnh create()
                 $order_id = $orderObj->create();
 
                 // --- BƯỚC 3: LƯU CHI TIẾT ĐƠN HÀNG (ORDER DETAILS) ---
@@ -69,30 +66,27 @@ class OnestepcheckoutController extends Controller {
                         $detailObj = new OrderDetail();
                         $detailObj->setOrderId($order_id);
                         
-                        // 1. Lấy ID sản phẩm từ giỏ hàng
                         $itemId = $item['product_id'] ?? $item['item_id'] ?? $item['id'] ?? 0;
                         $detailObj->setItemId($itemId); 
                         $detailObj->setQuantity($item['quantity'] ?? 1);
                         
-                        // 2. LẤY GIÁ GỐC TỪ DATABASE (Bảo mật tuyệt đối, chống gian lận giá)
                         $itemDb = new Item();
-                        $itemDb->setItemId($itemId); // Khi set ID, class Item sẽ tự động lấy dữ liệu từ DB
-                        $currentPrice = $itemDb->getPrice(); // Rút giá tiền chuẩn ra
+                        $itemDb->setItemId($itemId); 
+                        $currentPrice = $itemDb->getPrice(); 
                         
                         $detailObj->setPrice($currentPrice); 
-                        
-                        // 3. Lưu vào chi tiết đơn hàng
                         $detailObj->create();
                     }
                 }
 
-                // --- BƯỚC 4: HOÀN TẤT ---
-                // Xóa giỏ hàng sau khi đặt thành công
+                // --- BƯỚC 4: HOÀN TẤT VÀ CHUYỂN HƯỚNG TRANG ---
                 unset($_SESSION['cart']);
 
-                // Chuyển hướng sang trang thông báo thành công
-                $_SESSION['success_order'] = "Chúc mừng! Đơn hàng #$order_id của bạn đã được đặt thành công.";
-                header("Location: " . BASE_URL . "home"); 
+                // Lưu tạm mã đơn hàng vào Session để in ra ở trang Success
+                $_SESSION['last_order_id'] = $order_id;
+                
+                // Đá người dùng sang trang thông báo thành công thay vì trang chủ
+                header("Location: " . BASE_URL . "onestepcheckout/success"); 
                 exit;
 
             } catch (Exception $e) {
@@ -100,4 +94,24 @@ class OnestepcheckoutController extends Controller {
             }
         }
     }
+
+    // ========================================================
+    // HÀM HIỂN THỊ TRANG THÀNH CÔNG
+    // ========================================================
+    public function success() {
+        // Nếu người dùng cố tình gõ URL vào trang này mà không có đơn hàng vừa đặt, đá về trang chủ
+        if (!isset($_SESSION['last_order_id'])) {
+            header("Location: " . BASE_URL . "home");
+            exit;
+        }
+
+        $data['title'] = "Đặt hàng thành công - BK88";
+        $data['order_id'] = $_SESSION['last_order_id'];
+        
+        // Hủy session để tránh việc người dùng F5 lại trang này nhiều lần
+        unset($_SESSION['last_order_id']);
+
+        $this->view('public/onestepcheckout/success', $data);
+    }
 }
+?>

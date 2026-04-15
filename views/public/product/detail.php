@@ -54,10 +54,6 @@ foreach ($allProducts as $p) {
             <h6 class="text-muted text-uppercase mb-2">SÁCH GIÁO TRÌNH BÁCH KHOA</h6>
             <h1 class="fw-bold text-uppercase mb-3" style="font-size: 2.5rem;"><?php echo $currentProduct['item_name']; ?></h1>
             
-            <div class="d-flex align-items-center mb-3">
-                <div class="text-warning me-2">★★★★★</div>
-                <span class="text-muted small"><?php echo rand(50, 500); ?> Đánh giá</span>
-            </div>
 
             <h3 class="fw-bold mb-4 text-primary"><?php echo number_format($currentProduct['price'], 0, ',', '.') . ' ₫'; ?></h3>
 

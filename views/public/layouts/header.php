@@ -41,6 +41,13 @@
         .nav-item.dropdown .dropdown-menu {
             z-index: 9999 !important; 
         }
+
+            /* Xóa nền trắng/xám khi hover vào thẻ menu, thay bằng hiệu ứng đổi màu chữ */
+        .clean-dropdown-item:hover, .clean-dropdown-item:focus {
+            background-color: transparent !important;
+            color: #0d6efd !important;
+            font-weight: bold;
+        }
     }
 
     @keyframes fadeInDropdown {
@@ -112,31 +119,35 @@
                 </li>
 
                 <li class="nav-item dropdown position-relative">
-                    <a class="nav-link" href="<?php echo BASE_URL; ?>auth/login" id="userDropdown" aria-expanded="false">
+                    <a class="nav-link d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
                         <img src="<?php echo BASE_URL; ?>assets/img/user.png" alt="User" style="width: 22px; height: 22px; filter: invert(1);">
                         
                         <?php if(isset($_SESSION['user_id'])): ?>
                             <span class="ms-1 text-white-50 small d-none d-md-inline"><?php echo $_SESSION['user_name']; ?></span>
+                        <?php else: ?>
+                            <span class="ms-1 text-white-50 small d-none d-md-inline"></span>
                         <?php endif; ?>
                     </a>
                     
-                    <ul class="dropdown-menu shadow border-0 p-0" aria-labelledby="userDropdown" style="border-radius: 12px; min-width: 240px;">
+                    <ul class="dropdown-menu shadow border-0 p-2" aria-labelledby="userDropdown" style="border-radius: 12px; min-width: 220px;">
                         <?php if(isset($_SESSION['user_id'])): ?>
-                            <div class="p-3">
-                                <li><h6 class="dropdown-header text-primary fw-bold p-0 mb-3 fs-6">Xin chào, <?php echo $_SESSION['user_name']; ?></h6></li>
-                                <li><a class="dropdown-item py-2 rounded" href="<?php echo BASE_URL; ?>profile">Tài khoản của tôi</a></li>
-                                <li><a class="dropdown-item py-2 rounded" href="<?php echo BASE_URL; ?>order">Đơn mua</a></li>
-                                <li><hr class="dropdown-divider my-2"></li>
-                                <li><a class="dropdown-item py-2 text-danger fw-bold rounded" href="<?php echo BASE_URL; ?>auth/logout">Đăng xuất</a></li>
-                            </div>
+                            <li><h6 class="dropdown-header text-primary fw-bold fs-6 mb-1">Xin chào, <?php echo $_SESSION['user_name']; ?></h6></li>
+                            
+                            <li><a class="dropdown-item clean-dropdown-item py-2" href="<?php echo BASE_URL; ?>profile">Tài khoản của tôi</a></li>
+                            <li><a class="dropdown-item clean-dropdown-item py-2" href="<?php echo BASE_URL; ?>order">Đơn mua</a></li>
+                            
+                            <li><hr class="dropdown-divider my-2"></li>
+                            <li>
+                                <a class="dropdown-item py-2 text-danger fw-bold" href="<?php echo BASE_URL; ?>auth/logout" 
+                                   onmouseover="this.style.backgroundColor='transparent'; this.style.color='#dc3545';" 
+                                   onmouseout="this.style.backgroundColor='transparent';">
+                                    Đăng xuất
+                                </a>
+                            </li>
                         <?php else: ?>
-                            <div class="p-3">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#ajaxLoginModal" class="btn w-100 mb-2 fw-bold text-white" style="background-color: #0d6efd; border-radius: 8px; padding: 10px 0;">
-                                    Đăng nhập
-                                </button>
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#ajaxRegisterModal" class="btn w-100 fw-bold" style="color: #0d6efd; border: 2px solid #0d6efd; background-color: white; border-radius: 8px; padding: 8px 0;">
-                                    Đăng ký
-                                </button>
+                            <div class="p-2">
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#ajaxLoginModal" class="btn w-100 mb-2 fw-bold text-white" style="background-color: #0d6efd; border-radius: 8px; padding: 10px 0;">Đăng nhập</button>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#ajaxRegisterModal" class="btn w-100 fw-bold" style="color: #0d6efd; border: 2px solid #0d6efd; background-color: white; border-radius: 8px; padding: 8px 0;">Đăng ký</button>
                             </div>
                         <?php endif; ?>
                     </ul>

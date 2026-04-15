@@ -19,23 +19,31 @@
                                 <span class="text-muted ms-3 small"><i class="far fa-clock me-1"></i><?php echo date('d/m/Y H:i', strtotime($order['order_date'])); ?></span>
                             </div>
                             <div class="d-flex gap-2">
-                                <?php if ($order['is_paid'] == 1): ?>
-                                    <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill">
-                                        <i class="fas fa-check-circle me-1"></i> Đã thanh toán
-                                    </span>
-                                <?php else: ?>
-                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary px-3 py-2 rounded-pill">
-                                        Chưa thanh toán
-                                    </span>
-                                <?php endif; ?>
-
                                 <?php 
-                                    if ($order['status'] == 0) {
-                                        echo '<span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Đang chờ xử lý</span>';
-                                    } else if ($order['status'] == 1) {
-                                        echo '<span class="badge bg-success px-3 py-2 rounded-pill">Đã được giao</span>';
-                                    } else if ($order['status'] == 2) {
-                                        echo '<span class="badge bg-danger px-3 py-2 rounded-pill">Đã hủy</span>';
+                                    $isShipping = ($order['shipping_fee'] > 0);
+                                    $status = $order['status']; 
+                                    
+                                    // LOGIC HIỂN THỊ TRẠNG THÁI THEO LUỒNG (Áp dụng bảng mã trạng thái bạn gửi)
+                                    if ($isShipping) {
+                                        // 1. LUỒNG GIAO HÀNG TẬN NƠI (SHIP COD)
+                                        switch($status) {
+                                            case 0: echo '<span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Chờ xác nhận</span>'; break;
+                                            case 1: echo '<span class="badge bg-info text-white px-3 py-2 rounded-pill">Đang chuẩn bị hàng</span>'; break;
+                                            case 2: echo '<span class="badge bg-primary text-white px-3 py-2 rounded-pill">Đang giao hàng</span>'; break;
+                                            case 3: echo '<span class="badge bg-success px-3 py-2 rounded-pill">Giao thành công</span>'; break;
+                                            case 4: echo '<span class="badge bg-danger px-3 py-2 rounded-pill">Chuyển hoàn</span>'; break;
+                                            default: echo '<span class="badge bg-secondary px-3 py-2 rounded-pill">Không xác định</span>';
+                                        }
+                                    } else {
+                                        // 2. LUỒNG NHẬN TẠI CỬA HÀNG (PICKUP)
+                                        switch($status) {
+                                            case 0: echo '<span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Chờ xác nhận</span>'; break;
+                                            case 1: echo '<span class="badge bg-info text-white px-3 py-2 rounded-pill">Đang chuẩn bị hàng</span>'; break;
+                                            case 2: echo '<span class="badge bg-primary text-white px-3 py-2 rounded-pill">Sẵn sàng nhận hàng</span>'; break;
+                                            case 3: echo '<span class="badge bg-success px-3 py-2 rounded-pill">Đã lấy hàng</span>'; break;
+                                            case 4: echo '<span class="badge bg-danger px-3 py-2 rounded-pill">Đã hủy</span>'; break;
+                                            default: echo '<span class="badge bg-secondary px-3 py-2 rounded-pill">Không xác định</span>';
+                                        }
                                     }
                                 ?>
                             </div>
@@ -59,9 +67,18 @@
                         </div>
 
                         <div class="card-footer bg-white border-top py-3 px-4 d-flex justify-content-end align-items-center">
-                            <span class="text-muted me-3">Thành tiền (Đã bao gồm 22.000đ phí vận chuyển):</span>
+                            <span class="text-muted me-3">
+                                <?php 
+                                    $shipFee = $order['shipping_fee'] ?? 0;
+                                    if ($shipFee > 0) {
+                                        echo 'Thành tiền (Đã bao gồm ' . number_format($shipFee, 0, ',', '.') . 'đ phí vận chuyển):';
+                                    } else {
+                                        echo 'Thành tiền (Nhận tại cửa hàng):';
+                                    }
+                                ?>
+                            </span>
                             <h4 class="fw-bold mb-0" style="color: #0d6efd;">
-                                <?php echo number_format($order['total_amount'] + 22000, 0, ',', '.'); ?> ₫
+                                <?php echo number_format($order['total_amount'] + $shipFee, 0, ',', '.'); ?> ₫
                             </h4>
                         </div>
                     </div>

@@ -1,18 +1,19 @@
 <?php
-// 1. MẢNG DỮ LIỆU TẠM THỜI (Do chưa có Database nên ta tạm gọi lại mảng này để tra cứu thông tin sách dựa vào ID trong Session)
-$products = [
-    ['id' => 1, 'img' => 'gt1.png', 'name' => 'Giải Tích 1', 'price' => '70.000₫'],
-    ['id' => 2, 'img' => 'gt2.png', 'name' => 'Giải Tích 2', 'price' => '70.000₫'],
-    ['id' => 3, 'img' => 'dstt.png', 'name' => 'Đại Số Tuyến Tính', 'price' => '65.000₫'],
-    ['id' => 4, 'img' => 'hdc.png', 'name' => 'Hóa Đại Cương', 'price' => '75.000₫'],
-    ['id' => 5, 'img' => 'triethoc.png', 'name' => 'Triết Học Mác - Lênin', 'price' => '78.000₫'],
-    ['id' => 6, 'img' => 'ktct.png', 'name' => 'Kinh Tế Chính Trị Mác - Lênin', 'price' => '48.000₫'],
-    ['id' => 7, 'img' => 'cnxhkh.png', 'name' => 'Chủ Nghĩa Xã Hội Khoa Học', 'price' => '46.000₫'],
-    ['id' => 8, 'img' => 'lsd.png', 'name' => 'Lịch Sử Đảng Cộng Sản Việt Nam', 'price' => '70.000₫'],
-    ['id' => 9, 'img' => 'tthcm.png', 'name' => 'Tư Tưởng Hồ Chí Minh', 'price' => '45.000₫'],
-    ['id' => 10, 'img' => 'ktlt.png', 'name' => 'Kỹ Thuật Lập Trình', 'price' => '150.000₫'],
-    ['id' => 11, 'img' => 'ctdlgt.png', 'name' => 'Cấu Trúc Dữ Liệu & Giải Thuật', 'price' => '100.000₫'],
-];
+// 1. LẤY DỮ LIỆU THẬT TỪ DATABASE (Thay cho mảng giả)
+require_once __DIR__ . '/../../../models/ProductModel.php';
+$productModel = new ProductModel();
+$dbProducts = $productModel->getAllProducts();
+
+$products = [];
+foreach ($dbProducts as $p) {
+    $products[] = [
+        'id'    => $p['item_id'],
+        'img'   => $p['item_image'],
+        'name'  => $p['item_name'],
+        // Ép định dạng giá tiền giống y hệt mảng cũ để code bên dưới tự hiểu (VD: 78.000₫)
+        'price' => number_format($p['price'], 0, ',', '.') . '₫' 
+    ];
+}
 
 // 2. XỬ LÝ LẤY DỮ LIỆU GIỎ HÀNG TỪ SESSION
 $cartItems = [];
@@ -136,10 +137,6 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                             <span class="text-muted">Tạm tính</span>
                             <span class="fw-bold" id="summary-subtotal"><?php echo number_format($totalPrice, 0, ',', '.'); ?>₫</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="text-muted">Phí giao hàng</span>
-                            <span>Miễn phí</span>
-                        </div>
                         
                         <hr class="my-4">
                         
@@ -148,7 +145,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                             <span class="fw-bold fs-4 text-danger" id="summary-total"><?php echo number_format($totalPrice, 0, ',', '.'); ?>₫</span>
                         </div>
 
-                        <button type="button" onclick="processCheckout()" class="btn py-3 w-100 fw-bold text-uppercase text-white mb-2" style="background-color: #5a31f4; letter-spacing: 1px;">
+                        <button type="button" onclick="processCheckout()" class="btn py-3 w-100 fw-bold text-uppercase text-white mb-2" style="background-color: #0d6efd; letter-spacing: 1px;">
                             Thanh toán ngay
                         </button>
                     </div>

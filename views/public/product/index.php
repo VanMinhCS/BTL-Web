@@ -54,7 +54,6 @@
                     </a>
                     <p class="card-text mb-2"><span class="fw-bold text-primary fs-5"><?php echo number_format($item['price'], 0, ',', '.') . '₫'; ?></span></p>
                     
-                    <div class="text-warning small mb-3">★★★★★ <span class="text-muted">(<?php echo $item['reviews'] ?? rand(50, 300); ?> Reviews)</span></div>
                     
                     <form action="<?php echo BASE_URL; ?>cart/add" method="POST">
                         <input type="hidden" name="product_id" value="<?php echo $item['item_id']; ?>">

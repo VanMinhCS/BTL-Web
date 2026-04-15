@@ -20,10 +20,17 @@
         <?php 
             require_once __DIR__ . '/../../../models/UserModel.php';
             $userModel = new UserModel();
-            $currentUser = $userModel->getUserById($_SESSION['user_id']);
+            
+            // ĐÃ SỬA: Dùng getUserProfile thay vì getUserById để lấy luôn cả Địa chỉ
+            $currentUser = $userModel->getUserProfile($_SESSION['user_id']);
+            
             $userPhone = $currentUser['phone'] ?? '';
-            // Tự động ghép nối Họ và Tên từ DB để Fill vào form
             $userFullName = trim(($currentUser['lastname'] ?? '') . ' ' . ($currentUser['firstname'] ?? ''));
+            
+            // Lấy thêm 3 biến địa chỉ
+            $userStreet = $currentUser['street'] ?? '';
+            $userWard = $currentUser['ward'] ?? '';
+            $userCity = $currentUser['city'] ?? '';
         ?>
 
         <div class="row g-5">
@@ -45,15 +52,15 @@
                             
                             <div class="col-12">
                                 <label class="form-label fw-bold small">Số nhà & Tên đường <span class="text-danger">*</span></label>
-                                <input type="text" name="street" class="form-control" required placeholder="VD: 268 Lý Thường Kiệt">
+                                <input type="text" name="street" class="form-control" required value="<?php echo htmlspecialchars($userStreet); ?>" placeholder="VD: 268 Lý Thường Kiệt">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small">Phường/Xã <span class="text-danger">*</span></label>
-                                <input type="text" name="ward" class="form-control" required placeholder="VD: Phường 14">
+                                <input type="text" name="ward" class="form-control" required value="<?php echo htmlspecialchars($userWard); ?>" placeholder="VD: Phường 14">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small">Tỉnh/Thành phố <span class="text-danger">*</span></label>
-                                <input type="text" name="city" class="form-control" required placeholder="VD: TP.HCM">
+                                <input type="text" name="city" class="form-control" required value="<?php echo htmlspecialchars($userCity); ?>" placeholder="VD: TP.HCM">
                             </div>
                             
                             <div class="col-12">
@@ -176,7 +183,7 @@
                         
                         <div class="d-flex justify-content-between align-items-center mb-4 pt-3 border-top">
                             <span class="fw-bold text-dark fs-5">Tổng Số Tiền (gồm VAT)</span>
-                            <span class="fw-bold fs-4" style="color: #0d6efd;" id="totalPriceDisplay"> 
+                            <span class="fw-bold fs-4" style="color: #dc3545;" id="totalPriceDisplay"> 
                                 <?php echo number_format($subTotal + 22000, 0, ',', '.'); ?> ₫
                             </span>
                             <input type="hidden" name="total_amount" id="totalAmountInput" value="<?php echo $subTotal + 22000; ?>">
@@ -194,41 +201,60 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // 1. Lấy các phần tử cần thiết
     const deliveryHome = document.getElementById('deliveryHome');
     const deliveryStore = document.getElementById('deliveryStore');
     const shippingMethodCard = document.getElementById('shippingMethodCard');
     const shippingFeeRow = document.getElementById('shippingFeeRow');
     const totalPriceDisplay = document.getElementById('totalPriceDisplay');
     const totalAmountInput = document.getElementById('totalAmountInput');
-    const shippingStandardInput = document.getElementById('shippingStandard');
 
     const subTotal = <?php echo isset($subTotal) ? $subTotal : 0; ?>;
     const shippingFee = 22000;
 
+    // 2. Hàm format tiền tệ
     function formatCurrency(number) {
         return new Intl.NumberFormat('vi-VN').format(number) + ' ₫';
     }
 
+    // 3. Hàm cập nhật trạng thái
     function updateCheckoutState() {
         if (deliveryStore.checked) {
-            shippingMethodCard.style.display = 'none'; 
-            shippingFeeRow.style.display = 'none'; 
-            shippingStandardInput.disabled = true; 
+            // TRƯỜNG HỢP: NHẬN TẠI CỬA HÀNG
+            if (shippingMethodCard) shippingMethodCard.style.display = 'none'; 
             
+            // Xử lý cứng đầu của Bootstrap d-flex
+            if (shippingFeeRow) {
+                shippingFeeRow.classList.remove('d-flex'); // Gỡ class flex
+                shippingFeeRow.classList.add('d-none');    // Gắn class ẩn
+            }
+            
+            // Cập nhật giá không ship
             totalPriceDisplay.innerText = formatCurrency(subTotal);
             totalAmountInput.value = subTotal;
-        } else {
-            shippingMethodCard.style.display = 'block'; 
-            shippingFeeRow.style.display = 'flex'; 
-            shippingStandardInput.disabled = false; 
             
+        } else {
+            // TRƯỜNG HỢP: GIAO HÀNG TẬN NƠI
+            if (shippingMethodCard) shippingMethodCard.style.display = 'block'; 
+            
+            if (shippingFeeRow) {
+                shippingFeeRow.classList.remove('d-none'); // Gỡ class ẩn
+                shippingFeeRow.classList.add('d-flex');    // Trả lại class flex
+            }
+            
+            // Cập nhật giá có ship
             totalPriceDisplay.innerText = formatCurrency(subTotal + shippingFee);
             totalAmountInput.value = subTotal + shippingFee;
         }
     }
 
-    deliveryHome.addEventListener('change', updateCheckoutState);
-    deliveryStore.addEventListener('change', updateCheckoutState);
-    updateCheckoutState();
+    // 4. Lắng nghe sự kiện click
+    if (deliveryHome && deliveryStore) {
+        deliveryHome.addEventListener('change', updateCheckoutState);
+        deliveryStore.addEventListener('change', updateCheckoutState);
+        
+        // Chạy lần đầu tiên khi vừa load trang
+        updateCheckoutState();
+    }
 });
 </script>
