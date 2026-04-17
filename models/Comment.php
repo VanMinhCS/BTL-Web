@@ -113,7 +113,36 @@ class Comment extends Model {
         return $this->maskEmail($user->getEmail());
     }
 
+    public function updateText($userId) {
+        $stmt = $this->getDb()->prepare("UPDATE comments SET text=?, is_edited=1 WHERE id_comment=? AND id_user=?");
+        $stmt->bind_param("sii", $this->text, $this->id_comment, $userId);
+        $success = $stmt->execute();
+        $stmt->close();
+        return $success;
+    }
 
+    public function deleteByUser($userId) {
+        $stmt = $this->getDb()->prepare("DELETE FROM comments WHERE id_comment=? AND id_user=?");
+        $stmt->bind_param("ii", $this->id_comment, $userId);
+        $success = $stmt->execute();
+        $stmt->close();
+        return $success;
+    }
+
+    public function deleteCascade($userId) {
+        $stmt = $this->getDb()->prepare("DELETE FROM comments WHERE replied=?");
+        $stmt->bind_param("i", $this->id_comment);
+        $stmt->execute();
+        $stmt->close();
+
+        // Xóa bình luận gốc
+        $stmt2 = $this->getDb()->prepare("DELETE FROM comments WHERE id_comment=? AND id_user=?");
+        $stmt2->bind_param("ii", $this->id_comment, $userId);
+        $success = $stmt2->execute();
+        $stmt2->close();
+
+        return $success;
+    }
 
 }
 
