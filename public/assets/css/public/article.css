@@ -1,0 +1,88 @@
+.background_image {
+    display: flex;
+    width: 100%;
+    height: 500px;        
+    position: relative;
+    background: url('../../assets/img/mountain.jpg') no-repeat center center;
+    background-size: cover; 
+    z-index: 0;
+    display: flex;
+    align-items: center;      
+    justify-content: center;
+}
+
+.title {
+    color: white;
+    font-size: 4rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.content {
+    font-size: 1.4em;
+    font-family: 'Montserrat', sans-serif;
+}
+
+
+.time_upload{
+    text-align: left;
+    font-size: 2em;
+    font-family: 'Roboto Condensed', sans-serif;
+    color:black;
+}
+
+a.hvr-icon, a.like-btn, a.dislike-btn {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+textarea.form_area {
+  resize: none;   /* tắt kéo giãn */
+  overflow: auto; /* cho phép cuộn nội dung */
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.background_image {
+  animation: morph 10s infinite alternate ease-in-out;
+}
+
+@keyframes morph {
+  0% {
+    border-radius: 20% 80% 50% 30% / 30% 50% 70% 40%;
+    background-color: #f0f0f0;
+  }
+  25% {
+    border-radius: 40% 60% 30% 70% / 50% 40% 60% 30%;
+    background-color: #d0f0ff;
+  }
+  50% {
+    border-radius: 50% 30% 70% 40% / 40% 60% 30% 70%;
+    background-color: #e0e0ff;
+  }
+  75% {
+    border-radius: 65% 35% 45% 55% / 55% 45% 35% 65%;
+    background-color: #ffe0f0;
+  }
+  100% {
+    border-radius: 80% 20% 30% 70% / 70% 30% 40% 60%;
+    background-color: #ffe0e0;
+  }
+}
+
+.like-btn.active-vote,
+.dislike-btn.active-vote {
+  color: #0d6efd;
+  font-weight: bold;
+}
+
+.edit-textarea,
+.reply-area {
+  resize: none;       
+  min-height: 80px;  
+}
+
+

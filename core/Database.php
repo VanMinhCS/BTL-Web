@@ -6,7 +6,7 @@ class Database {
 
     public function __construct() {
         try {
-            // Chuẩn bị chuỗi kết nối (DSN) sử dụng các hằng số từ file config.php
+            // 1. Chuẩn bị chuỗi kết nối (DSN) sử dụng các hằng số từ file config.php (Chuẩn PDO của Task_3)
             $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
             
             $options = [
@@ -15,7 +15,7 @@ class Database {
                 PDO::ATTR_EMULATE_PREPARES   => false,                  // Tăng cường bảo mật chống SQL Injection
             ];
             
-            // Khởi tạo kết nối PDO
+            // 2. Khởi tạo kết nối PDO
             $this->conn = new PDO($dsn, DB_USER, DB_PASS, $options);
             
         } catch (PDOException $e) {
@@ -23,4 +23,21 @@ class Database {
             die("Lỗi kết nối CSDL: " . $e->getMessage());
         }
     }
+
+    // =================================================================
+    // GIỮ LẠI 2 HÀM CỦA NHÁNH MAIN ĐỂ KHÔNG LÀM HỎNG CODE CỦA TEAM
+    // =================================================================
+    
+    // Hàm lấy kết nối (Dùng cho các model cũ chưa kế thừa Database)
+    public function getConnection() {
+        return $this->conn;
+    }
+
+    // Hàm đóng kết nối (Với PDO, chỉ cần gán bằng null là kết nối tự đóng)
+    public function closeConnection() {
+        if ($this->conn) {
+            $this->conn = null;
+        }
+    }
 }
+?>

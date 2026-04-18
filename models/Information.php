@@ -27,6 +27,7 @@ class Address extends Database {
         $stmt = $this->conn->prepare("SELECT * FROM addresses WHERE address_id=?");
         $stmt->execute([$id]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
         if ($result) {
             $this->address_id = $result['address_id'];
             $this->street     = $result['street'];
@@ -58,7 +59,7 @@ class Information extends Database {
     private $address_id;
     private $firstname;
     private $lastname;
-    private $payment_method;
+    // Đã xóa hoàn toàn payment_method cho khớp với Database mới
 
     public function getInfoId() { return $this->info_id; }
     public function setInfoId($id) { 
@@ -78,31 +79,28 @@ class Information extends Database {
     public function getLastname() { return $this->lastname; }
     public function setLastname($name) { $this->lastname = $name; }
 
-    public function getPaymentMethod() { return $this->payment_method; }
-    public function setPaymentMethod($method) { $this->payment_method = $method; }
-
     private function loadById($id) {
         $stmt = $this->conn->prepare("SELECT * FROM information WHERE info_id=?");
         $stmt->execute([$id]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
         if ($result) {
             $this->info_id        = $result['info_id'];
             $this->user_id        = $result['user_id'];
             $this->address_id     = $result['address_id'];
             $this->firstname      = $result['firstname'];
             $this->lastname       = $result['lastname'];
-            $this->payment_method = $result['payment_method'];
         }
     }
 
     public function create() {
-        $stmt = $this->conn->prepare("INSERT INTO information (user_id, address_id, firstname, lastname, payment_method) VALUES (?, ?, ?, ?, ?)");
-        return $stmt->execute([$this->user_id, $this->address_id, $this->firstname, $this->lastname, $this->payment_method]);
+        $stmt = $this->conn->prepare("INSERT INTO information (user_id, address_id, firstname, lastname) VALUES (?, ?, ?, ?)");
+        return $stmt->execute([$this->user_id, $this->address_id, $this->firstname, $this->lastname]);
     }
 
     public function update() {
-        $stmt = $this->conn->prepare("UPDATE information SET user_id=?, address_id=?, firstname=?, lastname=?, payment_method=? WHERE info_id=?");
-        return $stmt->execute([$this->user_id, $this->address_id, $this->firstname, $this->lastname, $this->payment_method, $this->info_id]);
+        $stmt = $this->conn->prepare("UPDATE information SET user_id=?, address_id=?, firstname=?, lastname=? WHERE info_id=?");
+        return $stmt->execute([$this->user_id, $this->address_id, $this->firstname, $this->lastname, $this->info_id]);
     }
 
     public function delete() {

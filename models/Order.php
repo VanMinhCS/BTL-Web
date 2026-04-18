@@ -104,7 +104,6 @@ class Order extends Database {
     }
 
     public function create() {
-        // Đã cập nhật câu SQL để Insert shipping_fee
         $stmt = $this->conn->prepare("INSERT INTO orders (user_id, order_date, status, is_paid, payment_method, shipping_fee) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->payment_method, $this->shipping_fee]);
         return $this->conn->lastInsertId();
