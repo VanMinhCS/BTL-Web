@@ -119,23 +119,19 @@
                 </li>
 
                 <li class="nav-item dropdown position-relative">
-                    <a class="nav-link d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                    <a class="nav-link d-flex align-items-center" href="<?php echo isset($_SESSION['user_id']) ? BASE_URL . 'profile' : BASE_URL . 'auth/login'; ?>" id="userDropdown" aria-expanded="false" style="cursor: pointer;">
                         <img src="<?php echo BASE_URL; ?>assets/img/user.png" alt="User" style="width: 22px; height: 22px; filter: invert(1);">
                         
                         <?php if(isset($_SESSION['user_id'])): ?>
                             <span class="ms-1 text-white-50 small d-none d-md-inline"><?php echo $_SESSION['user_name']; ?></span>
-                        <?php else: ?>
-                            <span class="ms-1 text-white-50 small d-none d-md-inline"></span>
                         <?php endif; ?>
                     </a>
                     
                     <ul class="dropdown-menu shadow border-0 p-2" aria-labelledby="userDropdown" style="border-radius: 12px; min-width: 220px;">
                         <?php if(isset($_SESSION['user_id'])): ?>
                             <li><h6 class="dropdown-header text-primary fw-bold fs-6 mb-1">Xin chào, <?php echo $_SESSION['user_name']; ?></h6></li>
-                            
                             <li><a class="dropdown-item clean-dropdown-item py-2" href="<?php echo BASE_URL; ?>profile">Tài khoản của tôi</a></li>
                             <li><a class="dropdown-item clean-dropdown-item py-2" href="<?php echo BASE_URL; ?>order">Đơn mua</a></li>
-                            
                             <li><hr class="dropdown-divider my-2"></li>
                             <li>
                                 <a class="dropdown-item py-2 text-danger fw-bold" href="<?php echo BASE_URL; ?>auth/logout" 
@@ -195,6 +191,9 @@
                         <label class="form-label fw-bold">Mật khẩu</label>
                         <input type="password" name="password" class="form-control py-2" required placeholder="Nhập mật khẩu">
                     </div>
+                    <div class="text-end mb-3">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#ajaxForgotModal" class="text-primary text-decoration-none small fw-bold">Quên mật khẩu?</a>
+                    </div>
                     <button type="submit" class="btn btn-primary w-100 py-3 fw-bold" style="border-radius: 8px;">Đăng nhập ngay</button>
                 </form>
             </div>
@@ -216,7 +215,7 @@
                     <input type="hidden" name="ajax" value="1">
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Họ tên</label>
+                        <label class="form-label fw-bold">Họ và tên</label>
                         <input type="text" name="fullname" class="form-control" required placeholder="Nhập họ và tên">
                     </div>
                     
@@ -237,12 +236,78 @@
                             <input type="password" name="password" class="form-control" required placeholder="Mật khẩu">
                         </div>
                         <div class="col-6 mb-4">
-                            <label class="form-label fw-bold">Nhập lại</label>
+                            <label class="form-label fw-bold">Xác nhận mật khẩu</label>
                             <input type="password" name="repassword" class="form-control" required placeholder="Nhập lại">
                         </div>
                     </div>
                     
                     <button type="submit" class="btn btn-outline-primary border-2 w-100 py-3 fw-bold" style="border-radius: 8px;">Đăng ký tài khoản</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ajaxOtpModal" tabindex="-1" aria-labelledby="ajaxOtpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-5 pb-5 pt-2">
+                <h3 class="text-center fw-bold mb-3" id="ajaxOtpModalLabel">XÁC THỰC EMAIL</h3>
+                <p class="text-center text-muted mb-4" style="font-size: 14px;">
+                    Mã xác thực (6 số) đã được gửi đến email <br>
+                    <strong id="otp_email_display" class="text-primary"></strong>
+                </p>
+
+                <form id="otpForm">
+                    <input type="hidden" id="otp_user_id" name="user_id">
+                    
+                    <div class="mb-4">
+                        <input type="text" class="form-control form-control-lg text-center fw-bold" id="otp_code" name="otp_code" placeholder="Nhập mã 6 số..." maxlength="6" style="letter-spacing: 5px; font-size: 24px;" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" style="border-radius: 8px;">XÁC NHẬN BƯỚC CUỐI</button>
+                    
+                    <div id="otp-message" class="mt-3 text-center" style="font-size: 14px;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ajaxForgotModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4 text-uppercase">Khôi phục mật khẩu</h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="forgotMsg" class="text-center mb-3" style="font-size: 14px;"></div>
+                <form id="ajaxForgotForm">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email đăng ký</label>
+                        <div class="input-group">
+                            <input type="email" name="email" id="forgot_email" class="form-control" required placeholder="Nhập email...">
+                            <button class="btn btn-outline-primary" type="button" id="btnSendForgotOtp">Gửi mã OTP</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mã xác nhận OTP</label>
+                        <input type="text" name="otp_code" class="form-control" required placeholder="6 ký tự" maxlength="6">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Mật khẩu mới</label>
+                        <input type="password" name="new_password" class="form-control" required placeholder="Nhập mật khẩu mới">
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary w-100 py-2 fw-bold mb-2" style="border-radius: 8px;">XÁC NHẬN</button>
+                    <button type="button" class="btn btn-outline-danger w-100 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#ajaxLoginModal" style="border-radius: 8px;">TRỞ VỀ</button>
                 </form>
             </div>
         </div>
@@ -293,17 +358,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     successBox.classList.add('d-none');
                     errorBox.innerText = data.message;
                     errorBox.classList.remove('d-none');
-                } else {
+                } else if (data.status === 'otp_required') {
+                    // Ẩn thông báo lỗi/thành công cũ
                     errorBox.classList.add('d-none');
-                    successBox.innerText = data.message;
-                    successBox.classList.remove('d-none');
-                    // Thành công -> Đợi 1.5s -> Đóng popup ĐK, Mở popup Đăng nhập
-                    setTimeout(() => {
-                        let regModal = bootstrap.Modal.getInstance(document.getElementById('ajaxRegisterModal'));
-                        regModal.hide();
-                        let loginModal = new bootstrap.Modal(document.getElementById('ajaxLoginModal'));
-                        loginModal.show();
-                    }, 1500);
+                    successBox.classList.add('d-none');
+
+                    // 1. Tắt Modal Đăng ký
+                    let regModal = bootstrap.Modal.getInstance(document.getElementById('ajaxRegisterModal'));
+                    if (regModal) regModal.hide();
+
+                    // 2. Điền thông tin vào Modal OTP
+                    document.getElementById('otp_user_id').value = data.user_id;
+                    document.getElementById('otp_email_display').innerText = data.email;
+
+                    // 3. Mở Modal OTP lên
+                    let otpModal = new bootstrap.Modal(document.getElementById('ajaxOtpModal'));
+                    otpModal.show();
                 }
             });
         });
@@ -337,6 +407,125 @@ document.addEventListener('DOMContentLoaded', function() {
         registerModalEl.addEventListener('hidden.bs.modal', function () {
             mainAuthWrapper.style.opacity = '1';
             mainAuthWrapper.style.pointerEvents = 'auto';
+        });
+    }
+
+    // 4. XỬ LÝ AJAX XÁC THỰC OTP
+    const otpForm = document.getElementById('otpForm');
+    if(otpForm) {
+        otpForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            let msgBox = document.getElementById('otp-message');
+
+            fetch('<?php echo BASE_URL; ?>auth/processVerifyOTP', {
+                method: 'POST', body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'error') {
+                    msgBox.innerHTML = '<div class="text-danger fw-bold">' + data.message + '</div>';
+                } else {
+                    msgBox.innerHTML = '<div class="text-success fw-bold">' + data.message + '</div>';
+                    // Thành công -> Đợi 1.5s -> Chuyển hướng thẳng sang trang Đăng nhập
+                    setTimeout(() => {
+                        window.location.href = '<?php echo BASE_URL; ?>auth/login';
+                    }, 1500);
+                }
+            });
+        });
+    }
+
+    // 5. XỬ LÝ AJAX QUÊN MẬT KHẨU
+    const forgotForm = document.getElementById('ajaxForgotForm');
+    const btnSendForgotOtp = document.getElementById('btnSendForgotOtp');
+    const forgotMsg = document.getElementById('forgotMsg');
+
+    if(forgotForm) {
+        const modalEmailInput = document.getElementById('forgot_email');
+        const modalOtpInput = forgotForm.querySelector('input[name="otp_code"]');
+        const modalPassInput = forgotForm.querySelector('input[name="new_password"]');
+        const modalBtnConfirm = forgotForm.querySelector('button[type="submit"]');
+
+        function checkModalInputs() {
+            let emailVal = modalEmailInput.value.trim();
+            let otpVal = modalOtpInput.value.trim();
+            let passVal = modalPassInput.value.trim();
+
+            if (emailVal !== '' && otpVal.length === 6 && passVal !== '') {
+                // Đủ thông tin -> Nút xanh dương
+                modalBtnConfirm.className = 'btn btn-outline-primary w-100 py-2 fw-bold mb-2';
+                modalBtnConfirm.style.backgroundColor = '';
+                modalBtnConfirm.style.color = '';
+            } else {
+                // Chưa đủ -> Trở về màu xám (btn-secondary)
+                modalBtnConfirm.className = 'btn btn-secondary w-100 py-2 fw-bold mb-2';
+            }
+        }
+
+        // Bắt sự kiện gõ phím
+        modalEmailInput.addEventListener('input', checkModalInputs);
+        modalOtpInput.addEventListener('input', checkModalInputs);
+        modalPassInput.addEventListener('input', checkModalInputs);
+        // ==========================================
+
+
+        // A. Bấm nút Gửi mã OTP
+        btnSendForgotOtp.addEventListener('click', function() {
+            let email = document.getElementById('forgot_email').value;
+            if(!email) { alert('Vui lòng nhập email trước!'); return; }
+            
+            btnSendForgotOtp.innerText = 'Đang gửi...';
+            btnSendForgotOtp.disabled = true;
+
+            let fd = new FormData();
+            fd.append('email', email);
+
+            fetch('<?php echo BASE_URL; ?>auth/processSendResetOTP', { method: 'POST', body: fd })
+            .then(res => res.json())
+            .then(data => {
+                btnSendForgotOtp.innerText = 'Gửi lại mã';
+                btnSendForgotOtp.disabled = false;
+                forgotMsg.innerHTML = `<div class="text-${data.status === 'success' ? 'success' : 'danger'} fw-bold">${data.message}</div>`;
+            });
+        });
+
+        // B. Bấm nút Xác nhận (Đổi mật khẩu)
+        forgotForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let fd = new FormData(this);
+            
+            forgotMsg.innerHTML = '<div class="text-info fw-bold">Đang xử lý...</div>';
+
+            fetch('<?php echo BASE_URL; ?>auth/processResetPassword', { method: 'POST', body: fd })
+            .then(res => res.text()) // ĐỌC DƯỚI DẠNG TEXT TRƯỚC ĐỂ BẮT LỖI
+            .then(text => {
+                console.log("Dữ liệu thô Server trả về:", text); // In ra F12 để theo dõi
+                
+                try {
+                    let data = JSON.parse(text); // Thử ép sang JSON
+                    
+                    // Nếu ép thành công, làm bình thường
+                    forgotMsg.innerHTML = `<div class="text-${data.status === 'success' ? 'success' : 'danger'} fw-bold">${data.message}</div>`;
+                    
+                    if(data.status === 'success') {
+                        setTimeout(() => {
+                            bootstrap.Modal.getInstance(document.getElementById('ajaxForgotModal')).hide();
+                            new bootstrap.Modal(document.getElementById('ajaxLoginModal')).show();
+                            forgotForm.reset();
+                            forgotMsg.innerHTML = '';
+                            checkModalInputs(); 
+                        }, 1500);
+                    }
+                } catch (error) {
+                    // Nếu PHP trả về thứ gì đó không phải JSON (chứa lỗi HTML/PHP)
+                    forgotMsg.innerHTML = '<div class="text-danger fw-bold">Thao tác thành công nhưng bị lỗi hiển thị. Xem Console (F12) để biết chi tiết.</div>';
+                    console.error("Lỗi Parse JSON:", error);
+                }
+            })
+            .catch(err => {
+                forgotMsg.innerHTML = `<div class="text-danger fw-bold">Lỗi kết nối mạng!</div>`;
+            });
         });
     }
 });

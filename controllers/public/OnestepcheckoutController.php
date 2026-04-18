@@ -37,12 +37,28 @@ class OnestepcheckoutController extends Controller {
             $payment_method_raw = $_POST['payment_method'] ?? 'cod';
 
             try {
-                // --- BƯỚC 1: LƯU ĐỊA CHỈ MỚI ---
-                $addressObj = new Address();
-                $addressObj->setStreet($street); 
-                $addressObj->setWard($ward);
-                $addressObj->setCity($city);
-                $address_id = $addressObj->create(); 
+                // --- BƯỚC 1: XỬ LÝ ĐỊA CHỈ (CẬP NHẬT ĐỊA CHỈ CÓ SẴN CỦA USER) ---
+                require_once __DIR__ . '/../../models/UserModel.php';
+                $userModel = new UserModel();
+                
+                // Lấy thông tin user hiện tại (đã bao gồm address_id được tạo lúc đăng ký)
+                $currentUser = $userModel->getUserProfile($user_id);
+                $address_id = $currentUser['address_id'];
+
+                if (!empty($address_id)) {
+                    // Cập nhật thông tin đường, phường, thành phố vào dòng địa chỉ của riêng user này
+                    $userModel->updateAddressInfo($address_id, $street, $ward, $city);
+                } else {
+                    // Dự phòng cho các account cũ (tạo trước khi có logic đăng ký mới)
+                    $addressObj = new Address();
+                    $addressObj->setStreet($street); 
+                    $addressObj->setWard($ward);
+                    $addressObj->setCity($city);
+                    $address_id = $addressObj->create(); 
+                    
+                    // Lệnh này cần viết thêm ở Bước 2 bên dưới
+                    $userModel->updateUserAddressId($user_id, $address_id);
+                }
 
                 // Bắt phương thức giao hàng từ form
                 $delivery_method = $_POST['delivery_method'] ?? 'home';

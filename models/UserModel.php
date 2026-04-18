@@ -39,7 +39,7 @@ class UserModel extends Database {
             $stmtI->execute([$firstname, $lastname, $user_id]);
 
             $this->conn->commit();
-            return true;
+            return $user_id;
         } catch (Exception $e) {
             $this->conn->rollBack();
             return false;
@@ -79,7 +79,7 @@ class UserModel extends Database {
             $user_id = $this->conn->lastInsertId();
 
             // BƯỚC 3: Lưu vào bảng Information
-            $sqlInfo = "INSERT INTO information (user_id, address_id, firstname, lastname, payment_method) VALUES (:user_id, :address_id, :firstname, :lastname, 0)";
+            $sqlInfo = "INSERT INTO information (user_id, address_id, firstname, lastname) VALUES (:user_id, :address_id, :firstname, :lastname)";
             $stmtInfo = $this->conn->prepare($sqlInfo);
             $stmtInfo->execute([
                 'user_id' => $user_id,
@@ -89,19 +89,19 @@ class UserModel extends Database {
             ]);
 
             $this->conn->commit(); // Xác nhận lưu
-            return true;
+            return $user_id;
         } catch (Exception $e) {
             $this->conn->rollBack(); // Hoàn tác nếu có lỗi
             return false;
         }
     }
 
-    // 6. Đăng nhập - Nối (JOIN) thêm bảng information để lấy Họ Tên
+    // 6. Đăng nhập - Nối (JOIN) thêm bảng information để lấy Họ Tên (Đã thêm điều kiện is_verified = 1)
     public function getUserByEmailOrPhone($login_id) {
         $sql = "SELECT u.*, i.firstname, i.lastname 
                 FROM users u 
                 LEFT JOIN information i ON u.user_id = i.user_id 
-                WHERE u.email = :email OR u.phone = :phone LIMIT 1";
+                WHERE (u.email = :email OR u.phone = :phone) AND u.is_verified = 1 LIMIT 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
             'email' => $login_id,
@@ -119,6 +119,69 @@ class UserModel extends Database {
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // 8. Hàm gắn address_id vào hồ sơ người dùng (Dùng cho account cũ chưa có liên kết địa chỉ)
+    public function updateUserAddressId($user_id, $address_id) {
+        $stmt = $this->conn->prepare("UPDATE information SET address_id = ? WHERE user_id = ?");
+        return $stmt->execute([$address_id, $user_id]);
+    }
+
+    // 9. Hàm tạo và lưu mã OTP vào Database
+    public function createOTP($user_id, $code) {
+        // Vô hiệu hóa các OTP cũ của user này (nếu có) để tránh lỗi trùng lặp
+        $stmtOld = $this->conn->prepare("UPDATE otp SET is_active = 0 WHERE user_id = ?");
+        $stmtOld->execute([$user_id]);
+
+        // Tạo OTP mới hết hạn sau 5 phút (Dùng hàm DATE_ADD của MySQL)
+        $stmtNew = $this->conn->prepare("INSERT INTO otp (user_id, code, time_expire, is_active) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 5 MINUTE), 1)");
+        return $stmtNew->execute([$user_id, $code]);
+    }
+
+    // 10. Kiểm tra mã OTP khách nhập có khớp và còn hạn không
+    public function validateOTP($user_id, $code) {
+        $stmt = $this->conn->prepare("SELECT * FROM otp WHERE user_id = ? AND code = ? AND is_active = 1 AND time_expire >= NOW() LIMIT 1");
+        $stmt->execute([$user_id, $code]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // 11. Kích hoạt tài khoản và vô hiệu hóa mã OTP đã dùng
+    public function activateUser($user_id) {
+        $this->conn->beginTransaction();
+        try {
+            // 1. Kích hoạt user
+            $stmt1 = $this->conn->prepare("UPDATE users SET is_verified = 1 WHERE user_id = ?");
+            $stmt1->execute([$user_id]);
+
+            // 2. Vô hiệu hóa OTP
+            $stmt2 = $this->conn->prepare("UPDATE otp SET is_active = 0 WHERE user_id = ?");
+            $stmt2->execute([$user_id]);
+
+            $this->conn->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+            return false;
+        }
+    }
+
+    // 12. Lấy thông tin user đã xác thực qua Email (Dùng cho Quên mật khẩu)
+    public function getUserByEmailVerified($email) {
+        $stmt = $this->conn->prepare("SELECT user_id FROM users WHERE email = ? AND is_verified = 1 LIMIT 1");
+        $stmt->execute([$email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // 13. Cập nhật mật khẩu mới
+    public function updatePassword($user_id, $hashed_password) {
+        $stmt = $this->conn->prepare("UPDATE users SET password = ? WHERE user_id = ?");
+        return $stmt->execute([$hashed_password, $user_id]);
+    }
+
+    // 14. Vô hiệu hóa OTP (Dành cho Quên mật khẩu)
+    public function deactivateOTP($user_id) {
+        $stmt = $this->conn->prepare("UPDATE otp SET is_active = 0 WHERE user_id = ?");
+        return $stmt->execute([$user_id]);
     }
 }
 ?>

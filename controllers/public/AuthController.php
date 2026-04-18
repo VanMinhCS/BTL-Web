@@ -31,43 +31,163 @@ class AuthController extends Controller {
     // ==========================================
     public function processRegister() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $fullname = trim($_POST['fullname'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $phone = trim($_POST['phone'] ?? '');
-            $password = $_POST['password'] ?? '';
-            $repassword = $_POST['repassword'] ?? '';
-            $isAjax = isset($_POST['ajax']) && $_POST['ajax'] == 1;
+            $fullname = trim($_POST['fullname']);
+            $email = trim($_POST['email']);
+            $phone = trim($_POST['phone']);
+            $password = $_POST['password'];
+            $repassword = $_POST['repassword'];
 
-            if (empty($fullname) || empty($email) || empty($password)) {
-                if($isAjax) { echo json_encode(['status'=>'error', 'message'=>'Điền đủ thông tin!']); exit; }
-                $_SESSION['error'] = "Vui lòng điền đầy đủ thông tin.";
-                header("Location: " . BASE_URL . "auth/register"); exit;
-            }
-
+            // 1. Kiểm tra mật khẩu khớp
             if ($password !== $repassword) {
-                if($isAjax) { echo json_encode(['status'=>'error', 'message'=>'Mật khẩu không khớp!']); exit; }
-                $_SESSION['error'] = "Mật khẩu không khớp.";
-                header("Location: " . BASE_URL . "auth/register"); exit;
+                echo json_encode(['status' => 'error', 'message' => 'Mật khẩu nhập lại không khớp!']);
+                return;
             }
 
-            if ($this->userModel->checkEmailExists($email)) {
-                if($isAjax) { echo json_encode(['status'=>'error', 'message'=>'Email đã tồn tại!']); exit; }
-                $_SESSION['error'] = "Email này đã được sử dụng.";
-                header("Location: " . BASE_URL . "auth/register"); exit;
+            require_once __DIR__ . '/../../models/UserModel.php';
+            $userModel = new UserModel();
+
+            // 2. Kiểm tra Email tồn tại
+            if ($userModel->checkEmailExists($email)) {
+                echo json_encode(['status' => 'error', 'message' => 'Email này đã được đăng ký!']);
+                return;
             }
 
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            // 3. Mã hóa mật khẩu và Lưu vào Database
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $user_id = $userModel->registerUser($fullname, $email, $hashed_password, $phone);
 
-            if ($this->userModel->registerUser($fullname, $email, $hashedPassword, $phone)) {
-                if($isAjax) { echo json_encode(['status'=>'success', 'message'=>'Đăng ký thành công! Đang chuyển sang đăng nhập...']); exit; }
-                $_SESSION['success'] = "Đăng ký thành công! Vui lòng đăng nhập.";
-                header("Location: " . BASE_URL . "auth/login");
+            if ($user_id) {
+                // --- BẮT ĐẦU LUỒNG XỬ LÝ OTP ---
+                
+                // A. Tạo mã 6 số ngẫu nhiên
+                $otpCode = rand(100000, 999999);
+                
+                // B. Lưu OTP vào Database
+                $userModel->createOTP($user_id, $otpCode);
+                
+                // C. Gọi Bưu tá gửi Mail
+                require_once __DIR__ . '/../../models/MailService.php';
+                $isSent = MailService::sendOTP($email, $otpCode);
+
+                if ($isSent) {
+                    // Trả về status 'otp_required' để frontend biết đường mở popup OTP
+                    echo json_encode([
+                        'status' => 'otp_required', 
+                        'user_id' => $user_id, // Gửi kèm ID để lát nữa xác thực
+                        'email' => $email,
+                        'message' => 'Đăng ký thành công! Vui lòng kiểm tra Email để lấy mã OTP.'
+                    ]);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'Lỗi gửi mail xác thực. Vui lòng thử lại!']);
+                }
+
             } else {
-                if($isAjax) { echo json_encode(['status'=>'error', 'message'=>'Lỗi hệ thống!']); exit; }
-                $_SESSION['error'] = "Lỗi hệ thống, vui lòng thử lại sau.";
-                header("Location: " . BASE_URL . "auth/register");
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống khi đăng ký!']);
             }
-            exit;
+        }
+    }
+
+    // ==========================================
+    // 2.5 XỬ LÝ XÁC THỰC OTP
+    // ==========================================
+    public function processVerifyOTP() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $user_id = $_POST['user_id'] ?? '';
+            $otp_code = trim($_POST['otp_code'] ?? '');
+
+            if (empty($user_id) || empty($otp_code)) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ!']);
+                return;
+            }
+
+            require_once __DIR__ . '/../../models/UserModel.php';
+            $userModel = new UserModel();
+
+            // 1. Kiểm tra OTP
+            $otpData = $userModel->validateOTP($user_id, $otp_code);
+
+            if ($otpData) {
+                // 2. Nếu đúng thì kích hoạt tài khoản
+                if ($userModel->activateUser($user_id)) {
+                    echo json_encode(['status' => 'success', 'message' => 'Xác thực thành công! Hệ thống đang chuyển hướng...']);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống khi kích hoạt tài khoản!']);
+                }
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Mã OTP không đúng hoặc đã hết hạn!']);
+            }
+        }
+    }
+
+    // ==========================================
+    // 5. HIỂN THỊ TRANG QUÊN MẬT KHẨU ĐẦY ĐỦ
+    // ==========================================
+    public function forgot() {
+        $data['title'] = "Quên mật khẩu - BK88";
+        $this->view('public/auth/forgot_password', $data);
+    }
+
+    // ==========================================
+    // 6. XỬ LÝ GỬI MÃ OTP QUÊN MẬT KHẨU
+    // ==========================================
+    public function processSendResetOTP() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $email = trim($_POST['email'] ?? '');
+            
+            require_once __DIR__ . '/../../models/UserModel.php';
+            $userModel = new UserModel();
+            $user = $userModel->getUserByEmailVerified($email);
+
+            if ($user) {
+                $otpCode = rand(100000, 999999);
+                $userModel->createOTP($user['user_id'], $otpCode);
+                
+                require_once __DIR__ . '/../../models/MailService.php';
+                if (MailService::sendOTP($email, $otpCode)) {
+                    echo json_encode(['status' => 'success', 'message' => 'Mã OTP đã được gửi! Vui lòng kiểm tra email.']);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống khi gửi mail!']);
+                }
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Email không tồn tại hoặc chưa được kích hoạt!']);
+            }
+        }
+    }
+
+    // ==========================================
+    // 7. XỬ LÝ ĐẶT LẠI MẬT KHẨU
+    // ==========================================
+    public function processResetPassword() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $email = trim($_POST['email'] ?? '');
+            $otp_code = trim($_POST['otp_code'] ?? '');
+            $new_password = $_POST['new_password'] ?? '';
+
+            if (empty($email) || empty($otp_code) || empty($new_password)) {
+                echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin!']); return;
+            }
+
+            require_once __DIR__ . '/../../models/UserModel.php';
+            $userModel = new UserModel();
+            $user = $userModel->getUserByEmailVerified($email);
+
+            if ($user) {
+                // Kiểm tra OTP
+                $otpData = $userModel->validateOTP($user['user_id'], $otp_code);
+                if ($otpData) {
+                    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                    $userModel->updatePassword($user['user_id'], $hashed_password);
+                    
+                    // Vô hiệu hóa OTP sau khi dùng (Gọi qua Model cho chuẩn OOP)
+                    $userModel->deactivateOTP($user['user_id']);
+
+                    echo json_encode(['status' => 'success', 'message' => 'Đổi mật khẩu thành công! Bạn có thể đăng nhập.']);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'Mã OTP không đúng hoặc đã hết hạn!']);
+                }
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi xác thực người dùng!']);
+            }
         }
     }
 

@@ -23,9 +23,13 @@
                         <input type="text" name="login_id" value="<?php echo htmlspecialchars($old_login_id); ?>" class="form-control py-2" required placeholder="Nhập SĐT hoặc Email">
                     </div>
                     
-                    <div class="mb-4">
+                    <div class="mb-2"> 
                         <label class="form-label fw-bold">Mật khẩu</label>
                         <input type="password" name="password" class="form-control py-2" required placeholder="Nhập mật khẩu">
+                    </div>
+
+                    <div class="text-end mb-4">
+                        <a href="<?php echo BASE_URL; ?>auth/forgot" class="text-primary text-decoration-none small fw-bold">Quên mật khẩu?</a>
                     </div>
 
                     <button type="submit" class="btn w-100 py-3 fw-bold text-white text-uppercase" style="background-color: #5a31f4; letter-spacing: 1px;">

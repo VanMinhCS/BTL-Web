@@ -8,7 +8,7 @@
                     <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
                 <?php endif; ?>
 
-                <form action="<?php echo BASE_URL; ?>auth/processRegister" method="POST">
+                <form id="pageRegisterForm">
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold">Họ và tên</label>
@@ -17,7 +17,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Số điện thoại</label>
-                        <input type="tel" name="phone" class="form-control py-2" placeholder="Nhập số điện thoại (Không bắt buộc)">
+                        <input type="tel" name="phone" class="form-control py-2" placeholder="Nhập số điện thoại">
                     </div>
 
                     <div class="mb-3">
@@ -31,7 +31,7 @@
                             <input type="password" name="password" class="form-control py-2" required placeholder="Nhập mật khẩu">
                         </div>
                         <div class="col-md-6 mb-4">
-                            <label class="form-label fw-bold">Xác nhận Mật khẩu</label>
+                            <label class="form-label fw-bold">Xác nhận mật khẩu</label>
                             <input type="password" name="repassword" class="form-control py-2" required placeholder="Nhập lại mật khẩu">
                         </div>
                     </div>
@@ -48,3 +48,35 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pageRegForm = document.getElementById('pageRegisterForm');
+    if(pageRegForm) {
+        pageRegForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Chặn tải lại trang để không bị in ra JSON
+
+            let formData = new FormData(this);
+            // Gửi AJAX
+            fetch('<?php echo BASE_URL; ?>auth/processRegister', {
+                method: 'POST', body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'error') {
+                    // Bạn có thể tự tạo thẻ div error giống ở header, hoặc dùng alert tạm
+                    alert(data.message);
+                } else if (data.status === 'otp_required') {
+                    // 1. Điền thông tin vào Modal OTP (Modal này lấy từ header.php qua)
+                    document.getElementById('otp_user_id').value = data.user_id;
+                    document.getElementById('otp_email_display').innerText = data.email;
+
+                    // 2. Bật Popup OTP lên đè lên trang hiện tại
+                    let otpModal = new bootstrap.Modal(document.getElementById('ajaxOtpModal'));
+                    otpModal.show();
+                }
+            });
+        });
+    }
+});
+</script>
