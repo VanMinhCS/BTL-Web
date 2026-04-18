@@ -1,7 +1,8 @@
 <?php
-require_once __DIR__ . "/../core/Model.php";
+// FILE: models/Order.php
+require_once __DIR__ . '/../core/Database.php';
 
-class Item extends Model {
+class Item extends Database {
     private $item_id;
     private $item_name;
     private $item_stock;
@@ -28,10 +29,9 @@ class Item extends Model {
     public function setItemImage($img) { $this->item_image = $img; }
 
     private function loadById($id) {
-        $stmt = $this->db->prepare("SELECT * FROM items WHERE item_id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt = $this->conn->prepare("SELECT * FROM items WHERE item_id=?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $this->item_id    = $result['item_id'];
             $this->item_name  = $result['item_name'];
@@ -43,31 +43,29 @@ class Item extends Model {
     }
 
     public function create() {
-        $stmt = $this->db->prepare("INSERT INTO items (item_name, item_stock, description, price, item_image) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sisis", $this->item_name, $this->item_stock, $this->description, $this->price, $this->item_image);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("INSERT INTO items (item_name, item_stock, description, price, item_image) VALUES (?, ?, ?, ?, ?)");
+        return $stmt->execute([$this->item_name, $this->item_stock, $this->description, $this->price, $this->item_image]);
     }
 
     public function update() {
-        $stmt = $this->db->prepare("UPDATE items SET item_name=?, item_stock=?, description=?, price=?, item_image=? WHERE item_id=?");
-        $stmt->bind_param("sisisi", $this->item_name, $this->item_stock, $this->description, $this->price, $this->item_image, $this->item_id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("UPDATE items SET item_name=?, item_stock=?, description=?, price=?, item_image=? WHERE item_id=?");
+        return $stmt->execute([$this->item_name, $this->item_stock, $this->description, $this->price, $this->item_image, $this->item_id]);
     }
 
     public function delete() {
-        $stmt = $this->db->prepare("DELETE FROM items WHERE item_id=?");
-        $stmt->bind_param("i", $this->item_id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("DELETE FROM items WHERE item_id=?");
+        return $stmt->execute([$this->item_id]);
     }
 }
 
-class Order extends Model {
+class Order extends Database {
     private $order_id;
     private $user_id;
     private $order_date;
     private $status;
     private $is_paid;
     private $payment_method;
+    private $shipping_fee; // Đã thêm cột phí ship
 
     public function getOrderId() { return $this->order_id; }
     public function setOrderId($id) { $this->order_id = $id; $this->loadById($id); }
@@ -87,11 +85,13 @@ class Order extends Model {
     public function getPaymentMethod() { return $this->payment_method; }
     public function setPaymentMethod($method) { $this->payment_method = $method; }
 
+    public function getShippingFee() { return $this->shipping_fee; }
+    public function setShippingFee($fee) { $this->shipping_fee = $fee; }
+
     private function loadById($id) {
-        $stmt = $this->db->prepare("SELECT * FROM orders WHERE order_id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt = $this->conn->prepare("SELECT * FROM orders WHERE order_id=?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $this->order_id       = $result['order_id'];
             $this->user_id        = $result['user_id'];
@@ -99,29 +99,59 @@ class Order extends Model {
             $this->status         = $result['status'];
             $this->is_paid        = $result['is_paid'];
             $this->payment_method = $result['payment_method'];
+            $this->shipping_fee   = $result['shipping_fee'];
         }
     }
 
     public function create() {
-        $stmt = $this->db->prepare("INSERT INTO orders (user_id, order_date, status, is_paid, payment_method) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("isiii", $this->user_id, $this->order_date, $this->status, $this->is_paid, $this->payment_method);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("INSERT INTO orders (user_id, order_date, status, is_paid, payment_method, shipping_fee) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->payment_method, $this->shipping_fee]);
+        return $this->conn->lastInsertId();
     }
 
     public function update() {
-        $stmt = $this->db->prepare("UPDATE orders SET user_id=?, order_date=?, status=?, is_paid=?, payment_method=? WHERE order_id=?");
-        $stmt->bind_param("isiiii", $this->user_id, $this->order_date, $this->status, $this->is_paid, $this->payment_method, $this->order_id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("UPDATE orders SET user_id=?, order_date=?, status=?, is_paid=?, payment_method=?, shipping_fee=? WHERE order_id=?");
+        return $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->payment_method, $this->shipping_fee, $this->order_id]);
     }
 
     public function delete() {
-        $stmt = $this->db->prepare("DELETE FROM orders WHERE order_id=?");
-        $stmt->bind_param("i", $this->order_id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("DELETE FROM orders WHERE order_id=?");
+        return $stmt->execute([$this->order_id]);
+    }
+
+    public function getFullOrderHistory($user_id) {
+        $sqlOrders = "SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC";
+        $stmtOrders = $this->conn->prepare($sqlOrders);
+        $stmtOrders->execute([$user_id]);
+        $orders = $stmtOrders->fetchAll(PDO::FETCH_ASSOC);
+        
+        $orderData = [];
+        foreach ($orders as $o) {
+            $order_id = $o['order_id'];
+            
+            $sqlDetails = "SELECT od.*, i.item_name, i.item_image 
+                           FROM order_details od 
+                           JOIN items i ON od.item_id = i.item_id 
+                           WHERE od.order_id = ?";
+            $stmtDetails = $this->conn->prepare($sqlDetails);
+            $stmtDetails->execute([$order_id]);
+            $details = $stmtDetails->fetchAll(PDO::FETCH_ASSOC);
+            
+            $total = 0;
+            foreach ($details as $d) {
+                $total += $d['price'] * $d['quantity'];
+            }
+            
+            $o['details'] = $details;
+            $o['total_amount'] = $total;
+            $orderData[] = $o;
+        }
+        
+        return $orderData;
     }
 }
 
-class OrderDetail extends Model {
+class OrderDetail extends Database {
     private $detail_id;
     private $order_id;
     private $item_id;
@@ -144,10 +174,9 @@ class OrderDetail extends Model {
     public function setPrice($price) { $this->price = $price; }
 
     private function loadById($id) {
-        $stmt = $this->db->prepare("SELECT * FROM order_details WHERE detail_id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt = $this->conn->prepare("SELECT * FROM order_details WHERE detail_id=?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $this->detail_id = $result['detail_id'];
             $this->order_id  = $result['order_id'];
@@ -158,21 +187,18 @@ class OrderDetail extends Model {
     }
 
     public function create() {
-        $stmt = $this->db->prepare("INSERT INTO order_details (order_id, item_id, quantity, price) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("iiid", $this->order_id, $this->item_id, $this->quantity, $this->price);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("INSERT INTO order_details (order_id, item_id, quantity, price) VALUES (?, ?, ?, ?)");
+        return $stmt->execute([$this->order_id, $this->item_id, $this->quantity, $this->price]);
     }
 
     public function update() {
-        $stmt = $this->db->prepare("UPDATE order_details SET order_id=?, item_id=?, quantity=?, price=? WHERE detail_id=?");
-        $stmt->bind_param("iiidi", $this->order_id, $this->item_id, $this->quantity, $this->price, $this->detail_id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("UPDATE order_details SET order_id=?, item_id=?, quantity=?, price=? WHERE detail_id=?");
+        return $stmt->execute([$this->order_id, $this->item_id, $this->quantity, $this->price, $this->detail_id]);
     }
 
     public function delete() {
-        $stmt = $this->db->prepare("DELETE FROM order_details WHERE detail_id=?");
-        $stmt->bind_param("i", $this->detail_id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("DELETE FROM order_details WHERE detail_id=?");
+        return $stmt->execute([$this->detail_id]);
     }
 }
-
+?>

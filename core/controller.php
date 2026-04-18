@@ -5,6 +5,7 @@ class Controller {
         $fullPath = $basePath . $view . '.php';
         
         if (file_exists($fullPath)) {
+            extract($data);
             require_once $basePath . 'public/layouts/header.php';
             require_once $fullPath;
             require_once $basePath . 'public/layouts/footer.php';

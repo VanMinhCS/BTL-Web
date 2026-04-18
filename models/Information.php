@@ -1,7 +1,8 @@
 <?php
-require_once __DIR__ . "/../core/Model.php";
+// FILE: models/Information.php
+require_once __DIR__ . '/../core/Database.php';
 
-class Address extends Model {
+class Address extends Database {
     private $address_id;
     private $street;
     private $ward;
@@ -23,10 +24,10 @@ class Address extends Model {
     public function setCity($city) { $this->city = $city; }
 
     private function loadById($id) {
-        $stmt = $this->db->prepare("SELECT * FROM addresses WHERE address_id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt = $this->conn->prepare("SELECT * FROM addresses WHERE address_id=?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
         if ($result) {
             $this->address_id = $result['address_id'];
             $this->street     = $result['street'];
@@ -36,31 +37,29 @@ class Address extends Model {
     }
 
     public function create() {
-        $stmt = $this->db->prepare("INSERT INTO addresses (street, ward, city) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $this->street, $this->ward, $this->city);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("INSERT INTO addresses (street, ward, city) VALUES (?, ?, ?)");
+        $stmt->execute([$this->street, $this->ward, $this->city]);
+        return $this->conn->lastInsertId(); // Trả về ID vừa tạo
     }
 
     public function update() {
-        $stmt = $this->db->prepare("UPDATE addresses SET street=?, ward=?, city=? WHERE address_id=?");
-        $stmt->bind_param("sssi", $this->street, $this->ward, $this->city, $this->address_id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("UPDATE addresses SET street=?, ward=?, city=? WHERE address_id=?");
+        return $stmt->execute([$this->street, $this->ward, $this->city, $this->address_id]);
     }
 
     public function delete() {
-        $stmt = $this->db->prepare("DELETE FROM addresses WHERE address_id=?");
-        $stmt->bind_param("i", $this->address_id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("DELETE FROM addresses WHERE address_id=?");
+        return $stmt->execute([$this->address_id]);
     }
 }
 
-class Information extends Model {
+class Information extends Database {
     private $info_id;
     private $user_id;
     private $address_id;
     private $firstname;
     private $lastname;
-    private $payment_method;
+    // Đã xóa hoàn toàn payment_method cho khớp với Database mới
 
     public function getInfoId() { return $this->info_id; }
     public function setInfoId($id) { 
@@ -80,39 +79,33 @@ class Information extends Model {
     public function getLastname() { return $this->lastname; }
     public function setLastname($name) { $this->lastname = $name; }
 
-    public function getPaymentMethod() { return $this->payment_method; }
-    public function setPaymentMethod($method) { $this->payment_method = $method; }
-
     private function loadById($id) {
-        $stmt = $this->db->prepare("SELECT * FROM information WHERE info_id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt = $this->conn->prepare("SELECT * FROM information WHERE info_id=?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
         if ($result) {
             $this->info_id        = $result['info_id'];
             $this->user_id        = $result['user_id'];
             $this->address_id     = $result['address_id'];
             $this->firstname      = $result['firstname'];
             $this->lastname       = $result['lastname'];
-            $this->payment_method = $result['payment_method'];
         }
     }
 
     public function create() {
-        $stmt = $this->db->prepare("INSERT INTO information (user_id, address_id, firstname, lastname, payment_method) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("iisss", $this->user_id, $this->address_id, $this->firstname, $this->lastname, $this->payment_method);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("INSERT INTO information (user_id, address_id, firstname, lastname) VALUES (?, ?, ?, ?)");
+        return $stmt->execute([$this->user_id, $this->address_id, $this->firstname, $this->lastname]);
     }
 
     public function update() {
-        $stmt = $this->db->prepare("UPDATE information SET user_id=?, address_id=?, firstname=?, lastname=?, payment_method=? WHERE info_id=?");
-        $stmt->bind_param("iisssi", $this->user_id, $this->address_id, $this->firstname, $this->lastname, $this->payment_method, $this->info_id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("UPDATE information SET user_id=?, address_id=?, firstname=?, lastname=? WHERE info_id=?");
+        return $stmt->execute([$this->user_id, $this->address_id, $this->firstname, $this->lastname, $this->info_id]);
     }
 
     public function delete() {
-        $stmt = $this->db->prepare("DELETE FROM information WHERE info_id=?");
-        $stmt->bind_param("i", $this->info_id);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("DELETE FROM information WHERE info_id=?");
+        return $stmt->execute([$this->info_id]);
     }
 }
+?>
