@@ -32,3 +32,5 @@ ALTER TABLE `users` AUTO_INCREMENT = 1;
 
 -- 4. Bật lại kiểm tra khóa ngoại (BẮT BUỘC)
 SET FOREIGN_KEY_CHECKS = 1;
+
+Import bk88.sql vào database trên phpmyadmin trước khi test
