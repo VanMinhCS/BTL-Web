@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../core/model.php";
+require_once __DIR__ . "/../core/Model.php";
 
 class Notification extends Model {
     private $id;
@@ -33,17 +33,16 @@ class Notification extends Model {
 
     private function loadById($id) {
         $stmt = $this->getDb()->prepare("SELECT * FROM notifications WHERE id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
-            $this->id                        = $result['id'];
-            $this->type                      = $result['type'];
-            $this->user_id                   = $result['user_id'];
-            $this->notification_comment_id   = $result['notification_comment_id'];
-            $this->notification_vote_comment_id = $result['notification_vote_comment_id'];
-            $this->is_read                   = $result['is_read'];
-            $this->created_at                = $result['created_at'];
+            $this->id                          = $result['id'];
+            $this->type                        = $result['type'];
+            $this->user_id                     = $result['user_id'];
+            $this->notification_comment_id     = $result['notification_comment_id'];
+            $this->notification_vote_comment_id= $result['notification_vote_comment_id'];
+            $this->is_read                     = $result['is_read'];
+            $this->created_at                  = $result['created_at'];
         }
     }
 
@@ -52,18 +51,16 @@ class Notification extends Model {
             "INSERT INTO notifications (type, user_id, notification_comment_id, notification_vote_comment_id, is_read) 
              VALUES (?, ?, ?, ?, ?)"
         );
-        $stmt->bind_param("siiii",
+        $success = $stmt->execute([
             $this->type,
             $this->user_id,
             $this->notification_comment_id,
             $this->notification_vote_comment_id,
             $this->is_read
-        );
-        $success = $stmt->execute();
+        ]);
         if ($success) {
-            $this->id = $stmt->insert_id;
+            $this->id = $this->getDb()->lastInsertId();
         }
-        $stmt->close();
         return $success;
     }
 
@@ -73,25 +70,19 @@ class Notification extends Model {
              SET type=?, user_id=?, notification_comment_id=?, notification_vote_comment_id=?, is_read=? 
              WHERE id=?"
         );
-        $stmt->bind_param("siiiii",
+        return $stmt->execute([
             $this->type,
             $this->user_id,
             $this->notification_comment_id,
             $this->notification_vote_comment_id,
             $this->is_read,
             $this->id
-        );
-        $success = $stmt->execute();
-        $stmt->close();
-        return $success;
+        ]);
     }
 
     public function delete() {
         $stmt = $this->getDb()->prepare("DELETE FROM notifications WHERE id=?");
-        $stmt->bind_param("i", $this->id);
-        $success = $stmt->execute();
-        $stmt->close();
-        return $success;
+        return $stmt->execute([$this->id]);
     }
 }
 
@@ -123,9 +114,8 @@ class NotificationComment extends Model {
 
     private function loadById($id) {
         $stmt = $this->getDb()->prepare("SELECT * FROM notification_comment WHERE id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $this->id         = $result['id'];
             $this->article_id = $result['article_id'];
@@ -140,10 +130,10 @@ class NotificationComment extends Model {
         $stmt = $this->getDb()->prepare(
             "INSERT INTO notification_comment (article_id, comment_id, content, replied) VALUES (?, ?, ?, ?)"
         );
-        $stmt->bind_param("iisi", $this->article_id, $this->comment_id, $this->content, $this->replied);
-        $success = $stmt->execute();
-        if ($success) $this->id = $stmt->insert_id;
-        $stmt->close();
+        $success = $stmt->execute([$this->article_id, $this->comment_id, $this->content, $this->replied]);
+        if ($success) {
+            $this->id = $this->getDb()->lastInsertId();
+        }
         return $success;
     }
 
@@ -151,18 +141,12 @@ class NotificationComment extends Model {
         $stmt = $this->getDb()->prepare(
             "UPDATE notification_comment SET article_id=?, comment_id=?, content=?, replied=? WHERE id=?"
         );
-        $stmt->bind_param("iisii", $this->article_id, $this->comment_id, $this->content, $this->replied, $this->id);
-        $success = $stmt->execute();
-        $stmt->close();
-        return $success;
+        return $stmt->execute([$this->article_id, $this->comment_id, $this->content, $this->replied, $this->id]);
     }
 
     public function delete() {
         $stmt = $this->getDb()->prepare("DELETE FROM notification_comment WHERE id=?");
-        $stmt->bind_param("i", $this->id);
-        $success = $stmt->execute();
-        $stmt->close();
-        return $success;
+        return $stmt->execute([$this->id]);
     }
 }
 
@@ -190,9 +174,8 @@ class NotificationVoteComment extends Model {
 
     private function loadById($id) {
         $stmt = $this->getDb()->prepare("SELECT * FROM notification_vote_comment WHERE id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $this->id         = $result['id'];
             $this->comment_id = $result['comment_id'];
@@ -206,10 +189,10 @@ class NotificationVoteComment extends Model {
         $stmt = $this->getDb()->prepare(
             "INSERT INTO notification_vote_comment (comment_id, article_id, vote_type) VALUES (?, ?, ?)"
         );
-        $stmt->bind_param("iis", $this->comment_id, $this->article_id, $this->vote_type);
-        $success = $stmt->execute();
-        if ($success) $this->id = $stmt->insert_id;
-        $stmt->close();
+        $success = $stmt->execute([$this->comment_id, $this->article_id, $this->vote_type]);
+        if ($success) {
+            $this->id = $this->getDb()->lastInsertId();
+        }
         return $success;
     }
 
@@ -217,17 +200,11 @@ class NotificationVoteComment extends Model {
         $stmt = $this->getDb()->prepare(
             "UPDATE notification_vote_comment SET comment_id=?, article_id=?, vote_type=? WHERE id=?"
         );
-        $stmt->bind_param("iisi", $this->comment_id, $this->article_id, $this->vote_type, $this->id);
-        $success = $stmt->execute();
-        $stmt->close();
-        return $success;
+        return $stmt->execute([$this->comment_id, $this->article_id, $this->vote_type, $this->id]);
     }
 
     public function delete() {
         $stmt = $this->getDb()->prepare("DELETE FROM notification_vote_comment WHERE id=?");
-        $stmt->bind_param("i", $this->id);
-        $success = $stmt->execute();
-        $stmt->close();
-        return $success;
+        return $stmt->execute([$this->id]);
     }
 }

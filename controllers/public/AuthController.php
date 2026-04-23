@@ -198,26 +198,36 @@ class AuthController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $login_id = trim($_POST['login_id'] ?? '');
             $password = $_POST['password'] ?? '';
-            $isAjax = isset($_POST['ajax']) && $_POST['ajax'] == 1;
+            $isAjax   = isset($_POST['ajax']) && $_POST['ajax'] == 1;
 
             $user = $this->userModel->getUserByEmailOrPhone($login_id);
 
-            // MẸO: Chấp nhận cả mật khẩu đã hash VÀ mật khẩu thô ('1') từ file SQL của nhóm
+            // Chấp nhận cả mật khẩu đã hash VÀ mật khẩu thô
             if ($user && (password_verify($password, $user['password']) || $password === $user['password'])) {
                 
-                // ĐÃ SỬA: Dùng đúng tên cột mới của DB (user_id, lastname, firstname)
-                $_SESSION['user_id'] = $user['user_id'];
+                // Lưu thông tin vào session
+                $_SESSION['user_id']   = $user['user_id'];
                 $_SESSION['user_name'] = trim(($user['lastname'] ?? '') . ' ' . ($user['firstname'] ?? ''));
                 $_SESSION['user_role'] = $user['role'];
 
-                $redirectUrl = isset($_SESSION['redirect_after_login']) ? $_SESSION['redirect_after_login'] : BASE_URL . "home";
-                unset($_SESSION['redirect_after_login']);
+                // Điều hướng theo role
+                if (isset($_SESSION['redirect_after_login'])) {
+                    $redirectUrl = $_SESSION['redirect_after_login'];
+                    unset($_SESSION['redirect_after_login']);
+                } else {
+                    if ($_SESSION['user_role'] === 1) {
+                        $redirectUrl = BASE_URL . "admin/news";
+                    } else {
+                        $redirectUrl = BASE_URL . "home";
+                    }
+                }
 
                 if ($isAjax) {
                     echo json_encode(['status' => 'success', 'redirect' => $redirectUrl]);
                     exit;
                 }
                 header("Location: " . $redirectUrl);
+                exit;
             } else {
                 if ($isAjax) {
                     echo json_encode(['status' => 'error', 'message' => 'Email hoặc mật khẩu không chính xác.']);
@@ -227,10 +237,11 @@ class AuthController extends Controller {
                 $_SESSION['error'] = "Email hoặc mật khẩu không chính xác.";
                 $_SESSION['old_login_id'] = $login_id; 
                 header("Location: " . BASE_URL . "auth/login");
+                exit;
             }
-            exit;
         }
     }
+
 
     // ==========================================
     // 4. ĐĂNG XUẤT

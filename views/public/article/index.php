@@ -19,10 +19,7 @@
 </div>
 
 <div class="container justify-content-start ">
-    <div class="row content ">
-      <p>Đây là trang bài viết của BK88. Tại đây, bạn sẽ tìm thấy những bài viết mới nhất về các chủ đề liên quan đến BK88, bao gồm tin tức, hướng dẫn, đánh giá sản phẩm và nhiều hơn nữa. Chúng tôi cam kết cung cấp thông tin chính xác và hữu ích để giúp bạn có trải nghiệm tốt nhất khi sử dụng dịch vụ của chúng tôi.</p>
-      <p>Hãy thường xuyên truy cập trang này để cập nhật những bài viết mới nhất và đừng quên chia sẻ những bài viết mà bạn thấy hữu ích với bạn bè và người thân của mình. Cảm ơn bạn đã quan tâm đến BK88!</p>
-    </div>
+    <div class="row content "></div>
 
   <div class="row comments mt-4">
     <div class="col-12">

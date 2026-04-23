@@ -1,5 +1,5 @@
 <?php
-// FILE: core/Database.php
+// FILE: core/database.php
 
 class Database {
     protected $conn;

@@ -16,25 +16,25 @@ class NewsController extends Controller {
             ORDER BY time_modified DESC"
         );
         $stmt->execute();
-        $result = $stmt->get_result();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC); // lấy tất cả kết quả
 
         $articles = [];
-        while ($row = $result->fetch_assoc()) {
+        foreach ($rows as $row) {
             $articles[] = [
                 "id"          => $row['id_article'],
                 "title"       => $row['title'],
-                "description" => $row['description'],   // lấy trực tiếp từ DB
+                "description" => $row['description'],
                 "upload_date" => $row['time_modified'],
                 "image"       => $row['background'],
                 "link"        => "article?id=" . $row['id_article']
             ];
         }
 
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             "totalItems" => count($articles),
             "items"      => $articles
         ]);
-        $stmt->close();
-        $articleModel->closeDb();
     }
+
 }
