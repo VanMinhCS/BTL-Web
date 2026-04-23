@@ -1,30 +1,3 @@
-<?php
-// 1. GỌI DATABASE ĐỂ LẤY SẢN PHẨM (THAY THẾ HOÀN TOÀN MẢNG CŨ)
-require_once __DIR__ . '/../../../models/ProductModel.php';
-$productModel = new ProductModel();
-
-// Lấy ID sản phẩm từ URL (VD: localhost/product/detail?id=4)
-$productId = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
-// Bốc thông tin sản phẩm từ Database
-$currentProduct = $productModel->getProductById($productId);
-
-// Nếu nhập ID linh tinh hoặc sản phẩm không tồn tại, quay về trang danh sách
-if (!$currentProduct) {
-    echo "<script>window.location.href = '" . BASE_URL . "product';</script>";
-    exit;
-}
-
-// 2. LẤY CÁC SẢN PHẨM LIÊN QUAN (Lấy tất cả trừ sản phẩm đang xem)
-$allProducts = $productModel->getAllProducts();
-$relatedProducts = [];
-foreach ($allProducts as $p) {
-    if ($p['item_id'] != $productId) {
-        $relatedProducts[] = $p;
-    }
-}
-?>
-
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
 

@@ -18,16 +18,8 @@
     <form action="<?php echo BASE_URL; ?>onestepcheckout/processOrder" method="POST">
 
         <?php 
-            require_once __DIR__ . '/../../../models/UserModel.php';
-            $userModel = new UserModel();
-            
-            // ĐÃ SỬA: Dùng getUserProfile thay vì getUserById để lấy luôn cả Địa chỉ
-            $currentUser = $userModel->getUserProfile($_SESSION['user_id']);
-            
             $userPhone = $currentUser['phone'] ?? '';
             $userFullName = trim(($currentUser['lastname'] ?? '') . ' ' . ($currentUser['firstname'] ?? ''));
-            
-            // Lấy thêm 3 biến địa chỉ
             $userStreet = $currentUser['street'] ?? '';
             $userWard = $currentUser['ward'] ?? '';
             $userCity = $currentUser['city'] ?? '';
@@ -109,7 +101,7 @@
                             <input class="form-check-input m-0 me-3" type="radio" name="payment_method" id="paymentCOD" value="cod" checked>
                             <label class="form-check-label w-100 m-0" for="paymentCOD">
                                 <div class="d-flex align-items-center">
-                                    <span class="fw-medium">Thanh toán bằng tiền mặt khi nhận hàng</span>
+                                    <span class="fw-medium">Thanh toán bằng tiền mặt khi nhận hàng (COD)</span>
                                 </div>
                             </label>
                         </div>
@@ -126,42 +118,20 @@
                     <div class="card-body p-4">
                         <div class="mb-4" style="max-height: 250px; overflow-y: auto;">
                             <?php 
-                            require_once __DIR__ . '/../../../models/ProductModel.php';
-                            $productModel = new ProductModel();
-                            $allProducts = $productModel->getAllProducts();
-                            
-                            $productReference = [];
-                            // Đã Đổi sang item_id và item_name để khớp với DB
-                            foreach ($allProducts as $p) {
-                                $productReference[$p['item_id']] = [
-                                    'name' => $p['item_name'], 
-                                    'price' => $p['price']
-                                ];
-                            }
-
-                            $subTotal = 0;
-                            if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])): 
-                                foreach ($_SESSION['cart'] as $item):
-                                    $pId = $item['product_id'] ?? $item['id'] ?? 0;
-                                    $qty = $item['quantity'] ?? 1;
-
-                                    if (isset($productReference[$pId])) {
-                                        $pName = $productReference[$pId]['name'];
-                                        $pPrice = $productReference[$pId]['price'];
-                                        
-                                        $itemTotal = $pPrice * $qty;
-                                        $subTotal += $itemTotal;
+                            /* LẶP QUA MẢNG $checkoutItems DO CONTROLLER ĐÃ TÍNH TOÁN VÀ CUNG CẤP.
+                            */
+                            if (!empty($checkoutItems)): 
+                                foreach ($checkoutItems as $item):
                             ?>
                                 <div class="d-flex justify-content-between mb-2 small">
-                                    <div class="text-truncate pe-2" style="max-width: 70%;" title="<?php echo $pName; ?>">
-                                        <span class="fw-bold text-primary"><?php echo $qty; ?>x</span> <?php echo $pName; ?>
+                                    <div class="text-truncate pe-2" style="max-width: 70%;" title="<?php echo $item['name']; ?>">
+                                        <span class="fw-bold text-primary"><?php echo $item['quantity']; ?>x</span> <?php echo $item['name']; ?>
                                     </div>
                                     <div class="fw-medium text-end" style="min-width: 80px;">
-                                        <?php echo number_format($itemTotal, 0, ',', '.'); ?> ₫
+                                        <?php echo number_format($item['item_total'], 0, ',', '.'); ?> ₫
                                     </div>
                                 </div>
                             <?php 
-                                    } 
                                 endforeach; 
                             else:
                                 echo '<p class="text-muted small text-center my-3">Giỏ hàng của bạn đang trống.</p>';
@@ -190,7 +160,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-confirm-checkout w-100 py-3 fw-bold text-white fs-5 text-uppercase">
-                            Xác nhận thanh toán
+                            Xác nhận đặt hàng
                         </button>
                     </div>
                 </div>
@@ -201,7 +171,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Lấy các phần tử cần thiết
     const deliveryHome = document.getElementById('deliveryHome');
     const deliveryStore = document.getElementById('deliveryStore');
     const shippingMethodCard = document.getElementById('shippingMethodCard');
@@ -209,51 +178,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalPriceDisplay = document.getElementById('totalPriceDisplay');
     const totalAmountInput = document.getElementById('totalAmountInput');
 
-    const subTotal = <?php echo isset($subTotal) ? $subTotal : 0; ?>;
+    // Nhận subTotal thô từ PHP để JavaScript tính toán phí ship động
+    const subTotal = <?php echo (int)$subTotal; ?>;
     const shippingFee = 22000;
 
-    // 2. Hàm format tiền tệ
     function formatCurrency(number) {
         return new Intl.NumberFormat('vi-VN').format(number) + ' ₫';
     }
 
-    // 3. Hàm cập nhật trạng thái
     function updateCheckoutState() {
         if (deliveryStore.checked) {
-            // TRƯỜNG HỢP: NHẬN TẠI CỬA HÀNG
+            // Nhận tại cửa hàng -> Phí ship = 0
             if (shippingMethodCard) shippingMethodCard.style.display = 'none'; 
-            
-            // Xử lý cứng đầu của Bootstrap d-flex
             if (shippingFeeRow) {
-                shippingFeeRow.classList.remove('d-flex'); // Gỡ class flex
-                shippingFeeRow.classList.add('d-none');    // Gắn class ẩn
+                shippingFeeRow.classList.remove('d-flex');
+                shippingFeeRow.classList.add('d-none');
             }
-            
-            // Cập nhật giá không ship
             totalPriceDisplay.innerText = formatCurrency(subTotal);
             totalAmountInput.value = subTotal;
-            
         } else {
-            // TRƯỜNG HỢP: GIAO HÀNG TẬN NƠI
+            // Giao tận nơi -> Phí ship = 22.000
             if (shippingMethodCard) shippingMethodCard.style.display = 'block'; 
-            
             if (shippingFeeRow) {
-                shippingFeeRow.classList.remove('d-none'); // Gỡ class ẩn
-                shippingFeeRow.classList.add('d-flex');    // Trả lại class flex
+                shippingFeeRow.classList.remove('d-none');
+                shippingFeeRow.classList.add('d-flex');
             }
-            
-            // Cập nhật giá có ship
             totalPriceDisplay.innerText = formatCurrency(subTotal + shippingFee);
             totalAmountInput.value = subTotal + shippingFee;
         }
     }
 
-    // 4. Lắng nghe sự kiện click
     if (deliveryHome && deliveryStore) {
         deliveryHome.addEventListener('change', updateCheckoutState);
         deliveryStore.addEventListener('change', updateCheckoutState);
-        
-        // Chạy lần đầu tiên khi vừa load trang
         updateCheckoutState();
     }
 });
