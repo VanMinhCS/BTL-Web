@@ -16,7 +16,48 @@ class OnestepcheckoutController extends Controller {
     }
 
     public function index() {
+        // 1. Lấy thông tin User
+        require_once __DIR__ . '/../../models/UserModel.php';
+        $userModel = new UserModel();
+        $data['currentUser'] = $userModel->getUserProfile($_SESSION['user_id']);
+
+        // 2. Lấy dữ liệu Giỏ hàng và tính tiền (Giống như bên CartController)
+        require_once __DIR__ . '/../../models/ProductModel.php';
+        $productModel = new ProductModel();
+        $dbProducts = $productModel->getAllProducts();
+        
+        $productsLookup = [];
+        foreach ($dbProducts as $p) {
+            $productsLookup[$p['item_id']] = $p;
+        }
+
+        $checkoutItems = [];
+        $subTotal = 0;
+
+        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+            foreach ($_SESSION['cart'] as $item) {
+                $pId = $item['product_id'] ?? $item['id'] ?? 0;
+                $qty = $item['quantity'] ?? 1;
+
+                if (isset($productsLookup[$pId])) {
+                    $p = $productsLookup[$pId];
+                    $itemTotal = $p['price'] * $qty;
+                    $subTotal += $itemTotal;
+
+                    $checkoutItems[] = [
+                        'name' => $p['item_name'],
+                        'quantity' => $qty,
+                        'item_total' => $itemTotal
+                    ];
+                }
+            }
+        }
+
+        $data['checkoutItems'] = $checkoutItems;
+        $data['subTotal'] = $subTotal;
         $data['title'] = "Thanh toán đơn hàng - BK88";
+
+        // 3. Ném toàn bộ dữ liệu sạch sẽ sang View
         $this->view('public/onestepcheckout/index', $data);
     }
 

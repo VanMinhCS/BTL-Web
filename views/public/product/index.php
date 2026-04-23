@@ -29,11 +29,6 @@
         </div>
     </div>
 
-    <?php
-        require_once __DIR__ . '/../../../models/ProductModel.php';
-        $productModel = new ProductModel();
-        $products = $productModel->getAllProducts();
-    ?>
 
     <div class="row row-cols-1 row-cols-md-3 g-4" id="productList">
         <?php foreach ($products as $item): ?>

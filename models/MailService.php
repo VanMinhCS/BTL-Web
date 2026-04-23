@@ -1,5 +1,4 @@
 <?php
-// Nhúng 3 file "xương sống" của PHPMailer mà bạn vừa copy vào
 require_once __DIR__ . '/../libs/Exception.php';
 require_once __DIR__ . '/../libs/PHPMailer.php';
 require_once __DIR__ . '/../libs/SMTP.php';

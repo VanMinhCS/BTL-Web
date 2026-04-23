@@ -1,47 +1,3 @@
-<?php
-// 1. LẤY DỮ LIỆU THẬT TỪ DATABASE (Thay cho mảng giả)
-require_once __DIR__ . '/../../../models/ProductModel.php';
-$productModel = new ProductModel();
-$dbProducts = $productModel->getAllProducts();
-
-$products = [];
-foreach ($dbProducts as $p) {
-    $products[] = [
-        'id'    => $p['item_id'],
-        'img'   => $p['item_image'],
-        'name'  => $p['item_name'],
-        // Ép định dạng giá tiền giống y hệt mảng cũ để code bên dưới tự hiểu (VD: 78.000₫)
-        'price' => number_format($p['price'], 0, ',', '.') . '₫' 
-    ];
-}
-
-// 2. XỬ LÝ LẤY DỮ LIỆU GIỎ HÀNG TỪ SESSION
-$cartItems = [];
-$totalPrice = 0;
-
-if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $sessionItem) {
-        // Tìm thông tin sản phẩm tương ứng với ID
-        foreach ($products as $p) {
-            if ($p['id'] == $sessionItem['id']) {
-                $itemData = $p;
-                $itemData['quantity'] = $sessionItem['quantity'];
-                
-                // Lọc lấy số để tính tiền (VD: 70.000₫ -> 70000)
-                $rawPrice = preg_replace('/[^0-9]/', '', $p['price']);
-                $itemTotal = $rawPrice * $sessionItem['quantity'];
-                
-                $itemData['item_total'] = number_format($itemTotal, 0, ',', '.') . '₫';
-                $totalPrice += $itemTotal;
-                
-                $cartItems[] = $itemData;
-                break;
-            }
-        }
-    }
-}
-?>
-
 <div class="container py-5 mt-4" style="min-height: 60vh;">
     <h2 class="fw-bold text-uppercase mb-4">Giỏ hàng của bạn</h2>
 
@@ -73,11 +29,10 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                             <?php foreach ($cartItems as $item): ?>
                             <tr>
                                 <td class="text-center">
-                                    <?php $rawItemTotal = preg_replace('/[^0-9]/', '', $item['price']) * $item['quantity']; ?>
                                     <input class="form-check-input border-dark shadow-none item-checkbox" 
                                            type="checkbox" 
                                            value="<?php echo $item['id']; ?>" 
-                                           data-total="<?php echo $rawItemTotal; ?>" 
+                                           data-total="<?php echo $item['raw_item_total']; ?>" 
                                            checked>
                                 </td>
                                 
@@ -162,7 +117,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const summarySubtotal = document.getElementById('summary-subtotal');
     const summaryTotal = document.getElementById('summary-total');
 
-    // Hàm tính toán tổng tiền dựa trên các ô được tích
     function calculateTotal() {
         let currentTotal = 0;
         let allChecked = true;
@@ -170,39 +124,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
         itemCheckboxes.forEach(cb => {
             if (cb.checked) {
-                // Cộng dồn tiền từ data-total
                 currentTotal += parseInt(cb.getAttribute('data-total'));
                 anyChecked = true;
             } else {
-                allChecked = false; // Có ít nhất 1 ô không tích
+                allChecked = false;
             }
         });
 
-        // Xử lý trạng thái nút Chọn Tất cả
         selectAllBtn.checked = allChecked && anyChecked;
 
-        // Định dạng lại tiền Việt Nam và cập nhật lên giao diện
         let formattedTotal = new Intl.NumberFormat('vi-VN').format(currentTotal) + '₫';
         summarySubtotal.innerText = formattedTotal;
         summaryTotal.innerText = formattedTotal;
     }
 
-    // Sự kiện khi bấm "Chọn tất cả"
     selectAllBtn.addEventListener('change', function() {
         itemCheckboxes.forEach(cb => cb.checked = this.checked);
         calculateTotal();
     });
 
-    // Sự kiện khi bấm từng sản phẩm lẻ
     itemCheckboxes.forEach(cb => {
         cb.addEventListener('change', calculateTotal);
     });
 });
 
-// Hàm thu thập dữ liệu và chuyển trang
 function processCheckout() {
     let selectedIds = [];
-    // Chỉ lấy ID của những sản phẩm đang được check
     document.querySelectorAll('.item-checkbox:checked').forEach(cb => selectedIds.push(cb.value));
     
     if (selectedIds.length === 0) {
@@ -210,7 +157,6 @@ function processCheckout() {
         return;
     }
 
-    // Tạo form ẩn để gửi mảng ID sang trang Checkout
     let form = document.createElement('form');
     form.method = 'POST';
     form.action = '<?php echo BASE_URL; ?>onestepcheckout';
@@ -218,7 +164,7 @@ function processCheckout() {
     let input = document.createElement('input');
     input.type = 'hidden';
     input.name = 'selected_items'; 
-    input.value = JSON.stringify(selectedIds); // Chuyển mảng thành chuỗi JSON
+    input.value = JSON.stringify(selectedIds);
     
     form.appendChild(input);
     document.body.appendChild(form);
@@ -228,11 +174,9 @@ function processCheckout() {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // BẮT SỰ KIỆN KHI BẤM NÚT XÓA (THÙNG RÁC)
     document.querySelectorAll('form[action*="cart/remove"]').forEach(form => {
         form.addEventListener('submit', function(e) {
-            e.preventDefault(); // Phanh gấp, không cho load lại trang
+            e.preventDefault(); 
             
             let formData = new FormData(this);
             formData.append('ajax', 1);
@@ -244,45 +188,37 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if(data.status === 'success') {
-                    // 1. Hiệu ứng làm mờ và thu nhỏ dòng sản phẩm
                     let row = this.closest('tr');
                     row.style.transition = "all 0.3s ease";
                     row.style.opacity = "0";
                     row.style.transform = "translateX(-20px)";
                     
                     setTimeout(() => {
-                        row.remove(); // Xóa hẳn thẻ HTML khỏi trang
-                        
-                        // Nếu giỏ hàng trống trơn (đã xóa món cuối cùng)
+                        row.remove(); 
                         if(data.cartCount === 0) {
-                            location.reload(); // Load lại để hiện giao diện "Giỏ hàng trống"
+                            location.reload(); 
                         } else {
-                            // Gọi lại hàm tính tiền động để trừ tiền món vừa xóa
                             recalculateAfterDelete();
                         }
                     }, 300);
 
-                    // 2. Cập nhật con số đỏ trên Icon giỏ hàng (Header)
                     let badge = document.querySelector('.badge.bg-danger');
                     if (badge) {
                         badge.innerText = data.cartCount;
                         if(data.cartCount === 0) badge.remove();
                     }
 
-                    // 3. Hiện Popup thông báo Xóa
                     showRemoveToast();
                 }
             });
         });
     });
 
-    // Hàm tính lại tiền do DOM đã bị thay đổi (mất đi 1 dòng)
     function recalculateAfterDelete() {
         let currentTotal = 0;
         let allChecked = true;
         let anyChecked = false;
         
-        // Quét lại toàn bộ checkbox CÒN LẠI trên trang
         let remainingCheckboxes = document.querySelectorAll('.item-checkbox');
         remainingCheckboxes.forEach(cb => {
             if (cb.checked) {
@@ -299,13 +235,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('summary-total').innerText = formattedTotal;
     }
 
-    // Hàm hiện Popup đỏ
     function showRemoveToast() {
         let toast = document.getElementById('remove-toast');
         if (!toast) {
             toast = document.createElement('div');
             toast.id = 'remove-toast';
-            // Dùng màu #dc3545 (Đỏ Danger) để cảnh báo xóa
             toast.style.cssText = `
                 position: fixed; top: 100px; right: 20px;
                 background-color: #dc3545; color: #fff; 
@@ -319,9 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.appendChild(toast);
         }
 
-        // Hiện ra
         setTimeout(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; }, 10);
-        // Tắt đi sau 1.5 giây
         setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)'; }, 1500);
     }
 });
