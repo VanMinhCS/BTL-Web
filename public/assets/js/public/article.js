@@ -407,9 +407,10 @@ document.addEventListener("click", e => {
 });
 
 document.addEventListener("click", e => {
-  if(e.target.classList.contains("delete-btn")){
+  const btn = e.target.closest(".delete-btn");
+  if(btn){
     e.preventDefault();
-    const commentId = e.target.dataset.id;
+    const commentId = btn.dataset.id;
 
     if(confirm("Bạn có chắc muốn xóa bình luận này?")){
       fetch("/article/deleteComment", {
@@ -420,7 +421,6 @@ document.addEventListener("click", e => {
       .then(res => res.json())
       .then(data => {
         if(data.success){
-          // Sau khi xóa, fetch lại toàn bộ danh sách bình luận
           loadComments(currentPage);
         } else {
           alert(data.error || "Không thể xóa bình luận");

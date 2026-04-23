@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../core/model.php";
+require_once __DIR__ . "/../core/Model.php";
 
 class User extends Model {
     private $user_id;
@@ -27,10 +27,9 @@ class User extends Model {
     public function setPhone($phone) { $this->phone = $phone; }
 
     private function loadById($id) {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE user_id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt = $this->getDb()->prepare("SELECT * FROM users WHERE user_id=?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $this->user_id  = $result['user_id'];
             $this->email    = $result['email'];
@@ -41,21 +40,22 @@ class User extends Model {
     }
 
     public function create() {
-        $stmt = $this->db->prepare("INSERT INTO users (email, password, role, phone) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssis", $this->email, $this->password, $this->role, $this->phone);
-        return $stmt->execute();
+        $stmt = $this->getDb()->prepare("INSERT INTO users (email, password, role, phone) VALUES (?, ?, ?, ?)");
+        $success = $stmt->execute([$this->email, $this->password, $this->role, $this->phone]);
+        if ($success) {
+            $this->user_id = $this->getDb()->lastInsertId();
+        }
+        return $success;
     }
 
     public function update() {
-        $stmt = $this->db->prepare("UPDATE users SET email=?, password=?, role=?, phone=? WHERE user_id=?");
-        $stmt->bind_param("ssisi", $this->email, $this->password, $this->role, $this->phone, $this->user_id);
-        return $stmt->execute();
+        $stmt = $this->getDb()->prepare("UPDATE users SET email=?, password=?, role=?, phone=? WHERE user_id=?");
+        return $stmt->execute([$this->email, $this->password, $this->role, $this->phone, $this->user_id]);
     }
 
     public function delete() {
-        $stmt = $this->db->prepare("DELETE FROM users WHERE user_id=?");
-        $stmt->bind_param("i", $this->user_id);
-        return $stmt->execute();
+        $stmt = $this->getDb()->prepare("DELETE FROM users WHERE user_id=?");
+        return $stmt->execute([$this->user_id]);
     }
 }
 
@@ -82,10 +82,9 @@ class Otp extends Model {
     public function setIsActive($active) { $this->is_active = $active; }
 
     private function loadById($id) {
-        $stmt = $this->db->prepare("SELECT * FROM otp WHERE otp_id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt = $this->getDb()->prepare("SELECT * FROM otp WHERE otp_id=?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $this->otp_id     = $result['otp_id'];
             $this->user_id    = $result['user_id'];
@@ -96,21 +95,21 @@ class Otp extends Model {
     }
 
     public function create() {
-        $stmt = $this->db->prepare("INSERT INTO otp (user_id, code, time_expire, is_active) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("issi", $this->user_id, $this->code, $this->time_expire, $this->is_active);
-        return $stmt->execute();
+        $stmt = $this->getDb()->prepare("INSERT INTO otp (user_id, code, time_expire, is_active) VALUES (?, ?, ?, ?)");
+        $success = $stmt->execute([$this->user_id, $this->code, $this->time_expire, $this->is_active]);
+        if ($success) {
+            $this->otp_id = $this->getDb()->lastInsertId();
+        }
+        return $success;
     }
 
     public function update() {
-        $stmt = $this->db->prepare("UPDATE otp SET user_id=?, code=?, time_expire=?, is_active=? WHERE otp_id=?");
-        $stmt->bind_param("issii", $this->user_id, $this->code, $this->time_expire, $this->is_active, $this->otp_id);
-        return $stmt->execute();
+        $stmt = $this->getDb()->prepare("UPDATE otp SET user_id=?, code=?, time_expire=?, is_active=? WHERE otp_id=?");
+        return $stmt->execute([$this->user_id, $this->code, $this->time_expire, $this->is_active, $this->otp_id]);
     }
 
     public function delete() {
-        $stmt = $this->db->prepare("DELETE FROM otp WHERE otp_id=?");
-        $stmt->bind_param("i", $this->otp_id);
-        return $stmt->execute();
+        $stmt = $this->getDb()->prepare("DELETE FROM otp WHERE otp_id=?");
+        return $stmt->execute([$this->otp_id]);
     }
 }
-?>

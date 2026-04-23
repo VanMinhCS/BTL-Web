@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../core/model.php";
+require_once __DIR__ . "/../core/Model.php";
 
 class ReviewAdminReply extends Model {
     private $id;
@@ -29,9 +29,8 @@ class ReviewAdminReply extends Model {
     // Load dữ liệu theo id
     private function loadById($id) {
         $stmt = $this->getDb()->prepare("SELECT * FROM review_admin_replies WHERE id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $this->id            = $result['id'];
             $this->detail_id     = $result['detail_id'];
@@ -39,36 +38,31 @@ class ReviewAdminReply extends Model {
             $this->reply_content = $result['reply_content'];
             $this->created_at    = $result['created_at'];
         }
-        $stmt->close();
     }
 
-    // CRUD
+    // CREATE
     public function create() {
         $stmt = $this->getDb()->prepare(
             "INSERT INTO review_admin_replies (detail_id, admin_id, reply_content) VALUES (?, ?, ?)"
         );
-        $stmt->bind_param("iis", $this->detail_id, $this->admin_id, $this->reply_content);
-        $success = $stmt->execute();
-        if ($success) $this->id = $stmt->insert_id;
-        $stmt->close();
+        $success = $stmt->execute([$this->detail_id, $this->admin_id, $this->reply_content]);
+        if ($success) {
+            $this->id = $this->getDb()->lastInsertId();
+        }
         return $success;
     }
 
+    // UPDATE
     public function update() {
         $stmt = $this->getDb()->prepare(
             "UPDATE review_admin_replies SET detail_id=?, admin_id=?, reply_content=? WHERE id=?"
         );
-        $stmt->bind_param("iisi", $this->detail_id, $this->admin_id, $this->reply_content, $this->id);
-        $success = $stmt->execute();
-        $stmt->close();
-        return $success;
+        return $stmt->execute([$this->detail_id, $this->admin_id, $this->reply_content, $this->id]);
     }
 
+    // DELETE
     public function delete() {
         $stmt = $this->getDb()->prepare("DELETE FROM review_admin_replies WHERE id=?");
-        $stmt->bind_param("i", $this->id);
-        $success = $stmt->execute();
-        $stmt->close();
-        return $success;
+        return $stmt->execute([$this->id]);
     }
 }

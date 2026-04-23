@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . "/../core/model.php";
+require_once __DIR__ . "/../core/Model.php";
+require_once __DIR__ . "/../models/Notification.php";
 
 class Comment extends Model {
     private $id_comment;
@@ -45,9 +46,8 @@ class Comment extends Model {
 
     private function loadById($id) {
         $stmt = $this->getDb()->prepare("SELECT * FROM comments WHERE id_comment=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $this->id_comment   = $result['id_comment'];
             $this->id_article   = $result['id_article'];
@@ -64,36 +64,39 @@ class Comment extends Model {
             "INSERT INTO comments (id_article, id_user, text, is_edited, replied) 
             VALUES (?, ?, ?, ?, ?)"
         );
-        
-        if (!$stmt) {
-            error_log("Prepare failed: " . $this->getDb()->error);
-            return false;
-        }
-        $stmt->bind_param("iisii",
+        $success = $stmt->execute([
             $this->id_article,
             $this->id_user,
             $this->text,
             $this->is_edited,
             $this->replied
-        );
-        if (!$stmt->execute()) {
-            error_log("Execute failed: " . $stmt->error);
-            return false;
+        ]);
+        if ($success) {
+            $this->id_comment = $this->getDb()->lastInsertId();
         }
-        $this->id_comment = $stmt->insert_id;
-        return true;
+        return $success;
     }
 
     public function update() {
-        $stmt = $this->getDb()->prepare("UPDATE comments SET id_article=?, id_user=?, text=?, date_modified=?, is_edited=?, replied=? WHERE id_comment=?");
-        $stmt->bind_param("iissiii", $this->id_article, $this->id_user, $this->text, $this->date_modified, $this->is_edited, $this->replied, $this->id_comment);
-        return $stmt->execute();
+        $stmt = $this->getDb()->prepare("
+            UPDATE comments 
+            SET id_article=?, id_user=?, text=?, date_modified=?, is_edited=?, replied=? 
+            WHERE id_comment=?"
+        );
+        return $stmt->execute([
+            $this->id_article,
+            $this->id_user,
+            $this->text,
+            $this->date_modified,
+            $this->is_edited,
+            $this->replied,
+            $this->id_comment
+        ]);
     }
 
     public function delete() {
         $stmt = $this->getDb()->prepare("DELETE FROM comments WHERE id_comment=?");
-        $stmt->bind_param("i", $this->id_comment);
-        return $stmt->execute();
+        return $stmt->execute([$this->id_comment]);
     }
 
     public function getRepliedUserMaskedEmail($repliedId) {
@@ -113,37 +116,137 @@ class Comment extends Model {
         return $this->maskEmail($user->getEmail());
     }
 
+    public function getRepliedUserFullName($repliedId) {
+        $stmt = $this->getDb()->prepare("
+            SELECT i.firstname, i.lastname
+            FROM comments c
+            JOIN users u ON c.id_user = u.user_id
+            JOIN information i ON u.user_id = i.user_id
+            WHERE c.id_comment = ?
+        ");
+        $stmt->execute([$repliedId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? trim($row['lastname'] . ' ' . $row['firstname']) : null;
+    }
+
     public function updateText($userId) {
-        $stmt = $this->getDb()->prepare("UPDATE comments SET text=?, is_edited=1 WHERE id_comment=? AND id_user=?");
-        $stmt->bind_param("sii", $this->text, $this->id_comment, $userId);
-        $success = $stmt->execute();
-        $stmt->close();
-        return $success;
+        $stmt = $this->getDb()->prepare("
+            UPDATE comments 
+            SET text=?, is_edited=1 
+            WHERE id_comment=? AND id_user=?"
+        );
+        return $stmt->execute([$this->text, $this->id_comment, $userId]);
     }
 
     public function deleteByUser($userId) {
         $stmt = $this->getDb()->prepare("DELETE FROM comments WHERE id_comment=? AND id_user=?");
-        $stmt->bind_param("ii", $this->id_comment, $userId);
-        $success = $stmt->execute();
-        $stmt->close();
-        return $success;
+        return $stmt->execute([$this->id_comment, $userId]);
     }
 
     public function deleteCascade($userId) {
+        // Xóa các bình luận trả lời
         $stmt = $this->getDb()->prepare("DELETE FROM comments WHERE replied=?");
-        $stmt->bind_param("i", $this->id_comment);
-        $stmt->execute();
-        $stmt->close();
+        $stmt->execute([$this->id_comment]);
 
         // Xóa bình luận gốc
         $stmt2 = $this->getDb()->prepare("DELETE FROM comments WHERE id_comment=? AND id_user=?");
-        $stmt2->bind_param("ii", $this->id_comment, $userId);
-        $success = $stmt2->execute();
-        $stmt2->close();
-
-        return $success;
+        return $stmt2->execute([$this->id_comment, $userId]);
     }
 
+    public function getCommentsByArticle($articleId, $userId) {
+        $stmt = $this->getDb()->prepare("
+            SELECT c.id_comment, c.id_article, c.id_user, 
+                    i.firstname, i.lastname, u.role, 
+                    c.text, c.date_modified, c.is_edited, c.replied,
+                    SUM(cv.vote='like') AS likes,
+                    SUM(cv.vote='dislike') AS dislikes,
+                    uv.vote AS userVote
+            FROM comments c
+            JOIN users u ON c.id_user = u.user_id
+            JOIN information i ON u.user_id = i.user_id
+            LEFT JOIN comment_votes cv ON c.id_comment = cv.comment_id
+            LEFT JOIN comment_votes uv 
+                    ON c.id_comment = uv.comment_id 
+                    AND uv.user_id = ?
+            WHERE c.id_article = ?
+            GROUP BY c.id_comment
+            ORDER BY c.date_modified DESC
+        ");
+        $stmt->execute([$userId, $articleId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getCommentWithUserInfo($idComment) {
+        $stmt = $this->getDb()->prepare("
+            SELECT c.date_modified, u.role, i.firstname, i.lastname
+            FROM comments c
+            JOIN users u ON c.id_user = u.user_id
+            JOIN information i ON u.user_id = i.user_id
+            WHERE c.id_comment = ?
+        ");
+        $stmt->execute([$idComment]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function createCommentNotification($id_article, $idComment, $text, $userId) {
+        $notifComment = new NotificationComment();
+        $notifComment->setArticleId($id_article);
+        $notifComment->setCommentId($idComment);
+        $notifComment->setContent($text);
+        $notifComment->setReplied(null);
+        $notifComment->create();
+
+        $notif = new Notification();
+        $notif->setType("comment");
+        $notif->setUserId($userId);
+        $notif->setNotificationCommentId($notifComment->getId());
+        $notif->setIsRead(0);
+        $notif->create();
+    }
+
+    public function getReplyWithUserInfo($idComment) {
+        $stmt = $this->getDb()->prepare("
+            SELECT c.date_modified, c.replied, u.role, i.firstname, i.lastname
+            FROM comments c
+            JOIN users u ON c.id_user = u.user_id
+            JOIN information i ON u.user_id = i.user_id
+            WHERE c.id_comment = ?
+        ");
+        $stmt->execute([$idComment]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function createReplyNotification($id_article, $idComment, $text, $parentId, $userId) {
+        $notifComment = new NotificationComment();
+        $notifComment->setArticleId($id_article);
+        $notifComment->setCommentId($idComment);
+        $notifComment->setContent($text);
+        $notifComment->setReplied($parentId);
+        $notifComment->create();
+
+        $notif = new Notification();
+        $notif->setType("reply_comment");
+        $notif->setUserId($userId);
+        $notif->setNotificationCommentId($notifComment->getId());
+        $notif->setIsRead(0);
+        $notif->create();
+    }
+
+    public function createEditNotification($comment, $commentId, $text, $userId) {
+        $notifComment = new NotificationComment();
+        $notifComment->setArticleId($comment->getIdArticle());
+        $notifComment->setCommentId($commentId);
+        $notifComment->setContent($text);
+        $notifComment->setReplied($comment->getReplied());
+        $notifComment->create();
+
+        $notif = new Notification();
+        $notif->setType("edit_comment");
+        $notif->setUserId($userId);
+        $notif->setNotificationCommentId($notifComment->getId());
+        $notif->setIsRead(0);
+        $notif->create();
+    }
 }
 
 class VoteComment extends Model {
@@ -167,9 +270,8 @@ class VoteComment extends Model {
     // Load dữ liệu từ DB
     private function loadById($id) {
         $stmt = $this->getDb()->prepare("SELECT * FROM comment_votes WHERE id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $this->id         = $result['id'];
             $this->comment_id = $result['comment_id'];
@@ -181,40 +283,65 @@ class VoteComment extends Model {
     // CREATE
     public function create() {
         $stmt = $this->getDb()->prepare("INSERT INTO comment_votes (comment_id, user_id, vote) VALUES (?, ?, ?)");
-        $stmt->bind_param("iis", $this->comment_id, $this->user_id, $this->vote);
-        return $stmt->execute();
+        $success = $stmt->execute([$this->comment_id, $this->user_id, $this->vote]);
+        if ($success) {
+            $this->id = $this->getDb()->lastInsertId();
+        }
+        return $success;
     }
 
     // UPDATE
     public function update() {
         $stmt = $this->getDb()->prepare("UPDATE comment_votes SET vote=? WHERE id=?");
-        $stmt->bind_param("si", $this->vote, $this->id);
-        return $stmt->execute();
+        return $stmt->execute([$this->vote, $this->id]);
     }
 
     // DELETE
     public function delete() {
         $stmt = $this->getDb()->prepare("DELETE FROM comment_votes WHERE id=?");
-        $stmt->bind_param("i", $this->id);
-        return $stmt->execute();
+        return $stmt->execute([$this->id]);
     }
 
     // Lấy tổng số like/dislike cho 1 comment
     public function getVotesByComment($commentId) {
-        $stmt = $this->getDb()->prepare("SELECT 
-            SUM(vote='like') as likes,
-            SUM(vote='dislike') as dislikes
-            FROM comment_votes WHERE comment_id=?");
-        $stmt->bind_param("i", $commentId);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+        $stmt = $this->getDb()->prepare("
+            SELECT 
+                SUM(vote='like') as likes,
+                SUM(vote='dislike') as dislikes
+            FROM comment_votes 
+            WHERE comment_id=?"
+        );
+        $stmt->execute([$commentId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function findByUserAndComment($commentId, $userId) {
         $stmt = $this->getDb()->prepare("SELECT * FROM comment_votes WHERE comment_id=? AND user_id=?");
-        $stmt->bind_param("ii", $commentId, $userId);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+        $stmt->execute([$commentId, $userId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function handleVoteNotification($commentId, $voteType, $userId) {
+        $db = (new Comment())->getDb();
+        $stmt = $db->prepare("SELECT id_article FROM comments WHERE id_comment = ?");
+        $stmt->execute([$commentId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $articleId = $row ? $row['id_article'] : null;
+
+        if ($articleId) {
+            $notifVote = new NotificationVoteComment();
+            $notifVote->setCommentId($commentId);
+            $notifVote->setArticleId($articleId);
+            $notifVote->setVoteType($voteType);
+            $notifVote->create();
+
+            $notif = new Notification();
+            $notif->setType("vote_comment");
+            $notif->setUserId($userId);
+            $notif->setNotificationVoteCommentId($notifVote->getId());
+            $notif->setIsRead(0);
+            $notif->create();
+        }
+    }
 }
+

@@ -1,19 +1,31 @@
 <?php
+require_once __DIR__ . '/../../models/UserModel.php';
+
 class ArticleController extends Controller {
+    public function __construct() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
+    private function getFullName($firstName, $lastName) {
+        // Ghép theo định dạng: Lastname Firstname
+        return trim($lastName . ' ' . $firstName);
+    }
+
     public function index() {
         $data['title'] = "Bài viết của BK88";
         $this->view('public/article/index', $data);
     }
 
     public function getRole() {
-        require_once __DIR__ . "/../../models/Authentication.php";
-        $user = new User();
-        $user->setUserId(1); // tạm gán cứng
-        header('Content-Type: application/json');
+        // session đã được khởi tạo trong __construct()
+        $role = $_SESSION['user_role'] ?? null;
+
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
-            "role" => $user->getRole()
+            "role" => $role
         ]);
-        $user->closeDb();
     }
     
     public function getArticle() {
@@ -21,109 +33,70 @@ class ArticleController extends Controller {
         $articleModel = new Article();
 
         $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        $row = $articleModel->findArticleById($id);
 
-        $stmt = $articleModel->getDb()->prepare(
-            "SELECT id_article, title, description, time_modified, content, background 
-            FROM articles 
-            WHERE id_article = ? AND status = 1"
-        );
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-
+        header('Content-Type: application/json; charset=utf-8');
         if ($row) {
             echo json_encode([
                 "id"          => $row['id_article'],
                 "title"       => $row['title'],
                 "description" => $row['description'],
-                "upload_date" => date("d/m/Y", strtotime($row['time_modified'])), // chỉ ngày/tháng/năm
-                "content"     => $row['content'], // nội dung HTML
+                "upload_date" => date("d/m/Y", strtotime($row['time_modified'])), 
+                "content"     => $row['content'], 
                 "background"  => $row['background']
             ]);
         } else {
             echo json_encode(["error" => "Không tìm thấy bài viết"]);
         }
-        $stmt->close();
-        $articleModel->closeDb();
     }
 
     public function getComments() {
         require_once __DIR__ . "/../../models/Authentication.php";
         require_once __DIR__ . "/../../models/Comment.php";
+        require_once __DIR__ . "/../../models/Information.php";
 
         $commentModel = new Comment();
         $id_article = isset($_GET['id']) ? intval($_GET['id']) : 0; 
-        $userId     = 1; // sau này lấy từ session
-        $stmt = $commentModel->getDb()->prepare("
-            SELECT c.id_comment, c.id_article, c.id_user, u.email, u.role, 
-                c.text, c.date_modified, c.is_edited, c.replied,
-                SUM(cv.vote='like') AS likes,
-                SUM(cv.vote='dislike') AS dislikes,
-                uv.vote AS userVote
-            FROM comments c
-            JOIN users u ON c.id_user = u.user_id
-            LEFT JOIN comment_votes cv ON c.id_comment = cv.comment_id
-            LEFT JOIN comment_votes uv 
-                ON c.id_comment = uv.comment_id 
-                AND uv.user_id = ?
-            WHERE c.id_article = ?
-            GROUP BY c.id_comment
-            ORDER BY c.date_modified DESC
-        ");
-        $stmt->bind_param("ii", $userId, $id_article);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $userId     = $_SESSION['user_id'] ?? 0;
 
-        function maskEmail($email) {
-            $parts = explode("@", $email);
-            $name = $parts[0];
-            $domain = $parts[1];
-            if(strlen($name) > 1) {
-                $masked = substr($name, 0, 1) . str_repeat("*", strlen($name)-1);
-            } else {
-                $masked = $name;
-            }
-            return $masked . "@" . $domain;
-        }
+        $rows = $commentModel->getCommentsByArticle($id_article, $userId);
 
         $comments = [];
-        while ($row = $result->fetch_assoc()) {
+        foreach ($rows as $row) {
             $comments[] = [
-                "id"        => $row['id_comment'],
-                "user"      => maskEmail($row['email']),
-                "text"      => $row['text'],
-                "likes"     => (int)$row['likes'],
-                "dislikes"  => (int)$row['dislikes'],
-                "date"      => $row['date_modified'],
-                "isEdited"  => ((int)$row['is_edited'] === 1),
-                "isOwner"   => ($row['id_user'] == $userId),
-                "isAdmin"   => ((int)$row['role'] === 1),
-                "repliedId" => $row['replied'],
+                "id"          => $row['id_comment'],
+                "user"        => $this->getFullName($row['firstname'], $row['lastname']),
+                "text"        => $row['text'],
+                "likes"       => (int)$row['likes'],
+                "dislikes"    => (int)$row['dislikes'],
+                "date"        => $row['date_modified'],
+                "isEdited"    => ((int)$row['is_edited'] === 1),
+                "isOwner"     => ($row['id_user'] == $userId),
+                "isAdmin"     => ((int)$row['role'] === 1),
+                "repliedId"   => $row['replied'],
                 "repliedUser" => $row['replied'] 
-                    ? $commentModel->getRepliedUserMaskedEmail($row['replied']) 
+                    ? $commentModel->getRepliedUserFullName($row['replied']) 
                     : null,
-                "userVote"  => $row['userVote'] ?? null
+                "userVote"    => $row['userVote'] ?? null
             ];
         }
+
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             "totalItems" => count($comments),
             "items"      => $comments
         ]);
-        $stmt->close();
-        $commentModel->closeDb();
     }
-    
+
     public function voteComment() {
         header('Content-Type: application/json; charset=utf-8');
         require_once __DIR__ . "/../../models/Comment.php"; 
-        require_once __DIR__ . "/../../models/Notification.php";
-
 
         $commentId = intval($_POST['comment_id'] ?? 0);
         $voteType  = $_POST['vote'] ?? null;
-        $userId    = 1; // giả định user đang đăng nhập
+        $userId    = $_SESSION['user_id'] ?? 0; // lấy từ session
 
-        if ($commentId && ($voteType === 'like' || $voteType === 'dislike')) {
+        if ($userId && $commentId && ($voteType === 'like' || $voteType === 'dislike')) {
             $voteModel = new VoteComment();
             $voteModel->setCommentId($commentId);
             $voteModel->setUserId($userId);
@@ -132,66 +105,49 @@ class ArticleController extends Controller {
 
             if ($result) {
                 if ($result['vote'] === $voteType) {
-                    // đã vote cùng loại → hủy (unlike/undislike)
                     $voteModel->setId($result['id']);
                     $success = $voteModel->delete();
                     $userVote = null;
                 } else {
-                    // đã vote khác loại → đổi loại
                     $voteModel->setId($result['id']);
                     $voteModel->setVote($voteType);
                     $success = $voteModel->update();
                     $userVote = $voteType;
                 }
             } else {
-                // chưa từng vote → thêm mới
                 $voteModel->setVote($voteType);
                 $success = $voteModel->create();
                 $userVote = $voteType;
             }
 
             if ($success) {
-                // chỉ tạo notification khi có hành động like/dislike (không tạo khi hủy)
                 if ($userVote !== null) {
-                    $notifVote = new NotificationVoteComment();
-                    $notifVote->setCommentId($commentId);
-                    $notifVote->setArticleId(1); // bạn lấy id_article từ bảng comments nếu cần
-                    $notifVote->setVoteType($voteType);
-                    $notifVote->create();
-
-                    $notif = new Notification();
-                    $notif->setType("vote_comment");
-                    $notif->setUserId($userId);
-                    $notif->setNotificationVoteCommentId($notifVote->getId());
-                    $notif->setIsRead(0);
-                    $notif->create();
+                    $voteModel->handleVoteNotification($commentId, $voteType, $userId);
                 }
 
                 $votes = $voteModel->getVotesByComment($commentId);
                 echo json_encode([
                     "success"   => true,
-                    "likes"     => $votes['likes'] ?? 0,
-                    "dislikes"  => $votes['dislikes'] ?? 0,
+                    "likes"     => (int)($votes['likes'] ?? 0),
+                    "dislikes"  => (int)($votes['dislikes'] ?? 0),
                     "userVote"  => $userVote
                 ]);
             } else {
                 echo json_encode(["success" => false, "error" => "Không thể cập nhật vote"]);
             }
         } else {
-            echo json_encode(["success" => false, "error" => "Tham số không hợp lệ"]);
+            echo json_encode(["success" => false, "error" => "Tham số không hợp lệ hoặc chưa đăng nhập"]);
         }
-        $voteModel->closeDb();
     }
 
     public function addComment() {      
         header('Content-Type: application/json; charset=utf-8');
         require_once __DIR__ . "/../../models/Comment.php";
-        require_once __DIR__ . "/../../models/Notification.php";
-        require_once __DIR__ . "/../../models/Authentication.php";
+
 
         $id_article = intval($_POST['article_id'] ?? 0);
         $text       = trim($_POST['text'] ?? "");
-        $userId     = 1; // tạm thời fix cứng user id = 1
+        $userId     = $_SESSION['user_id'] ?? 0; // lấy từ session
 
         $comment = new Comment();
         $comment->setIdArticle($id_article);
@@ -200,53 +156,23 @@ class ArticleController extends Controller {
         $comment->setIsEdited(0);
         $comment->setReplied(null);
 
-        function maskEmail($email) {
-            $parts = explode("@", $email);
-            $name = $parts[0];
-            $domain = $parts[1];
-            $masked = strlen($name) > 1 
-                ? substr($name, 0, 1) . str_repeat("*", strlen($name)-1) 
-                : $name;
-            return $masked . "@" . $domain;
-        }
-
         if ($comment->create()) {
             $idComment = $comment->getIdComment();
 
-            // Lưu thông báo comment
-            $notifComment = new NotificationComment();
-            $notifComment->setArticleId($id_article);
-            $notifComment->setCommentId($idComment);
-            $notifComment->setContent($text);
-            $notifComment->setReplied(null);
-            $notifComment->create();
+            // gọi service để tạo thông báo
+            $comment->createCommentNotification($id_article, $idComment, $text, $userId);
 
-            $notif = new Notification();
-            $notif->setType("comment");
-            $notif->setUserId($userId);
-            $notif->setNotificationCommentId($notifComment->getId());
-            $notif->setIsRead(0);
-            $notif->create();
+            // lấy thông tin user từ model
+            $row = $comment->getCommentWithUserInfo($idComment);
 
-            // Lấy thông tin user để trả về JSON
-            $stmt = $comment->getDb()->prepare("
-                SELECT c.date_modified, u.email, u.role
-                FROM comments c
-                JOIN users u ON c.id_user = u.user_id
-                WHERE c.id_comment = ?
-            ");
-            $stmt->bind_param("i", $idComment);
-            $stmt->execute();
-            $row = $stmt->get_result()->fetch_assoc();
-
-            $maskedEmail = maskEmail($row['email']);
+            $fullName = trim($row['lastname'] . ' ' . $row['firstname']);
             $role = (int)$row['role'];
 
             echo json_encode([
                 "success" => true,
                 "comment" => [
                     "id"          => $idComment,
-                    "user"        => $maskedEmail,
+                    "user"        => $fullName,
                     "text"        => $text,
                     "likes"       => 0,
                     "dislikes"    => 0,
@@ -259,24 +185,19 @@ class ArticleController extends Controller {
                     "userVote"    => null
                 ]
             ]);
-            $stmt->close();
         } else {
             echo json_encode(["success" => false, "error" => "Không thể thêm bình luận"]);
         }
-
-        $comment->closeDb();
     }
 
     public function replyComment() {
         header('Content-Type: application/json; charset=utf-8');
         require_once __DIR__ . "/../../models/Comment.php";
-        require_once __DIR__ . "/../../models/Notification.php";
-        require_once __DIR__ . "/../../models/Authentication.php";
 
         $id_article = intval($_POST['article_id'] ?? 0);
-        $parentId   = intval($_POST['parent_id'] ?? 0); // id comment gốc
+        $parentId   = intval($_POST['parent_id'] ?? 0);
         $text       = trim($_POST['text'] ?? "");
-        $userId     = 1; // tạm thời fix cứng user id = 1
+        $userId     = $_SESSION['user_id'] ?? 0;
 
         $comment = new Comment();
         $comment->setIdArticle($id_article);
@@ -285,53 +206,23 @@ class ArticleController extends Controller {
         $comment->setIsEdited(0);
         $comment->setReplied($parentId);
 
-        function maskEmail($email) {
-            $parts = explode("@", $email);
-            $name = $parts[0];
-            $domain = $parts[1];
-            $masked = strlen($name) > 1 
-                ? substr($name, 0, 1) . str_repeat("*", strlen($name)-1) 
-                : $name;
-            return $masked . "@" . $domain;
-        }
-
         if ($comment->create()) {
             $idComment = $comment->getIdComment();
 
-            // Lưu thông báo reply comment
-            $notifComment = new NotificationComment();
-            $notifComment->setArticleId($id_article);
-            $notifComment->setCommentId($idComment);
-            $notifComment->setContent($text);
-            $notifComment->setReplied($parentId);
-            $notifComment->create();
+            // gọi service để tạo thông báo reply
+            $comment->createReplyNotification($id_article, $idComment, $text, $parentId, $userId);
 
-            $notif = new Notification();
-            $notif->setType("reply_comment");
-            $notif->setUserId($userId);
-            $notif->setNotificationCommentId($notifComment->getId());
-            $notif->setIsRead(0);
-            $notif->create();
+            // lấy thông tin user từ model
+            $row = $comment->getReplyWithUserInfo($idComment);
 
-            // Lấy thông tin user để trả về JSON
-            $stmt = $comment->getDb()->prepare("
-                SELECT c.date_modified, c.replied, u.email, u.role
-                FROM comments c
-                JOIN users u ON c.id_user = u.user_id
-                WHERE c.id_comment = ?
-            ");
-            $stmt->bind_param("i", $idComment);
-            $stmt->execute();
-            $row = $stmt->get_result()->fetch_assoc();
-
-            $maskedEmail = maskEmail($row['email']);
+            $fullName = trim($row['lastname'] . ' ' . $row['firstname']);
             $role = (int)$row['role'];
 
             echo json_encode([
                 "success" => true,
                 "comment" => [
                     "id"          => $idComment,
-                    "user"        => $maskedEmail,
+                    "user"        => $fullName,
                     "text"        => $text,
                     "likes"       => 0,
                     "dislikes"    => 0,
@@ -341,49 +232,33 @@ class ArticleController extends Controller {
                     "isAdmin"     => ($role === 1),
                     "repliedId"   => $row['replied'],
                     "repliedUser" => $row['replied'] 
-                        ? $comment->getRepliedUserMaskedEmail($row['replied']) 
+                        ? $comment->getRepliedUserFullName($row['replied']) 
                         : null,
                     "userVote"    => null
                 ]
             ]);
-            $stmt->close();
         } else {
             echo json_encode(["success" => false, "error" => "Không thể thêm phản hồi"]);
         }
-
-        $comment->closeDb();
     }
 
     public function editComment() {
         header('Content-Type: application/json; charset=utf-8');
         require_once __DIR__ . "/../../models/Comment.php";
-        require_once __DIR__ . "/../../models/Notification.php";
 
         $commentId = intval($_POST['comment_id'] ?? 0);
         $text      = trim($_POST['text'] ?? "");
-        $userId    = 1; // sau này lấy từ session
+        $userId    = $_SESSION['user_id'] ?? 0;
 
-        if ($commentId && $text !== "") {
+        if ($commentId && $text !== "" && $userId) {
             $comment = new Comment();
             $comment->setIdComment($commentId);
             $comment->setText($text);
             $comment->setIsEdited(1);
 
             if ($comment->updateText($userId)) {
-                // Lưu thông báo edit comment
-                $notifComment = new NotificationComment();
-                $notifComment->setArticleId($comment->getIdArticle());
-                $notifComment->setCommentId($commentId);
-                $notifComment->setContent($text);
-                $notifComment->setReplied($comment->getReplied());
-                $notifComment->create();
-
-                $notif = new Notification();
-                $notif->setType("edit_comment");
-                $notif->setUserId($userId);
-                $notif->setNotificationCommentId($notifComment->getId());
-                $notif->setIsRead(0);
-                $notif->create();
+                // gọi service để tạo thông báo edit comment
+                $comment->createEditNotification($comment, $commentId, $text, $userId);
 
                 echo json_encode([
                     "success" => true,
@@ -397,17 +272,17 @@ class ArticleController extends Controller {
                 echo json_encode(["success" => false, "error" => "Không thể chỉnh sửa"]);
             }
         } else {
-            echo json_encode(["success" => false, "error" => "Tham số không hợp lệ"]);
+            echo json_encode(["success" => false, "error" => "Tham số không hợp lệ hoặc chưa đăng nhập"]);
         }
     }
 
     public function deleteComment() {
         header('Content-Type: application/json; charset=utf-8');
         require_once __DIR__ . "/../../models/Comment.php";
-
-        $commentId = intval($_POST['comment_id'] ?? 0);
-        $userId    = 1; // sau này lấy từ session
-
+    
+        $commentId = intval($_POST['comment_id'] ?? $_GET['comment_id'] ?? 0);
+        $userId    = $_SESSION['user_id'] ?? 0; 
+        
         if ($commentId) {
             $comment = new Comment();
             $comment->setIdComment($commentId);
@@ -426,21 +301,12 @@ class ArticleController extends Controller {
         require_once __DIR__ . "/../../models/Article.php";
         $articleModel = new Article();
 
-        // Bài cũ nhất
-        $stmtOld = $articleModel->getDb()->query(
-            "SELECT id_article FROM articles ORDER BY time_modified ASC LIMIT 1"
-        );
-        $oldest = $stmtOld->fetch_assoc();
-
-        // Bài mới nhất
-        $stmtNew = $articleModel->getDb()->query(
-            "SELECT id_article FROM articles ORDER BY time_modified DESC LIMIT 1"
-        );
-        $newest = $stmtNew->fetch_assoc();
+        $oldest = $articleModel->getOldestArticleId();
+        $newest = $articleModel->getNewestArticleId();
 
         echo json_encode([
-            "oldest" => $oldest ? BASE_URL."article?id=".$oldest['id_article'] : null,
-            "newest" => $newest ? BASE_URL."article?id=".$newest['id_article'] : null
+            "oldest" => $oldest ? BASE_URL . "article?id=" . $oldest['id_article'] : null,
+            "newest" => $newest ? BASE_URL . "article?id=" . $newest['id_article'] : null
         ]);
     }
 
