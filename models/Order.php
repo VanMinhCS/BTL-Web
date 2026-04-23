@@ -1,6 +1,6 @@
 <?php
 // FILE: models/Order.php
-require_once __DIR__ . '/../core/Database.php';
+require_once __DIR__ . '/../core/database.php';
 
 class Item extends Database {
     private $item_id;
