@@ -6,23 +6,33 @@
     <title><?php echo isset($title) ? $title : 'BK88 Admin'; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <link rel="shortcut icon" type="image/png" href="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/images/icon/favicon.ico">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/css/fontawesome.min.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/css/themify-icons.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/css/metismenujs.min.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/css/swiper-bundle.min.css">
+    <link rel="shortcut icon" type="image/png" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/images/icon/favicon.ico">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/fontawesome.min.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/themify-icons.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/metismenujs.min.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/swiper-bundle.min.css">
     
     <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
     
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/css/typography.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/css/default-css.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/css/styles.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/css/responsive.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/typography.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/default-css.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/styles.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/responsive.css">
+
+    <style>
+        .metismenu > li > a::after {
+            transition: transform 0.3s ease-in-out !important; /* Thời gian xoay 0.3s */
+        }
+        .metismenu > li > a[aria-expanded="true"]::after {
+            content: '\f107' !important; /* Mã mũi tên xuống của FontAwesome */
+            transform: translateY(-10%) rotate(-180deg) !important; /* Lộn ngược 180 độ */
+        }
+    </style>
 </head>
 
 <body>
-    <div id="preloader">
+    <div id="preloader" style="display: none;">
         <div class="loader"></div>
     </div>
     <div class="page-container">
@@ -31,7 +41,7 @@
             <div class="sidebar-header">
                 <div class="logo">
                     <a href="<?php echo BASE_URL; ?>admin/dashboard">
-                        <img src="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/images/icon/logo.png" alt="logo">
+                        <img src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/images/icon/logo.png" alt="logo">
                     </a>
                 </div>
             </div>
@@ -39,15 +49,16 @@
                 <div class="menu-inner">
                     <nav>
                         <ul class="metismenu" id="menu">
-                            <li class="active">
-                                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-dashboard"></i><span>dashboard</span></a>
-                                <ul class="collapse">
-                                    <li class="active"><a href="<?php echo BASE_URL; ?>admin/dashboard">Ecommerce</a></li>
+                            <li>
+                                <a href="<?php echo BASE_URL; ?>admin/dashboard" aria-expanded="false"><i class="ti-dashboard"></i><span>Dashboard</span></a>
+                            </li>
+                            
+                            <li> <a href="javascript:void(0)" aria-expanded="false"> <i class="ti-layout-grid2"></i><span>Sản phẩm</span></a>
+                                <ul class="collapse"> <li><a href="<?php echo BASE_URL; ?>admin/product">Danh sách giáo trình</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>admin/product/create">Thêm giáo trình mới</a></li>
                                 </ul>
                             </li>
-                            <li>
-                                <a href="<?php echo BASE_URL; ?>admin/product"><i class="ti-layout-grid2"></i><span>Quản lý sản phẩm</span></a>
-                            </li>
+
                             <li>
                                 <a href="<?php echo BASE_URL; ?>admin/order"><i class="ti-receipt"></i><span>Quản lý đơn hàng</span></a>
                             </li>
@@ -63,12 +74,12 @@
             <div class="header-area">
                 <div class="row align-items-center">
                     <div class="col-md-6 col-sm-8 clearfix">
-                        <div class="nav-btn pull-left">
+                        <div class="nav-btn float-start">
                             <span></span>
                             <span></span>
                             <span></span>
                         </div>
-                        <div class="search-box pull-left">
+                        <div class="search-box float-start">
                             <form action="#">
                                 <input type="text" name="search" placeholder="Search..." required>
                                 <i class="ti-search"></i>
@@ -76,9 +87,20 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-4 clearfix">
-                        <ul class="notification-area pull-right">
+                        <ul class="notification-area float-end">
                             <li id="full-view"><i class="ti-fullscreen"></i></li>
-                            <li id="full-view-exit"><i class="ti-fullscreen"></i></li>
+                            <li id="full-view-exit"><i class="ti-zoom-out"></i></li>
+                            <li class="dropdown">
+                                <i class="ti-bell dropdown-toggle" data-bs-toggle="dropdown">
+                                    <span>2</span>
+                                </i>
+                            </li>
+                            <li class="dropdown">
+                                <i class="fa-regular fa-envelope dropdown-toggle" data-bs-toggle="dropdown"><span>3</span></i>
+                            </li>
+                            <li class="settings-btn">
+                                <i class="ti-settings"></i>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -87,24 +109,28 @@
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <div class="breadcrumbs-area clearfix">
-                            <h4 class="page-title pull-left">Dashboard</h4>
-                            <ul class="breadcrumbs pull-left">
+                            <h1 class="page-title float-start">Dashboard</h1>
+                            <ul class="breadcrumbs float-start">
                                 <li><a href="<?php echo BASE_URL; ?>admin/dashboard">Home</a></li>
                                 <li><span>Dashboard</span></li>
                             </ul>
                         </div>
                     </div>
                     <div class="col-sm-6 clearfix">
-                        <div class="user-profile pull-right">
-                            <img class="avatar user-thumb" src="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/images/author/avatar.png" alt="avatar">
-                            <h4 class="user-name dropdown-toggle" data-bs-toggle="dropdown">Admin BK88 <i class="fa fa-angle-down"></i></h4>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="<?php echo BASE_URL; ?>home">Trang chủ web</a>
-                                <a class="dropdown-item" href="<?php echo BASE_URL; ?>auth/logout">Đăng xuất</a>
+                        <div class="user-profile float-end">
+                            <img class="avatar user-thumb" src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/images/author/avatar.png" alt="avatar">
+                            
+                            <h4 class="user-name dropdown-toggle" data-bs-toggle="dropdown">Admin BK88 <i class="fa-solid fa-angle-down"></i></h4>
+                            
+                            <div class="dropdown-menu user-dropdown">
+                                <a class="dropdown-item" href="<?php echo BASE_URL; ?>home?view=public"><i class="fa-solid fa-globe"></i> Trang chủ Web</a>
+                                
+                                <a class="dropdown-item" href="<?php echo BASE_URL; ?>profile"><i class="fa-solid fa-user"></i> Hồ sơ của tôi</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item user-dropdown-logout" href="<?php echo BASE_URL; ?>auth/logout"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="main-content-inner">
-                

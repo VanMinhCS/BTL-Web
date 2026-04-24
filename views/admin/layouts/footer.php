@@ -30,9 +30,9 @@
             </div>
         </div>
     </div>
-    <script src="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/js/swiper-bundle.min.js"></script>
-    <script src="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/js/metismenujs.min.js"></script>
+    <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/swiper-bundle.min.js"></script>
+    <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/metismenujs.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
     <script src="https://code.highcharts.com/12.5.0/highcharts.js"></script>
@@ -44,11 +44,11 @@
         }
     </script>
 
-    <script src="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/js/line-chart.js"></script>
-    <script src="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/js/bar-chart.js"></script>
-    <script src="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/js/pie-chart.js"></script>
+    <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/line-chart.js"></script>
+    <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/bar-chart.js"></script>
+    <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/pie-chart.js"></script>
     
-    <script src="<?php echo BASE_URL; ?>public/assets/strdash-admin-dashboard/js/scripts.js"></script>
+    <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/scripts.js"></script>
 </body>
 
 </html>

@@ -198,8 +198,17 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `description`, `price`, `item_image`) VALUES
-(1, 'Laptop Dell', 10, 'Laptop văn phòng', 1500.00, 'dell.jpg'),
-(2, 'Chuột Logitech', 50, 'Chuột không dây', 25.00, 'logitech.jpg');
+(1, 'Triết Học Mác - Lênin', 100, 'Giáo trình Triết học Mác - Lênin', 78000.00, 'triethoc.png'),
+(2, 'Kinh Tế Chính Trị Mác - Lênin', 100, 'Giáo trình Kinh tế chính trị Mác - Lênin', 48000.00, 'ktct.png'),
+(3, 'Chủ Nghĩa Xã Hội Khoa Học', 100, 'Giáo trình Chủ nghĩa xã hội khoa học', 46000.00, 'cnxhkh.png'),
+(4, 'Lịch Sử Đảng Cộng Sản Việt Nam', 100, 'Giáo trình Lịch sử Đảng Cộng sản Việt Nam', 70000.00, 'lsd.png'),
+(5, 'Giải Tích 1', 100, 'Giáo trình Giải Tích 1', 70000.00, 'gt1.png'),
+(6, 'Giải Tích 2', 100, 'Giáo trình Giải Tích 2', 70000.00, 'gt2.png'),
+(7, 'Đại Số Tuyến Tính', 100, 'Giáo trình Đại số tuyến tính', 65000.00, 'dstt.png'),
+(8, 'Hóa Đại Cương', 100, 'Giáo trình Hóa đại cương', 75000.00, 'hdc.png'),
+(9, 'Kỹ Thuật Lập Trình', 100, 'Giáo trình Kỹ thuật lập trình', 150000.00, 'ktlt.png'),
+(10, 'Cấu Trúc Dữ Liệu & Giải Thuật', 100, 'Giáo trình Cấu trúc dữ liệu & giải thuật', 100000.00, 'ctdlgt.png'),
+(11, 'Tư Tưởng Hồ Chí Minh', 100, 'Hệ thống quan điểm toàn diện và sâu sắc về những vấn đề cơ bản của cách mạng Việt Nam.', 45000.00, 'tthcm.png');
 
 -- --------------------------------------------------------
 

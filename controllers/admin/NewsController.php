@@ -17,19 +17,9 @@ class NewsController extends Controller {
             exit;
         }
         $data['title'] = "Trang tin tức của BK88";
+        
+        // Gọi hàm view() từ class Cha (core/Controller.php)
         $this->view('admin/news/index', $data);
     }
-
-    public function view($view, $data = []) {
-        $basePath = __DIR__ . '/../../views/';
-        $fullPath = $basePath . $view . '.php';
-        
-        if (file_exists($fullPath)) {
-            extract($data);
-            // Chỉ load nội dung chính, không header/footer
-            require_once $fullPath;
-        } else {
-            die("View không tồn tại: " . $fullPath);
-        }
-    }
 }
+?>
