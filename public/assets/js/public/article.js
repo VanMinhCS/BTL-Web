@@ -476,7 +476,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const articleId = params.get("id");
   fetchArticle();
   fetchUserRole();
-  fetchComments(articleId); // sẽ gán comments và gọi renderComments bên trong
+  fetchComments(articleId); 
 });
 
 loadOldestNewest();
