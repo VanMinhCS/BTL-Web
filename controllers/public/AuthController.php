@@ -216,7 +216,7 @@ class AuthController extends Controller {
                     unset($_SESSION['redirect_after_login']);
                 } else {
                     if ($_SESSION['user_role'] === 1) {
-                        $redirectUrl = BASE_URL . "admin/news";
+                        $redirectUrl = BASE_URL . "admin";
                     } else {
                         $redirectUrl = BASE_URL . "home";
                     }
