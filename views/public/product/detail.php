@@ -15,11 +15,11 @@
         
         <div class="col-md-6 mb-4 mb-md-0">
             <div class="bg-light d-flex justify-content-center align-items-center p-5 rounded" style="aspect-ratio: 1/1;">
-                <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $currentProduct['item_image']; ?>" 
-                     alt="<?php echo htmlspecialchars($currentProduct['item_name']); ?>" 
-                     class="img-fluid object-fit-contain" 
-                     style="max-height: 100%;"
-                     onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($currentProduct['item_name']); ?>'">
+                <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $currentProduct['item_image']; ?>" 
+                    alt="<?php echo htmlspecialchars($currentProduct['item_name']); ?>" 
+                    class="img-fluid object-fit-contain" 
+                    style="max-height: 100%;"
+                    onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($currentProduct['item_name']); ?>'">
             </div>
         </div>
 
@@ -76,10 +76,10 @@
                     <div class="card h-100 border-0 shadow-sm">
                         <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['item_id']; ?>" class="text-decoration-none">
                             <div class="position-relative bg-light" style="aspect-ratio: 1/1.2; display: flex; align-items: center; justify-content: center;">
-                                <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['item_image']; ?>" 
-                                     alt="<?php echo htmlspecialchars($item['item_name']); ?>" 
-                                     class="w-100 h-100 object-fit-contain p-3"
-                                     onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($item['item_name']); ?>'">
+                                <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $item['item_image']; ?>" 
+                                    alt="<?php echo htmlspecialchars($item['item_name']); ?>" 
+                                    class="w-100 h-100 object-fit-contain p-3"
+                                    onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($item['item_name']); ?>'">
                             </div>
                         </a>
                         <div class="card-body text-center pt-3 pb-4">

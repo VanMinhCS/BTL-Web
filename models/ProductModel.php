@@ -19,5 +19,25 @@ class ProductModel extends Database {
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function insertProduct($name, $stock, $description, $price, $image) {
+        // 1. Viết câu lệnh SQL (Dùng dấu : để tạo tham số ẩn)
+        $sql = "INSERT INTO items (item_name, item_stock, description, price, item_image) 
+                VALUES (:name, :stock, :description, :price, :image)";
+        
+        // 2. Chuẩn bị câu lệnh (Lưu ý: thay $this->db bằng biến kết nối CSDL của bạn, ví dụ $this->conn)
+        // Giả sử PDO connection được lưu ở thuộc tính db
+        $stmt = $this->conn->prepare($sql);
+        
+        // 3. Gán giá trị thật vào các tham số ẩn
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':stock', $stock);
+        $stmt->bindParam(':description', $description);
+        $stmt->bindParam(':price', $price);
+        $stmt->bindParam(':image', $image);
+        
+        // 4. Thực thi lệnh và trả về kết quả (true nếu thành công, false nếu lỗi)
+        return $stmt->execute();
+    }
 }
 ?>

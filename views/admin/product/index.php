@@ -25,8 +25,9 @@
                             <tr>
                                 <td><?php echo $item['item_id']; ?></td>
                                 <td>
-                                    <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['item_image']; ?>" 
-                                         alt="book" style="width: 50px; height: 60px; object-fit: cover;"
+                                    <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $item['item_image']; ?>" 
+                                         alt="Hình ảnh giáo trình" 
+                                         style="width: 80px; height: auto; object-fit: cover;"
                                          onerror="this.src='https://placehold.co/50x60?text=No+Image'">
                                 </td>
                                 <td class="text-start fw-bold"><?php echo htmlspecialchars($item['item_name']); ?></td>

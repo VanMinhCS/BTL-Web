@@ -18,6 +18,8 @@ class NewsController extends Controller {
         }
         $data['title'] = "Trang tin tức của BK88";
         
+        $data['currentPage'] = 'dashboard';
+        
         // Gọi hàm view() từ class Cha (core/Controller.php)
         $this->view('admin/news/index', $data);
     }
