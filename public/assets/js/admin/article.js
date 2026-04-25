@@ -18,7 +18,7 @@ async function fetchArticle() {
   const id = params.get("id");
 
   try {
-    const response = await fetch(`/article/getArticleAdmin?id=${id}`);
+    const response = await fetch(`/admin/article/getArticle?id=${id}`);
     const articleData = await response.json();
 
     if (articleData.error) {
@@ -48,7 +48,7 @@ async function fetchArticle() {
 
 async function fetchComments(articleId) {
   try {
-    const response = await fetch(`article/getComments?id=${articleId}`);
+    const response = await fetch(`/admin/article/getComments?id=${articleId}`);
     const data = await response.json();
 
     // Gán dữ liệu vào mảng comments toàn cục
@@ -61,7 +61,7 @@ async function fetchComments(articleId) {
 }
 
 async function loadComments(page = 1){
-  const response = await fetch(`/article/getComments?id=${articleId}`);
+  const response = await fetch(`/admin/article/getComments?id=${articleId}`);
   const data = await response.json();
 
   // Gán lại dữ liệu mới vào biến toàn cục
@@ -74,7 +74,7 @@ async function loadComments(page = 1){
 
 async function sendVote(commentId, voteType) {
   try {
-    const response = await fetch("/article/voteComment", {
+    const response = await fetch("/admin/article/voteComment", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `comment_id=${commentId}&vote=${voteType}`
@@ -124,7 +124,7 @@ function hideNotification() {
 }
 
 function fetchUserRole() {
-  fetch("/article/getRole")
+  fetch("/admin/article/getRole")
     .then(res => res.json())
     .then(data => {
       // giả sử API trả về { "role": 1 } hoặc { "role": 0 }
@@ -336,7 +336,7 @@ document.addEventListener("click", async e => {
     sendBtn.addEventListener("click", () => {
       const replyText = textarea.value.trim();
       if(replyText){
-        fetch("/article/replyComment", {
+        fetch("/admin/article/replyComment", {
           method: "POST",
           headers: {"Content-Type": "application/x-www-form-urlencoded"},
           body: `article_id=${articleId}&parent_id=${id}&text=${encodeURIComponent(replyText)}`
@@ -387,7 +387,7 @@ document.addEventListener("click", e => {
     const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
     const newText = commentDiv.querySelector(".edit-textarea").value;
 
-    fetch("/article/editComment", {
+    fetch("/admin/article/editComment", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: "comment_id=" + encodeURIComponent(commentId) +
@@ -420,7 +420,7 @@ document.addEventListener("click", e => {
     const commentId = btn.dataset.id;
 
     if(confirm("Bạn có chắc muốn xóa bình luận này?")){
-      fetch("/article/deleteComment", {
+      fetch("/admin/article/deleteComment", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "comment_id=" + encodeURIComponent(commentId)
@@ -500,7 +500,7 @@ document.getElementById("commentForm").addEventListener("submit", async e => {
   const text = textarea.value.trim();
   if (text) {
     try {
-      const response = await fetch("/article/addComment", {
+      const response = await fetch("/admin/article/addComment", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `article_id=${articleId}&text=${encodeURIComponent(text)}`

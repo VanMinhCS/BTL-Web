@@ -189,7 +189,7 @@
                                 </form>
                             </div>
                         </div>
-                        <!-- profile info & task notification -->
+                        <!-- task notification -->
                         <div class="col-md-6 col-sm-4 clearfix">
                             <ul class="notification-area float-end">
                                 <li id="full-view"><i class="ti-fullscreen"></i></li>
@@ -220,24 +220,6 @@
                                                 <div class="notify-text">
                                                     <p>Some special like you</p>
                                                     <span>Just Now</span>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="dropdown">
-                                    <i class="fa-regular fa-envelope dropdown-toggle" data-bs-toggle="dropdown"><span>3</span></i>
-                                    <div class="dropdown-menu notify-box nt-enveloper-box">
-                                        <span class="notify-title">You have 3 new notifications <a href="#">view all</a></span>
-                                        <div class="notify-list">
-                                            <a href="#" class="notify-item">
-                                                <div class="notify-thumb">
-                                                    <picture><source srcset="/assets/srtdash-admin-dashboard/srtdash/assets/images/author/author-img1.avif" type="image/avif"><img src="/assets/srtdash-admin-dashboard/srtdash/assets/images/author/author-img1.jpg" alt="image"></picture>
-                                                </div>
-                                                <div class="notify-text">
-                                                    <p>Aglae Mayer</p>
-                                                    <span class="msg">Hey I am waiting for you...</span>
-                                                    <span>3:15 PM</span>
                                                 </div>
                                             </a>
                                         </div>
@@ -349,80 +331,62 @@
         <!-- offset area start -->
         <div class="offset-area">
             <div class="offset-close"><i class="ti-close"></i></div>
-            <ul class="nav offset-menu-tab">
-                <li><a class="active" data-bs-toggle="tab" href="#activity">Activity</a></li>
-                <li><a data-bs-toggle="tab" href="#settings">Settings</a></li>
-            </ul>
             <div class="offset-content tab-content">
-                <div id="activity" class="tab-pane fade in show active">
-                    <div class="recent-activity">
-                        <div class="timeline-task">
-                            <div class="icon bg1">
-                                <i class="fa-solid fa-envelope"></i>
-                            </div>
-                            <div class="tm-title">
-                                <h4>Rashed sent you an email</h4>
-                                <span class="time"><i class="ti-time"></i>09:35</span>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse distinctio itaque at.
-                            </p>
-                        </div>
-                        <div class="timeline-task">
-                            <div class="icon bg2">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <div class="tm-title">
-                                <h4>Added</h4>
-                                <span class="time"><i class="ti-time"></i>7 Minutes Ago</span>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet consectetur.
-                            </p>
-                        </div>
-                        <div class="timeline-task">
-                            <div class="icon bg2">
-                                <i class="fa-solid fa-exclamation-triangle"></i>
-                            </div>
-                            <div class="tm-title">
-                                <h4>You missed you Password!</h4>
-                                <span class="time"><i class="ti-time"></i>09:20 Am</span>
-                            </div>
-                        </div>
-                        <div class="timeline-task">
-                            <div class="icon bg3">
-                                <i class="fa-solid fa-bomb"></i>
-                            </div>
-                            <div class="tm-title">
-                                <h4>Member waiting for you Attention</h4>
-                                <span class="time"><i class="ti-time"></i>09:35</span>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse distinctio itaque at.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div id="settings" class="tab-pane fade">
+                <div id="settings" class="tab-pane fade active show">
                     <div class="offset-settings">
                         <h4>General Settings</h4>
                         <div class="settings-list">
+                            <!-- Nút chính -->
                             <div class="s-settings">
                                 <div class="s-sw-title">
-                                    <h5>Notifications</h5>
+                                    <h5>Thông báo</h5>
                                     <div class="s-swtich">
-                                        <input type="checkbox" id="switch1" />
-                                        <label for="switch1">Toggle</label>
+                                        <input type="checkbox" id="switch-main">
+                                        <label for="switch-main">Bật/Tắt</label>
                                     </div>
                                 </div>
-                                <p>Keep it 'On' When you want to get all the notification.</p>
+                                <p>Bật để nhận tất cả thông báo.</p>
                             </div>
+
+                            <!-- Các nút con -->
                             <div class="s-settings">
                                 <div class="s-sw-title">
-                                    <h5>Show recent activity</h5>
+                                    <h5>Bình luận</h5>
                                     <div class="s-swtich">
-                                        <input type="checkbox" id="switch2" />
-                                        <label for="switch2">Toggle</label>
+                                        <input type="checkbox" id="switch-comment" disabled>
+                                        <label for="switch-comment">Nhận thông báo bình luận</label>
                                     </div>
                                 </div>
-                                <p>The for attribute is necessary to bind our custom checkbox with the input.</p>
+                            </div>
+
+                            <div class="s-settings">
+                                <div class="s-sw-title">
+                                    <h5>Phản hồi</h5>
+                                    <div class="s-swtich">
+                                        <input type="checkbox" id="switch-reply" disabled>
+                                        <label for="switch-reply">Nhận thông báo phản hồi</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="s-settings">
+                                <div class="s-sw-title">
+                                    <h5>Chỉnh sửa</h5>
+                                    <div class="s-swtich">
+                                        <input type="checkbox" id="switch-edit" disabled>
+                                        <label for="switch-edit">Nhận thông báo chỉnh sửa</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="s-settings">
+                                <div class="s-sw-title">
+                                    <h5>Bình chọn</h5>
+                                    <div class="s-swtich">
+                                        <input type="checkbox" id="switch-vote" disabled>
+                                        <label for="switch-vote">Nhận thông báo bình chọn</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

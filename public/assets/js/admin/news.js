@@ -164,6 +164,35 @@ document.addEventListener("click", function(e) {
   }
 });
 
+document.getElementById("searchForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const keyword = document.getElementById("searchInput").value.trim();
+
+  // Luôn gọi fetchNews với keyword, nếu rỗng thì load toàn bộ
+  fetchNews(1, keyword);
+});
+
+document.getElementById("addArticleBtn").addEventListener("click", function(e){
+  e.preventDefault(); // chặn chuyển trang ngay lập tức
+
+  // gọi API tạo bài viết mới (ví dụ)
+  fetch("/admin/news/create", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "title=Bài viết mới" // tuỳ theo backend
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success){
+      showNotification("Thêm bài viết thành công");
+      // reload danh sách
+      fetchNews();
+    } else {
+      showNotification("Thêm bài viết thất bại");
+    }
+  });
+});
+
 document.addEventListener("DOMContentLoaded", async function() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
@@ -190,14 +219,6 @@ document.addEventListener("DOMContentLoaded", async function() {
       console.error("Lỗi khi tải bài viết:", error);
     }
   }
-});
-
-document.getElementById("searchForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const keyword = document.getElementById("searchInput").value.trim();
-
-  // Luôn gọi fetchNews với keyword, nếu rỗng thì load toàn bộ
-  fetchNews(1, keyword);
 });
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -238,23 +259,112 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-document.getElementById("addArticleBtn").addEventListener("click", function(e){
-  e.preventDefault(); // chặn chuyển trang ngay lập tức
+function loadNotifications(){
+    fetch("/admin/news/getNotifications")
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            const bellCount = document.querySelector(".ti-bell span");
+            bellCount.textContent = data.count > 99 ? "+99" : data.count;
 
-  // gọi API tạo bài viết mới (ví dụ)
-  fetch("/admin/news/create", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "title=Bài viết mới" // tuỳ theo backend
-  })
-  .then(res => res.json())
-  .then(data => {
-    if(data.success){
-      showNotification("Thêm bài viết thành công");
-      // reload danh sách
-      fetchNews();
-    } else {
-      showNotification("Thêm bài viết thất bại");
-    }
-  });
+            const notifyTitle = document.querySelector(".notify-title");
+            notifyTitle.innerHTML = data.count > 0
+                ? `Bạn có ${data.count} thông báo mới <a href="#">xem tất cả</a>`
+                : `Bạn không có thông báo mới <a href="#">xem tất cả</a>`;
+
+            const list = document.querySelector(".notify-list");
+            list.innerHTML = "";
+            data.notifications.forEach(n => {
+                const item = document.createElement("a");
+                item.href = "#";
+                item.className = "notify-item";
+                item.dataset.id = n.id;
+                item.innerHTML = `
+                    <div class="notify-thumb"><i class="ti-info bg-info"></i></div>
+                    <div class="notify-text">
+                        <p>${n.message ?? "Thông báo mới"}</p>
+                        <span>${n.created_at}</span>
+                    </div>`;
+                item.addEventListener("click", function(e){
+                    e.preventDefault();
+                    fetch("/admin/news/markRead", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "id=" + this.dataset.id
+                    }).then(() => loadNotifications());
+                });
+                list.appendChild(item);
+            });
+        }
+    });
+}
+
+
+// Gọi ngay khi trang vừa load
+document.addEventListener("DOMContentLoaded", function(){
+    loadNotifications(); // chạy ngay khi load trang
+    setInterval(loadNotifications, 1000); // polling mỗi 1 phút
 });
+
+// nút read all
+document.querySelector(".notify-title a").addEventListener("click", function(e){
+    e.preventDefault();
+    fetch("/admin/notification/markAllRead", {
+        method: "POST"
+    }).then(() => loadNotifications());
+});
+
+
+document.addEventListener("DOMContentLoaded", function(){
+    const mainSwitch = document.getElementById("switch-main");
+    const subSwitches = {
+        comment: document.getElementById("switch-comment"),
+        reply: document.getElementById("switch-reply"),
+        edit: document.getElementById("switch-edit"),
+        vote: document.getElementById("switch-vote")
+    };
+
+    // Load settings từ DB
+    fetch("/admin/news/getNotificationSettings")
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            mainSwitch.checked = data.is_enabled == 1;
+            subSwitches.comment.checked = data.enable_comment == 1;
+            subSwitches.reply.checked   = data.enable_reply == 1;
+            subSwitches.edit.checked    = data.enable_edit == 1;
+            subSwitches.vote.checked    = data.enable_vote == 1;
+
+            // nếu nút chính tắt thì disable các nút con
+            Object.values(subSwitches).forEach(sw => sw.disabled = !mainSwitch.checked);
+        }
+    });
+
+    // Khi bật/tắt nút chính
+    mainSwitch.addEventListener("change", function(){
+        const enabled = this.checked;
+        Object.values(subSwitches).forEach(sw => sw.disabled = !enabled);
+        saveSettings();
+    });
+
+    // Khi bật/tắt nút con
+    Object.values(subSwitches).forEach(sw => {
+        sw.addEventListener("change", saveSettings);
+    });
+
+    function saveSettings(){
+        const data = new URLSearchParams();
+        data.append("enable_notifications", mainSwitch.checked ? 1 : 0);
+        data.append("enable_comment", subSwitches.comment.checked ? 1 : 0);
+        data.append("enable_reply", subSwitches.reply.checked ? 1 : 0);
+        data.append("enable_edit", subSwitches.edit.checked ? 1 : 0);
+        data.append("enable_vote", subSwitches.vote.checked ? 1 : 0);
+
+        fetch("/admin/news/updateNotificationSettings", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: data.toString()
+        });
+    }
+});
+

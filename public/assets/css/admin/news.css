@@ -11,3 +11,11 @@
 #notification-timer {
   height: 8px;        /* thanh timer dày hơn */
 }
+
+.btn-group{
+  z-index: 0;
+}
+
+.offset-settings h4 {
+  margin-top: 40px; /* đẩy xuống 20px */
+}
