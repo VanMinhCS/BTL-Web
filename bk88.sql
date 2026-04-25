@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 23, 2026 at 04:04 PM
+-- Generation Time: Apr 24, 2026 at 06:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -66,7 +66,20 @@ CREATE TABLE `articles` (
 --
 
 INSERT INTO `articles` (`id_article`, `title`, `description`, `time_modified`, `status`, `content`, `background`) VALUES
-(1, 'Bài viết mẫu BK88', 'Giới thiệu', '2026-04-15 09:35:06', 1, 'Nội dung thử nghiệm...', '../../assets/img/mountain.jpg');
+(1, 'bk888', 'Giới thiệu', '2026-04-24 15:01:07', 1, '<ol><li data-list=\"ordered\"><span class=\"ql-ui\" contenteditable=\"false\"></span><u>sdsddsds</u></li></ol>', '/assets/img/article/mountain(2).jpg'),
+(2, 'Khuyến mãi mùa hè', 'Giảm giá đặc biệt', '2026-04-24 11:21:22', 1, 'Nội dung khuyến mãi chi tiết...', '../../assets/img/summer.jpg'),
+(4, 'Mẹo sức khỏe', 'Ăn uống lành mạnh', '2026-04-24 11:21:22', 1, 'Hướng dẫn chế độ ăn uống...', '../../assets/img/health.jpg'),
+(5, 'Du lịch Đà Lạt', 'Trải nghiệm núi rừng', '2026-04-24 11:21:22', 1, 'Review chuyến đi Đà Lạt...', '../../assets/img/dalat.jpg'),
+(9, 'Ẩm thực Việt', 'Món ngon ba miền', '2026-04-24 11:37:21', 1, 'Giới thiệu các món ăn truyền thống...', '../../assets/img/food.jpg'),
+(10, 'Thời trang 2026', 'Xu hướng mới', '2026-04-24 11:37:21', 1, 'Phong cách thời trang hiện đại...', '../../assets/img/fashion.jpg'),
+(11, 'Du lịch Phú Quốc', 'Trải nghiệm biển đảo', '2026-04-24 11:37:21', 1, 'Review chuyến đi Phú Quốc...', '../../assets/img/phuquoc.jpg'),
+(12, 'Công nghệ AI', 'Ứng dụng trong đời sống', '2026-04-24 11:37:21', 1, 'AI đang thay đổi mọi lĩnh vực...', '../../assets/img/ai.jpg'),
+(13, 'Sức khỏe cộng đồng', 'Phòng chống dịch bệnh', '2026-04-24 11:37:21', 1, 'Các biện pháp phòng chống dịch...', '../../assets/img/health2.jpg'),
+(14, 'Giáo dục hiện đại', 'Đổi mới phương pháp học', '2026-04-24 11:37:21', 1, 'Ứng dụng công nghệ trong giáo dục...', '../../assets/img/education.jpg'),
+(15, 'Âm nhạc trẻ', 'Top hit 2026', '2026-04-24 11:37:21', 1, 'Danh sách bài hát hot nhất...', '../../assets/img/music.jpg'),
+(16, 'Bài viết mới', '', '2026-04-24 15:24:08', 0, '', ''),
+(17, 'Bài viết mới', '', '2026-04-24 15:24:14', 0, '', ''),
+(18, 'đ', 'ds', '2026-04-24 16:11:26', 0, '<p><br></p>', '/assets/img/article/mountain(9).jpg');
 
 -- --------------------------------------------------------
 
@@ -119,7 +132,8 @@ INSERT INTO `comments` (`id_comment`, `id_article`, `id_user`, `text`, `date_mod
 (101, 1, 6, 'hello', '2026-04-23 07:49:12', 0, 99),
 (105, 1, 6, 'đa', '2026-04-23 09:47:38', 0, NULL),
 (106, 1, 6, 'đe', '2026-04-23 09:51:10', 1, 105),
-(107, 1, 5, 'hay', '2026-04-23 12:16:38', 0, NULL);
+(107, 1, 5, 'hay', '2026-04-23 12:16:38', 0, NULL),
+(109, 1, 5, 'd', '2026-04-24 13:40:50', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -150,7 +164,8 @@ INSERT INTO `comment_votes` (`id`, `comment_id`, `user_id`, `vote`) VALUES
 (70, 82, 1, 'dislike'),
 (86, 98, 1, 'dislike'),
 (110, 102, 6, 'dislike'),
-(122, 106, 5, 'like');
+(125, 106, 5, 'like'),
+(127, 107, 5, 'like');
 
 -- --------------------------------------------------------
 
@@ -281,7 +296,16 @@ INSERT INTO `notifications` (`id`, `type`, `user_id`, `notification_comment_id`,
 (62, 'reply_comment', 6, 15, 0, '2026-04-23 09:49:24', NULL),
 (63, 'edit_comment', 6, 16, 0, '2026-04-23 09:51:10', NULL),
 (64, 'vote_comment', 5, NULL, 0, '2026-04-23 12:16:33', 48),
-(65, 'comment', 5, 17, 0, '2026-04-23 12:16:38', NULL);
+(65, 'comment', 5, 17, 0, '2026-04-23 12:16:38', NULL),
+(66, 'vote_comment', 5, NULL, 0, '2026-04-24 11:10:22', 49),
+(67, 'vote_comment', 5, NULL, 0, '2026-04-24 11:10:23', 50),
+(68, 'vote_comment', 5, NULL, 0, '2026-04-24 11:10:25', 51),
+(69, 'vote_comment', 5, NULL, 0, '2026-04-24 11:10:28', 52),
+(70, 'vote_comment', 5, NULL, 0, '2026-04-24 11:10:30', 53),
+(71, 'vote_comment', 5, NULL, 0, '2026-04-24 11:10:35', 54),
+(72, 'vote_comment', 5, NULL, 0, '2026-04-24 11:11:07', 55),
+(75, 'vote_comment', 5, NULL, 0, '2026-04-24 11:14:22', 56),
+(76, 'comment', 5, 20, 0, '2026-04-24 13:40:50', NULL);
 
 -- --------------------------------------------------------
 
@@ -315,7 +339,8 @@ INSERT INTO `notification_comment` (`id`, `article_id`, `comment_id`, `content`,
 (14, 1, 105, 'đa', NULL, '2026-04-23 09:47:38'),
 (15, 1, 106, 'de', 105, '2026-04-23 09:49:24'),
 (16, 1, 106, 'đe', 105, '2026-04-23 09:51:10'),
-(17, 1, 107, 'hay', NULL, '2026-04-23 12:16:38');
+(17, 1, 107, 'hay', NULL, '2026-04-23 12:16:38'),
+(20, 1, 109, 'd', NULL, '2026-04-24 13:40:50');
 
 -- --------------------------------------------------------
 
@@ -382,7 +407,15 @@ INSERT INTO `notification_vote_comment` (`id`, `comment_id`, `article_id`, `vote
 (45, 100, 1, 'like', '2026-04-23 09:40:51'),
 (46, 100, 1, 'dislike', '2026-04-23 09:44:01'),
 (47, 100, 1, 'like', '2026-04-23 09:44:02'),
-(48, 106, 1, 'like', '2026-04-23 12:16:33');
+(48, 106, 1, 'like', '2026-04-23 12:16:33'),
+(49, 107, 1, 'dislike', '2026-04-24 11:10:22'),
+(50, 107, 1, 'like', '2026-04-24 11:10:23'),
+(51, 107, 1, 'dislike', '2026-04-24 11:10:25'),
+(52, 106, 1, 'like', '2026-04-24 11:10:28'),
+(53, 106, 1, 'like', '2026-04-24 11:10:30'),
+(54, 107, 1, 'like', '2026-04-24 11:10:35'),
+(55, 107, 1, 'like', '2026-04-24 11:11:07'),
+(56, 107, 1, 'like', '2026-04-24 11:14:22');
 
 -- --------------------------------------------------------
 
@@ -663,19 +696,19 @@ ALTER TABLE `addresses`
 -- AUTO_INCREMENT for table `articles`
 --
 ALTER TABLE `articles`
-  MODIFY `id_article` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_article` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
+  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
 --
 -- AUTO_INCREMENT for table `comment_votes`
 --
 ALTER TABLE `comment_votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
 
 --
 -- AUTO_INCREMENT for table `information`
@@ -693,19 +726,19 @@ ALTER TABLE `items`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT for table `notification_comment`
 --
 ALTER TABLE `notification_comment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `notification_vote_comment`
 --
 ALTER TABLE `notification_vote_comment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `orders`
