@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="utf-8">
-        <title>Notifications - SRTdash Admin</title>
+        <title>Article - SRTdash Admin</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Notification center with filterable alerts, messages, and system updates.">
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,6 +22,7 @@
         <link rel="stylesheet" href="/assets/srtdash-admin-dashboard/srtdash/assets/css/default-css.css">
         <link rel="stylesheet" href="/assets/srtdash-admin-dashboard/srtdash/assets/css/styles.css">
         <link rel="stylesheet" href="/assets/srtdash-admin-dashboard/srtdash/assets/css/responsive.css">
+        <link rel="stylesheet" href="/assets/css/admin/news.css">
     </head>
 
     <body>
@@ -283,42 +284,53 @@
                     <div class="row mt-4">
                         <div class="col-12">
 
-                            <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h4 class="header-title">Danh sách bài viết</h4>
-                                <a href="article-new.php" class="btn btn-sm btn-success">Thêm bài viết</a>
-                                </div>
+                        <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="header-title">Danh sách bài viết</h4>
+                            <div class="d-flex align-items-center">
+                                <div class="btn-group me-2" role="group" aria-label="Toggle buttons">
+                                <input type="radio" class="btn-check" name="options" id="optionArticles" autocomplete="off" checked>
+                                <label class="btn btn-outline-primary" for="optionArticles">Bài viết</label>
 
-                                <!-- article 1 -->
-                                <div class="article-entry d-flex align-items-start p-3 border-bottom">
-                                <div class="me-3">
-                                    <i class="ti-file bg-primary" style="height:45px;width:45px;line-height:45px;display:block;border-radius:50%;text-align:center;color:#fff;font-size:18px;"></i>
+                                <input type="radio" class="btn-check" name="options" id="optionReviews" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="optionReviews">Đánh giá</label>
                                 </div>
-                                <div class="flex-grow-1 article-content">
-                                    <h6 class="mb-1">Giới thiệu về SRTdash</h6>
-                                    <p class="text-muted mb-1">Bài viết hướng dẫn cách sử dụng template SRTdash trong dự án quản trị...</p>
-                                    <small class="text-muted">Đăng ngày: 10/04/2026</small>
-                                </div>
-                                <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='article-edit.php?id=1'">Edit</button>
-                                <button class="btn btn-sm btn-outline-secondary toggle-btn">Hide</button>
-                                </div>
+                                <button id="addArticleBtn" class="btn btn-sm btn-success">Thêm bài viết</button>
+                            </div>
+                            </div>
 
+                            <form id="searchForm" class="d-flex mb-3" role="search">
+                                <input id="searchInput" class="form-control me-2" type="search" placeholder="Tìm bài viết..." aria-label="Search">
+                                <button class="btn btn-outline-primary" type="submit">Tìm</button>
+                            </form>
 
-                                    <!-- article 2 -->
-                                    <div class="article-entry d-flex align-items-start p-3 border-bottom">
-                                    <div class="me-3">
-                                        <i class="ti-file bg-success" style="height:45px;width:45px;line-height:45px;display:block;border-radius:50%;text-align:center;color:#fff;font-size:18px;"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1">Quản lý người dùng</h6>
-                                        <p class="text-muted mb-1">Hướng dẫn tạo, sửa, phân quyền người dùng trong hệ thống...</p>
-                                        <small class="text-muted">Đăng ngày: 09/04/2026</small>
-                                    </div>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='article-edit.php?id=2'">Edit</button>
-                                    </div>
-                                </div>
-                                </div>
+                            <!-- Nút bật chế độ chọn nhiều -->
+                            <button id="toggle-bulk" class="btn btn-sm btn-outline-dark mb-3">Select Multiple</button>
+
+                            <!-- Panel thông báo -->
+                            <div id="notification-panel" class="alert alert-success position-fixed top-0 start-50 translate-middle-x d-none"
+                                style="z-index:1050; width:400px;">
+                            <span id="notification-message"></span>
+                            <button type="button" class="btn-close float-end" aria-label="Close"></button>
+                            <div id="notification-timer" style="height:4px;background:#28a745;margin-top:8px;"></div>
+                            </div>
+
+                            <!-- Nút thao tác hàng loạt -->
+                            <div id="bulk-actions" class="mb-3 d-none">
+                            <button id="bulk-delete" class="btn btn-sm btn-danger me-2">Delete Selected</button>
+                            <button id="bulk-hide" class="btn btn-sm btn-secondary me-2">Hide Selected</button>
+                            <button id="bulk-show" class="btn btn-sm btn-success">Show Selected</button>
+                            </div>
+
+                            <div id="article-list"></div>
+
+                            <div class="d-flex justify-content-center mt-3">
+                                <ul id="pagination" class="pagination"></ul>
+                            </div>
+
+                        </div>
+                        </div>
 
                         </div>
                     </div>
@@ -506,23 +518,7 @@
                 });
             }
         })();
-        
-        document.addEventListener("click", function(e) {
-        if(e.target.classList.contains("toggle-btn")){
-            const btn = e.target;
-
-            if(btn.textContent === "Hide"){
-            btn.textContent = "Show";
-            btn.classList.remove("btn-outline-secondary");
-            btn.classList.add("btn-outline-danger"); // đổi sang màu đỏ
-            } else {
-            btn.textContent = "Hide";
-            btn.classList.remove("btn-outline-danger");
-            btn.classList.add("btn-outline-secondary"); // đổi lại màu gốc
-            }
-        }
-        });
-
+    
         </script>
         <!-- Google Analytics 4 -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -532,6 +528,7 @@
             gtag("js", new Date());
             gtag("config", "G-XXXXXXXXXX");
         </script>
+        <script src="/assets/js/admin/news.js"></script>
     </body>
-    <script src="../../../public/assets/js/admin/news.js"></script>
+  
     </html>
