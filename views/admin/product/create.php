@@ -16,6 +16,13 @@
                                 <input class="form-control" type="text" name="item_name" id="item_name" placeholder="Ví dụ: Lập trình Web" required>
                             </div>
                         </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="cost_price" class="col-form-label">Giá vốn (VNĐ) <span class="text-danger">*</span></label>
+                                <input class="form-control" type="number" name="cost_price" id="cost_price" placeholder="Giá nhập hàng" required>
+                            </div>
+                        </div>
                         
                         <div class="col-md-3">
                             <div class="form-group">

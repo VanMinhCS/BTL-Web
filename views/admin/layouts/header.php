@@ -80,7 +80,7 @@
                             ?>
                             <li class="<?php echo $isProduct ? 'active mm-active' : ''; ?>">
                                 <a href="javascript:void(0)" aria-expanded="<?php echo $isProduct ? 'true' : 'false'; ?>">
-                                    <i class="ti-layout-grid2"></i><span>Sản phẩm</span>
+                                    <i class="ti-layout-grid2"></i><span>Cửa hàng</span>
                                 </a>
                                 
                                 <ul class="collapse <?php echo $isProduct ? 'show mm-collapse mm-show' : ''; ?>">
@@ -99,12 +99,6 @@
                                         <a href="<?php echo BASE_URL; ?>admin/product/create">Thêm giáo trình mới</a>
                                     </li>
                                 </ul>
-                            </li>
-
-                            <li class="<?php echo ($current == 'order') ? 'active' : ''; ?>">
-                                <a href="<?php echo BASE_URL; ?>admin/order">
-                                    <i class="ti-receipt"></i><span>Quản lý đơn hàng</span>
-                                </a>
                             </li>
                             
                             <li class="<?php echo ($current == 'user') ? 'active' : ''; ?>">

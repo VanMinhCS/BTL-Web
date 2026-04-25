@@ -22,10 +22,16 @@ class ProductController extends Controller {
     }
 
     public function overview() {
-        $data['title'] = "Tổng quan sản phẩm - Admin";
-        $data['currentPage'] = 'product_overview'; // Báo cho header biết đang ở trang Tổng quan
+        require_once __DIR__ . '/../../models/ProductModel.php';
+        $productModel = new ProductModel();
         
-        // Gọi View giao diện Tổng quan
+        // Lấy dữ liệu thật từ DB
+        $data['stats'] = $productModel->getDashboardStats();
+        $data['topSelling'] = $productModel->getTopSelling();
+        $data['recentOrders'] = $productModel->getRecentOrders();
+        
+        $data['title'] = "Tổng quan sản phẩm - Admin";
+        $data['currentPage'] = 'product_overview';
         $this->view('admin/product/overview', $data);
     }
 
@@ -70,6 +76,7 @@ class ProductController extends Controller {
             // 1. Lấy dữ liệu từ Form
             $name = $_POST['item_name'];
             $price = $_POST['price'];
+            $cost_price = $_POST['cost_price'];
             $stock = $_POST['item_stock'];
             $desc = $_POST['description'];
             
@@ -93,7 +100,7 @@ class ProductController extends Controller {
             // 3. Gọi Model để lưu vào DB
             require_once __DIR__ . '/../../models/ProductModel.php';
             $productModel = new ProductModel();
-            $result = $productModel->insertProduct($name, $stock, $desc, $price, $image_name);
+            $result = $productModel->insertProduct($name, $stock, $desc, $price, $cost_price, $image_name);
 
             if ($result) {
                 // Thành công thì quay về danh sách
@@ -101,6 +108,80 @@ class ProductController extends Controller {
             } else {
                 die("Lỗi khi thêm giáo trình!");
             }
+        }
+    }
+
+    public function getChartData() {
+        header('Content-Type: application/json');
+        
+        // Nhận dải thời gian (mặc định 24h) và loại biểu đồ (mặc định revenue)
+        $range = $_GET['range'] ?? '24h'; 
+        $type = $_GET['type'] ?? 'revenue';
+        
+        require_once __DIR__ . '/../../models/ProductModel.php';
+        $productModel = new ProductModel();
+        
+        // Gọi hàm mới vừa tạo
+        $result = $productModel->getDynamicChartData($type, $range);
+        
+        echo json_encode($result);
+        exit();
+    }
+
+    public function edit() {
+        if (!isset($_GET['id'])) {
+            header("Location: " . BASE_URL . "admin/product");
+            exit;
+        }
+        require_once __DIR__ . '/../../models/ProductModel.php';
+        $productModel = new ProductModel();
+        
+        // Lấy data sản phẩm cũ
+        $data['product'] = $productModel->getProductById($_GET['id']);
+        $data['title'] = "Sửa giáo trình - Admin";
+        $data['currentPage'] = 'product_list'; // Giữ sáng menu "Danh sách"
+        
+        $this->view('admin/product/edit', $data);
+    }
+
+    public function update() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['id'])) {
+            $id = $_GET['id'];
+            $name = $_POST['item_name'];
+            $price = $_POST['price'];
+            $cost_price = $_POST['cost_price'];
+            $stock = $_POST['item_stock'];
+            $desc = $_POST['description'];
+            
+            $image_name = null; // Mặc định là null (không đổi ảnh)
+            
+            // Nếu người dùng chọn file ảnh mới
+            if (isset($_FILES['item_image']) && $_FILES['item_image']['error'] == 0) {
+                $image_name = time() . '_' . $_FILES['item_image']['name'];
+                $target_dir = __DIR__ . '/../../public/assets/img/products/';
+                if (!file_exists($target_dir)) { mkdir($target_dir, 0777, true); }
+                move_uploaded_file($_FILES['item_image']['tmp_name'], $target_dir . $image_name);
+            }
+
+            require_once __DIR__ . '/../../models/ProductModel.php';
+            $productModel = new ProductModel();
+            $result = $productModel->updateProduct($id, $name, $stock, $desc, $price, $cost_price, $image_name);
+
+            if ($result) {
+                header("Location: " . BASE_URL . "admin/product?status=updated");
+            } else {
+                die("Lỗi khi cập nhật!");
+            }
+        }
+    }
+
+    public function delete() {
+        if (isset($_GET['id'])) {
+            require_once __DIR__ . '/../../models/ProductModel.php';
+            $productModel = new ProductModel();
+            $productModel->deleteProduct($_GET['id']);
+            
+            header("Location: " . BASE_URL . "admin/product?status=deleted");
         }
     }
 }
