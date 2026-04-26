@@ -4,7 +4,7 @@
     <div class="col-12 mt-5">
         <div class="card">
             <div class="card-body">
-                <h4 class="header-title">Quản lý Đơn đặt hàng (Workflow)</h4>
+                <h4 class="header-title">Quản lý Đơn đặt hàng</h4>
                 <div class="table-responsive">
                     <table class="table table-hover text-center align-middle">
                         <thead class="bg-light text-capitalize">

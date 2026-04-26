@@ -181,8 +181,17 @@ class OrderDetail extends Database {
     }
 
     public function create() {
+        // 1. Lưu sản phẩm vào chi tiết đơn hàng
         $stmt = $this->conn->prepare("INSERT INTO order_details (order_id, item_id, quantity, price) VALUES (?, ?, ?, ?)");
-        return $stmt->execute([$this->order_id, $this->item_id, $this->quantity, $this->price]);
+        $result = $stmt->execute([$this->order_id, $this->item_id, $this->quantity, $this->price]);
+
+        // 2. TỰ ĐỘNG TRỪ KHO HÀNG
+        if ($result) {
+            $stmtUpdateStock = $this->conn->prepare("UPDATE items SET item_stock = item_stock - ? WHERE item_id = ?");
+            $stmtUpdateStock->execute([$this->quantity, $this->item_id]);
+        }
+
+        return $result;
     }
 
     public function update() {
