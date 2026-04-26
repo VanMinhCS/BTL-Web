@@ -64,8 +64,7 @@ class Order extends Database {
     private $order_date;
     private $status;
     private $is_paid;
-    private $payment_method;
-    private $shipping_fee; // Đã thêm cột phí ship
+    private $shipping_fee;
 
     public function getOrderId() { return $this->order_id; }
     public function setOrderId($id) { $this->order_id = $id; $this->loadById($id); }
@@ -82,9 +81,6 @@ class Order extends Database {
     public function getIsPaid() { return $this->is_paid; }
     public function setIsPaid($paid) { $this->is_paid = $paid; }
 
-    public function getPaymentMethod() { return $this->payment_method; }
-    public function setPaymentMethod($method) { $this->payment_method = $method; }
-
     public function getShippingFee() { return $this->shipping_fee; }
     public function setShippingFee($fee) { $this->shipping_fee = $fee; }
 
@@ -98,20 +94,18 @@ class Order extends Database {
             $this->order_date     = $result['order_date'];
             $this->status         = $result['status'];
             $this->is_paid        = $result['is_paid'];
-            $this->payment_method = $result['payment_method'];
             $this->shipping_fee   = $result['shipping_fee'];
         }
     }
 
     public function create() {
-        $stmt = $this->conn->prepare("INSERT INTO orders (user_id, order_date, status, is_paid, payment_method, shipping_fee) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->payment_method, $this->shipping_fee]);
+        $stmt = $this->conn->prepare("INSERT INTO orders (user_id, order_date, status, is_paid, shipping_fee) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->shipping_fee]);
         return $this->conn->lastInsertId();
     }
-
     public function update() {
-        $stmt = $this->conn->prepare("UPDATE orders SET user_id=?, order_date=?, status=?, is_paid=?, payment_method=?, shipping_fee=? WHERE order_id=?");
-        return $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->payment_method, $this->shipping_fee, $this->order_id]);
+        $stmt = $this->conn->prepare("UPDATE orders SET user_id=?, order_date=?, status=?, is_paid=?, shipping_fee=? WHERE order_id=?");
+        return $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->shipping_fee, $this->order_id]);
     }
 
     public function delete() {

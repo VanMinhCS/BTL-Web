@@ -35,15 +35,33 @@ class ProductController extends Controller {
         $this->view('admin/product/overview', $data);
     }
 
+    // GỌI TRANG DANH SÁCH ĐƠN HÀNG (Đã được cập nhật lấy dữ liệu thật)
     public function order() {
-        $data['title'] = "Quản lý đơn hàng sản phẩm - Admin";
+        require_once __DIR__ . '/../../models/ProductModel.php';
+        $productModel = new ProductModel();
         
-        // Cắm cờ để làm sáng menu Quản lý đơn hàng bên trong Sản phẩm
-        $data['currentPage'] = 'product_order'; 
+        // Gọi Model để lấy toàn bộ dữ liệu đơn hàng
+        $data['orders'] = $productModel->getAllOrders(); 
         
-        // Sau này khi bạn có Dashboard, bạn sẽ tạo file views/admin/product/order.php
-        // Hiện tại mình cứ gọi View này, bạn tạo file trống trước để không bị lỗi 404 nhé
+        $data['title'] = "Quản lý đơn hàng - Admin";
+        $data['currentPage'] = 'product_order'; // Giữ sáng menu Quản lý đơn hàng
+        
         $this->view('admin/product/order', $data);
+    }
+
+    // XỬ LÝ LUỒNG TRẠNG THÁI (WORKFLOW)
+    public function processOrderFlow() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['order_id']) && isset($_POST['next_status'])) {
+            require_once __DIR__ . '/../../models/ProductModel.php';
+            $productModel = new ProductModel();
+            
+            // Đẩy đơn hàng sang bước tiếp theo
+            $productModel->advanceOrderStatus($_POST['order_id'], $_POST['next_status']);
+            
+            // Quay lại trang quản lý
+            header("Location: " . BASE_URL . "admin/product/order?status=updated");
+            exit;
+        }
     }
 
     public function index() {

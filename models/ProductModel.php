@@ -186,5 +186,32 @@ class ProductModel extends Database {
 
         return ['labels' => $labels, 'values' => $values];
     }
+
+    // Lấy toàn bộ danh sách đơn hàng kèm thông tin người mua (Đã lấy thêm shipping_fee)
+    public function getAllOrders() {
+        $sql = "SELECT o.order_id, o.order_date, o.status, o.is_paid, o.shipping_fee, 
+                       u.email, u.phone, 
+                       i.firstname, i.lastname 
+                FROM orders o
+                JOIN users u ON o.user_id = u.user_id
+                LEFT JOIN information i ON u.user_id = i.user_id
+                ORDER BY o.order_date DESC";
+        return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Chuyển đổi trạng thái đơn hàng theo luồng
+    public function advanceOrderStatus($order_id, $status) {
+        // Nếu chuyển sang trạng thái 3 (Hoàn thành), tự động đánh dấu đã thanh toán
+        if ($status == 3) {
+            $sql = "UPDATE orders SET status = :status, is_paid = 1 WHERE order_id = :order_id";
+        } else {
+            $sql = "UPDATE orders SET status = :status WHERE order_id = :order_id";
+        }
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':status', $status, PDO::PARAM_INT);
+        $stmt->bindParam(':order_id', $order_id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
 ?>

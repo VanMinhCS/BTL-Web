@@ -188,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCheckoutState() {
         if (deliveryStore.checked) {
-            // Nhận tại cửa hàng -> Phí ship = 0
             if (shippingMethodCard) shippingMethodCard.style.display = 'none'; 
             if (shippingFeeRow) {
                 shippingFeeRow.classList.remove('d-flex');
@@ -196,8 +195,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             totalPriceDisplay.innerText = formatCurrency(subTotal);
             totalAmountInput.value = subTotal;
+            
+            document.getElementById('shippingStandard').value = 0; 
+            
         } else {
-            // Giao tận nơi -> Phí ship = 22.000
             if (shippingMethodCard) shippingMethodCard.style.display = 'block'; 
             if (shippingFeeRow) {
                 shippingFeeRow.classList.remove('d-none');
@@ -205,6 +206,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             totalPriceDisplay.innerText = formatCurrency(subTotal + shippingFee);
             totalAmountInput.value = subTotal + shippingFee;
+
+            document.getElementById('shippingStandard').value = 22000; 
         }
     }
 
