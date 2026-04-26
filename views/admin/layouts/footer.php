@@ -5,31 +5,70 @@
             </div>
         </footer>
         </div>
-    <div class="offset-area">
-        <div class="offset-close"><i class="ti-close"></i></div>
-        <ul class="nav nav-tabs drive-menu">
-            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#settings">Settings</a></li>
-        </ul>
-        <div class="tab-content">
-            <div id="settings" class="tab-pane fade show active">
-                <div class="offset-settings">
-                    <h4>General Settings</h4>
-                    <div class="settings-list">
-                        <div class="s-settings">
-                            <div class="s-sw-title">
-                                <h5>Notifications</h5>
-                                <div class="s-swtich">
-                                    <input type="checkbox" id="switch1" />
-                                    <label for="switch1">Toggle</label>
+        <div class="offset-area">
+            <div class="offset-close"><i class="ti-close"></i></div>
+            <div class="offset-content tab-content">
+                <div id="settings" class="tab-pane fade active show">
+                    <div class="offset-settings">
+                        <h4>General Settings</h4>
+                        <div class="settings-list">
+                            <!-- Nút chính -->
+                            <div class="s-settings">
+                                <div class="s-sw-title">
+                                    <h5>Thông báo</h5>
+                                    <div class="s-swtich">
+                                        <input type="checkbox" id="switch-main">
+                                        <label for="switch-main">Bật/Tắt</label>
+                                    </div>
+                                </div>
+                                <p>Bật để nhận tất cả thông báo.</p>
+                            </div>
+
+                            <!-- Các nút con -->
+                            <div class="s-settings">
+                                <div class="s-sw-title">
+                                    <h5>Bình luận</h5>
+                                    <div class="s-swtich">
+                                        <input type="checkbox" id="switch-comment" disabled>
+                                        <label for="switch-comment">Nhận thông báo bình luận</label>
+                                    </div>
                                 </div>
                             </div>
-                            <p>Keep it on if you want to receive notifications.</p>
+
+                            <div class="s-settings">
+                                <div class="s-sw-title">
+                                    <h5>Phản hồi</h5>
+                                    <div class="s-swtich">
+                                        <input type="checkbox" id="switch-reply" disabled>
+                                        <label for="switch-reply">Nhận thông báo phản hồi</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="s-settings">
+                                <div class="s-sw-title">
+                                    <h5>Chỉnh sửa</h5>
+                                    <div class="s-swtich">
+                                        <input type="checkbox" id="switch-edit" disabled>
+                                        <label for="switch-edit">Nhận thông báo chỉnh sửa</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="s-settings">
+                                <div class="s-sw-title">
+                                    <h5>Bình chọn</h5>
+                                    <div class="s-swtich">
+                                        <input type="checkbox" id="switch-vote" disabled>
+                                        <label for="switch-vote">Nhận thông báo bình chọn</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/swiper-bundle.min.js"></script>
     <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/metismenujs.min.js"></script>
@@ -49,6 +88,8 @@
     <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/pie-chart.js"></script>
     
     <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/scripts.js"></script>
+
+
 </body>
 
 </html>

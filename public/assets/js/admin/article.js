@@ -181,6 +181,7 @@ function renderComments() {
     const div = document.createElement("div");
     div.className = "comment mb-3 text-start border p-3 rounded";
     div.dataset.commentId = c.id; 
+    div.id = "comment-" + c.id;
     div.innerHTML = `
       <div class="d-flex justify-content-between align-items-center">
         <p class="mb-1">
@@ -258,21 +259,48 @@ function renderComments() {
 function renderPagination(total) {
   const ul = document.getElementById("commentPagination");
   ul.innerHTML = "";
-  const pages = Math.ceil(total/perPage);
-  for(let i=1;i<=pages;i++){
+  const pages = Math.ceil(total / perPage);
+
+  // Hàm tạo item trang
+  function appendPageItem(i) {
     const li = document.createElement("li");
-    li.className = "page-item"+(i===currentPage?" active":"");
+    li.className = "page-item" + (i === currentPage ? " active" : "");
     li.innerHTML = `<a class="page-link" href="javascript:void(0)">${i}</a>`;
-    li.addEventListener("click", ()=>{
+    li.addEventListener("click", () => {
       currentPage = i;
       const url = new URL(window.location);
       url.searchParams.delete("comment");
       url.searchParams.set("page", i);
       window.history.pushState({}, "", url);
-
-      loadComments(i); // gọi lại API để lấy dữ liệu mới
+      loadComments(i);
     });
     ul.appendChild(li);
+  }
+
+  // Hàm tạo dấu ...
+  function appendDots() {
+    const li = document.createElement("li");
+    li.className = "page-item disabled";
+    li.innerHTML = `<span class="page-link">...</span>`;
+    ul.appendChild(li);
+  }
+
+  if (pages <= 3) {
+    // Nếu tổng số trang <= 3 thì hiện hết
+    for (let i = 1; i <= pages; i++) appendPageItem(i);
+  } else {
+    appendPageItem(1); // trang đầu
+
+    if (currentPage > 2) appendDots();
+
+    // hiện trang hiện tại và lân cận
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(pages - 1, currentPage + 1);
+    for (let i = start; i <= end; i++) appendPageItem(i);
+
+    if (currentPage < pages - 1) appendDots();
+
+    appendPageItem(pages); // trang cuối
   }
 }
 
@@ -454,25 +482,35 @@ document.addEventListener("click", e=>{
   }
 });
 
-document.getElementById("commentForm").addEventListener("submit", e => {
+document.getElementById("commentForm").addEventListener("submit", async e => {
   e.preventDefault();
-  if(userRole === "guest") return; // guest không được gửi
+  if (userRole === "guest") return;
 
   const textarea = e.target.querySelector("textarea");
   const text = textarea.value.trim();
-  if(text){
-    const newComment = {
-      id: comments.length+1,
-      user: "Bạn", // giả lập tên người dùng
-      text: text,
-      likes: 0,
-      dislikes: 0,
-      date: new Date().toISOString().split("T")[0] // yyyy-mm-dd
-    };
-    comments.unshift(newComment); // thêm vào đầu danh sách
-    textarea.value = "";
-    currentPage = 1;
-    renderComments();
+  if (text) {
+    try {
+      const response = await fetch("admin/article/addComment", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `article_id=${articleId}&text=${encodeURIComponent(text)}`
+      });
+
+      const raw = await response.text();
+      console.log("Raw response:", raw);
+      const data = JSON.parse(raw);
+
+      if (data.success) {
+        comments.unshift(data.comment); 
+        textarea.value = "";
+        currentPage = 1;
+        renderComments();
+      } else {
+        console.error("Lỗi thêm bình luận:", data.error);
+      }
+    } catch (err) {
+      console.error("Lỗi AJAX:", err);
+    }
   }
 });
 
@@ -634,7 +672,6 @@ document.getElementById("saveDescriptionBtn").addEventListener("click", async fu
     });
     const data = await res.json();
     if(data.success){
-      document.getElementById("articleDescription").textContent = newDescription;
       showNotification("Mô tả đã được cập nhật");
     } else {
       showNotification("Cập nhật mô tả thất bại");

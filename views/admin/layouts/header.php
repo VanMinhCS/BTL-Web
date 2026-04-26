@@ -20,13 +20,24 @@
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/styles.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/responsive.css">
 
+    
     <style>
-        .metismenu > li > a::after {
-            transition: transform 0.3s ease-in-out !important; /* Thời gian xoay 0.3s */
+        /* 1. Ẩn hoàn toàn mũi tên ở những menu KHÔNG có mục con */
+        .metismenu > li > a:not([aria-expanded])::after {
+            display: none !important;
+            content: none !important;
         }
+
+        /* 2. Mặc định mũi tên hướng XUỐNG cho menu CÓ mục con */
+        .metismenu > li > a[aria-expanded]::after {
+            content: '\f107' !important; /* Mã mũi tên xuống */
+            transform: translateY(-10%) rotate(0deg) !important;
+            transition: transform 0.3s ease-in-out !important; /* Xoay mượt 0.3s */
+        }
+
+        /* 3. Khi menu xổ xuống (mở), xoay ngược mũi tên hướng LÊN */
         .metismenu > li > a[aria-expanded="true"]::after {
-            content: '\f107' !important; /* Mã mũi tên xuống của FontAwesome */
-            transform: translateY(-10%) rotate(-180deg) !important; /* Lộn ngược 180 độ */
+            transform: translateY(-10%) rotate(180deg) !important;
         }
     </style>
 </head>
@@ -48,23 +59,67 @@
             <div class="main-menu">
                 <div class="menu-inner">
                     <nav>
+                        <?php 
+                        // SỬA Ở ĐÂY: Bắt biến bằng 2 cách để đảm bảo 100% không bị hụt dữ liệu
+                        $current = '';
+                        if (isset($currentPage)) {
+                            $current = $currentPage;
+                        } elseif (isset($data['currentPage'])) {
+                            $current = $data['currentPage'];
+                        }
+                        ?>
                         <ul class="metismenu" id="menu">
-                            <li>
-                                <a href="<?php echo BASE_URL; ?>admin/dashboard" aria-expanded="false"><i class="ti-dashboard"></i><span>Dashboard</span></a>
+                            
+                            <li class="<?php echo ($current == 'dashboard') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/dashboard">
+                                    <i class="ti-dashboard"></i><span>Dashboard</span>
+                                </a>
                             </li>
                             
-                            <li> <a href="javascript:void(0)" aria-expanded="false"> <i class="ti-layout-grid2"></i><span>Sản phẩm</span></a>
-                                <ul class="collapse"> <li><a href="<?php echo BASE_URL; ?>admin/product">Danh sách giáo trình</a></li>
-                                    <li><a href="<?php echo BASE_URL; ?>admin/product/create">Thêm giáo trình mới</a></li>
+                            <?php 
+                            $isProduct = in_array($current, ['product_overview', 'product_order', 'product_list', 'product_create']); 
+                            ?>
+                            <li class="<?php echo $isProduct ? 'active mm-active' : ''; ?>">
+                                <a href="javascript:void(0)" aria-expanded="<?php echo $isProduct ? 'true' : 'false'; ?>">
+                                    <i class="ti-layout-grid2"></i><span>Cửa hàng</span>
+                                </a>
+                                
+                                <ul class="collapse <?php echo $isProduct ? 'show mm-collapse mm-show' : ''; ?>">
+                                    <li class="<?php echo ($current == 'product_overview') ? 'active' : ''; ?>">
+                                        <a href="<?php echo BASE_URL; ?>admin/product/overview">Tổng quan</a>
+                                    </li>
+
+                                    <li class="<?php echo ($current == 'product_order') ? 'active' : ''; ?>">
+                                        <a href="<?php echo BASE_URL; ?>admin/product/order">Quản lý đơn hàng</a>
+                                    </li>
+
+                                    <li class="<?php echo ($current == 'product_list') ? 'active' : ''; ?>">
+                                        <a href="<?php echo BASE_URL; ?>admin/product">Danh sách giáo trình</a>
+                                    </li>
+                                    <li class="<?php echo ($current == 'product_create') ? 'active' : ''; ?>">
+                                        <a href="<?php echo BASE_URL; ?>admin/product/create">Thêm giáo trình mới</a>
+                                    </li>
                                 </ul>
                             </li>
 
-                            <li>
-                                <a href="<?php echo BASE_URL; ?>admin/order"><i class="ti-receipt"></i><span>Quản lý đơn hàng</span></a>
+                            <li class="<?php echo ($current == 'news') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/news">
+                                    <i class="ti-book"></i><span>Quản lý tin tức</span>
+                                </a>
                             </li>
-                            <li>
-                                <a href="<?php echo BASE_URL; ?>admin/user"><i class="ti-user"></i><span>Quản lý người dùng</span></a>
+
+                            <li class="<?php echo ($current == 'notification') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/notification">
+                                    <i class="ti-bell"></i><span>Quản lý thông báo</span>
+                                </a>
                             </li>
+
+                            <li class="<?php echo ($current == 'user') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/user">
+                                    <i class="ti-user"></i><span>Quản lý người dùng</span>
+                                </a>
+                            </li>
+                            
                         </ul>
                     </nav>
                 </div>
@@ -86,23 +141,25 @@
                             </form>
                         </div>
                     </div>
-                    <div class="col-md-6 col-sm-4 clearfix">
-                        <ul class="notification-area float-end">
-                            <li id="full-view"><i class="ti-fullscreen"></i></li>
-                            <li id="full-view-exit"><i class="ti-zoom-out"></i></li>
-                            <li class="dropdown">
-                                <i class="ti-bell dropdown-toggle" data-bs-toggle="dropdown">
-                                    <span>2</span>
-                                </i>
-                            </li>
-                            <li class="dropdown">
-                                <i class="fa-regular fa-envelope dropdown-toggle" data-bs-toggle="dropdown"><span>3</span></i>
-                            </li>
-                            <li class="settings-btn">
-                                <i class="ti-settings"></i>
-                            </li>
-                        </ul>
-                    </div>
+                        <div class="col-md-6 col-sm-4 clearfix">
+                            <ul class="notification-area float-end">
+                                <li id="full-view"><i class="ti-fullscreen"></i></li>
+                                <li id="full-view-exit"><i class="ti-zoom-out"></i></li>
+                                <li class="dropdown">
+                                    <i class="ti-bell dropdown-toggle" data-bs-toggle="dropdown">
+                                        <span>2</span>
+                                    </i>
+                                    <div class="dropdown-menu bell-notify-box notify-box">
+                                        <span class="notify-title"> <a href="#">view all</a></span>
+                                        <div class="notify-list">
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="settings-btn">
+                                    <i class="ti-settings"></i>
+                                </li>
+                            </ul>
+                        </div>
                 </div>
             </div>
             <div class="page-title-area">

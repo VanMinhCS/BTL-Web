@@ -85,25 +85,100 @@ class Notification extends Model {
         return $stmt->execute([$this->id]);
     }
 
-    public function getUnreadByUser($userId, $limit = 3) {
-        $stmt = $this->getDb()->prepare("
-            SELECT * FROM notifications 
-            WHERE user_id = ? AND is_read = 0 
-            ORDER BY created_at DESC 
+    public function getUnread($limit = 3) {
+        $sql = "
+            SELECT n.id, n.type, n.created_at,
+                n.notification_comment_id,
+                n.notification_vote_comment_id,
+                nc.article_id, nc.comment_id, nc.content AS message,
+                vc.article_id AS vote_article_id, vc.comment_id AS vote_comment_id, vc.vote_type,
+                i.user_id AS id_user, i.firstname, i.lastname
+            FROM notifications n
+            LEFT JOIN notification_comment nc 
+                ON n.notification_comment_id = nc.id
+            LEFT JOIN notification_vote_comment vc 
+                ON n.notification_vote_comment_id = vc.id
+            LEFT JOIN information i 
+                ON n.user_id = i.user_id
+            WHERE n.is_read = 0
+            ORDER BY n.created_at DESC
             LIMIT ?
-        ");
-        $stmt->execute([$userId, $limit]);
+        ";
+        $stmt = $this->getDb()->prepare($sql);
+        $stmt->execute([$limit]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function countUnreadByUser($userId) {
-        $stmt = $this->getDb()->prepare("
-            SELECT COUNT(*) as total 
-            FROM notifications 
-            WHERE user_id = ? AND is_read = 0
-        ");
-        $stmt->execute([$userId]);
-        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    public function countAllUnread() {
+        $sql = "SELECT COUNT(*) FROM notifications WHERE is_read = 0";
+        $stmt = $this->getDb()->query($sql);
+        return (int)$stmt->fetchColumn();
+    }
+
+    public function getAll($page = 1, $itemsPerPage = 5, $keyword = "", $status = "", $type = "", $sort = "desc") {
+        $offset = ($page - 1) * $itemsPerPage;
+        $sql = "
+            SELECT n.id, n.type, n.created_at, n.is_read,
+                nc.article_id, nc.comment_id,
+                vc.article_id AS vote_article_id, vc.comment_id AS vote_comment_id,
+                i.user_id AS id_user, i.firstname, i.lastname
+            FROM notifications n
+            LEFT JOIN notification_comment nc ON n.notification_comment_id = nc.id
+            LEFT JOIN notification_vote_comment vc ON n.notification_vote_comment_id = vc.id
+            LEFT JOIN information i ON n.user_id = i.user_id
+            WHERE 1=1
+        ";
+
+        $params = [];
+
+        if ($status === "read") {
+            $sql .= " AND n.is_read = 1";
+        } elseif ($status === "unread") {
+            $sql .= " AND n.is_read = 0";
+        }
+
+        if ($type !== "") {
+            $sql .= " AND n.type = ?";
+            $params[] = $type;
+        }
+
+        // Thêm điều kiện keyword
+        if ($keyword !== "") {
+            $sql .= " AND (
+                i.firstname LIKE ? 
+                OR i.lastname LIKE ? 
+                OR n.type LIKE ? 
+                OR nc.article_id LIKE ? 
+                OR nc.comment_id LIKE ?
+            )";
+            $kw = "%$keyword%";
+            $params[] = $kw;
+            $params[] = $kw;
+            $params[] = $kw;
+            $params[] = $kw;
+            $params[] = $kw;
+        }
+
+        $sql .= " ORDER BY n.created_at " . ($sort === "asc" ? "ASC" : "DESC");
+        $sql .= " LIMIT ? OFFSET ?";
+        $params[] = $itemsPerPage;
+        $params[] = $offset;
+
+        $stmt = $this->getDb()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAll($keyword = "") {
+        $sql = "SELECT COUNT(*) FROM notifications";
+        $stmt = $this->getDb()->query($sql);
+        $count = (int)$stmt->fetchColumn();
+
+        if ($keyword !== "") {
+            $all = $this->getAll(1, $count, $keyword);
+            return count($all);
+        }
+        return $count;
     }
 
     public function markAsRead($id) {
@@ -111,9 +186,9 @@ class Notification extends Model {
         return $stmt->execute([$id]);
     }
 
-    public function markAllAsRead($userId) {
-        $stmt = $this->getDb()->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ?");
-        return $stmt->execute([$userId]);
+    public function markAllAsRead() {
+        $stmt = $this->getDb()->prepare("UPDATE notifications SET is_read = 1");
+        return $stmt->execute();
     }
 
     private function getUserFullName($userId) {
@@ -125,6 +200,7 @@ class Notification extends Model {
         }
         return "Người dùng #$userId";
     }
+    
     private function getArticleIdFromComment($commentId) {
         $stmt = $this->getDb()->prepare("SELECT article_id FROM notification_comment WHERE id=?");
         $stmt->execute([$commentId]);
@@ -140,7 +216,7 @@ class Notification extends Model {
     }
 
     public function map($notification) {
-        $userName = $this->getUserFullName($notification['user_id']);
+        $userName = $this->getUserFullName($notification['id_user']);
         $articleId = null;
 
         if (!empty($notification['notification_comment_id'])) {
@@ -163,6 +239,23 @@ class Notification extends Model {
                 return "$userName có hoạt động mới trong bài viết $articleId";
         }
     }
+
+    public function deleteNotifications($ids) {
+        if (empty($ids)) return false;
+        $in  = str_repeat('?,', count($ids) - 1) . '?';
+        $sql = "DELETE FROM notifications WHERE id IN ($in)";
+        $stmt = $this->getDb()->prepare($sql);
+        return $stmt->execute($ids);
+    }
+
+    public function markAsReadMultiple($ids) {
+        if (empty($ids)) return false;
+        $in  = str_repeat('?,', count($ids) - 1) . '?';
+        $sql = "UPDATE notifications SET is_read = 1 WHERE id IN ($in)";
+        $stmt = $this->getDb()->prepare($sql);
+        return $stmt->execute($ids);
+    }
+
 }
 
 class NotificationComment extends Model {

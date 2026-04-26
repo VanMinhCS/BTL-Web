@@ -37,7 +37,17 @@ class ArticleController extends Controller {
             die("View không tồn tại: " . $fullPath);
         }
     }
-    
+
+    public function getRole() {
+        // session đã được khởi tạo trong __construct()
+        $role = $_SESSION['user_role'] ?? null;
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            "role" => $role
+        ]);
+    }
+
     public function getArticle() {
         require_once __DIR__ . "/../../models/Article.php";
         $articleModel = new Article();
@@ -326,22 +336,17 @@ class ArticleController extends Controller {
     public function updateDescription() {
         require_once __DIR__ . "/../../models/Article.php";
 
-        $id          = $_POST['id'] ?? null;
-        $description = $_POST['description'] ?? '';
-
-        if(!$id){
-            echo json_encode(["success"=>false,"message"=>"Thiếu id bài viết"]);
-            return;
-        }
+        $id    = intval($_POST['id']);
+        $description = $_POST['description'];
 
         $article = new Article();
         $article->setIdArticle($id);
         $article->setDescription($description);
 
         if($article->update()){
-            echo json_encode(["success"=>true,"message"=>"Cập nhật mô tả thành công"]);
+            echo json_encode(["success"=>true, "description"=>$description]);
         } else {
-            echo json_encode(["success"=>false,"message"=>"Cập nhật mô tả thất bại"]);
+            echo json_encode(["success"=>false]);
         }
     }
 

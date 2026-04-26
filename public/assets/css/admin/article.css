@@ -89,6 +89,7 @@ textarea.form_area {
   max-width: 600px;   /* rộng hơn */
   font-size: 1.2rem;  /* chữ to hơn */
   padding: 20px;      /* khoảng cách trong */
+  z-index: 20;
 }
 
 #notification-message {
@@ -97,4 +98,8 @@ textarea.form_area {
 
 #notification-timer {
   height: 8px;        /* thanh timer dày hơn */
+}
+
+.modal-content{
+  z-index: 10;
 }
