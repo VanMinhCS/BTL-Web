@@ -49,6 +49,32 @@ class ProductController extends Controller {
         $this->view('admin/product/order', $data);
     }
 
+    // XEM CHI TIẾT ĐƠN HÀNG
+    public function orderDetail() {
+        if (!isset($_GET['id'])) {
+            header("Location: " . BASE_URL . "admin/product/order");
+            exit;
+        }
+
+        require_once __DIR__ . '/../../models/ProductModel.php';
+        $productModel = new ProductModel();
+        
+        $order_id = $_GET['id'];
+        $data['order'] = $productModel->getOrderById($order_id);
+        $data['orderItems'] = $productModel->getOrderItems($order_id);
+        
+        // Nếu ai đó nhập bậy ID không tồn tại trên URL thì đẩy về lại danh sách
+        if (!$data['order']) {
+            header("Location: " . BASE_URL . "admin/product/order");
+            exit;
+        }
+
+        $data['title'] = "Chi tiết đơn hàng #" . $order_id . " - Admin";
+        $data['currentPage'] = 'product_order'; // Giữ sáng menu Quản lý Đơn hàng
+        
+        $this->view('admin/product/orderDetail', $data);
+    }
+
     // XỬ LÝ LUỒNG TRẠNG THÁI (WORKFLOW)
     public function processOrderFlow() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['order_id']) && isset($_POST['next_status'])) {

@@ -238,5 +238,30 @@ class ProductModel extends Database {
 
         return true;
     }
+
+    // Lấy thông tin chung của 1 đơn hàng cụ thể
+    public function getOrderById($order_id) {
+        $sql = "SELECT o.*, u.email, u.phone as user_phone, i.firstname, i.lastname, 
+                       a.street, a.ward, a.city 
+                FROM orders o
+                JOIN users u ON o.user_id = u.user_id
+                LEFT JOIN information i ON u.user_id = i.user_id
+                LEFT JOIN addresses a ON i.address_id = a.address_id
+                WHERE o.order_id = :order_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':order_id' => $order_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Lấy danh sách các giáo trình nằm trong đơn hàng đó
+    public function getOrderItems($order_id) {
+        $sql = "SELECT od.*, i.item_name, i.item_image 
+                FROM order_details od
+                JOIN items i ON od.item_id = i.item_id
+                WHERE od.order_id = :order_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':order_id' => $order_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
