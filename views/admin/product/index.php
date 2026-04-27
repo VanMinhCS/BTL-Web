@@ -3,7 +3,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-                    <h4 class="header-title mb-0">Danh sách giáo trình hiện có</h4>
+                    <h4 class="header-title mb-0">Danh sách sản phẩm</h4>
                     
                     <div class="d-flex gap-2">
                         <div class="input-group input-group-sm" style="max-width: 250px;">

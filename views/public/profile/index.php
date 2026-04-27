@@ -12,14 +12,15 @@
         <h2 class="fw-bold m-0 text-uppercase" style="letter-spacing: 1px;">Tài khoản của tôi</h2>
     </div>
 
-    <h5 class="fw-bold mb-3">Hồ sơ</h5>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold m-0">Hồ sơ</h5>
+        <button class="btn btn-link text-dark fw-bold text-decoration-none p-0" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+            <i class="fas fa-pen me-1"></i> Chỉnh sửa
+        </button>
+    </div>
+    
     <div class="card border mb-5 shadow-sm" style="border-radius: 12px; border-color: #eaeaea !important;">
-        <div class="card-body p-4 position-relative">
-            
-            <button class="btn btn-link text-dark p-0 position-absolute" style="top: 24px; right: 24px;" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                <i class="fas fa-pen"></i>
-            </button>
-
+        <div class="card-body p-4">
             <div class="mb-3">
                 <span class="text-muted small fw-bold d-block mb-1">Họ và Tên</span>
                 <span class="fs-6"><?php echo $fullName ?: 'Chưa cập nhật'; ?></span>

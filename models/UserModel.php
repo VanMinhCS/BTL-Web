@@ -13,6 +13,23 @@ class UserModel extends Database {
         return $stmt->rowCount() > 0;
     }
 
+    public function checkUserExists($email, $phone) {
+        // Chỉ kiểm tra phone nếu người dùng có nhập
+        if (!empty($phone)) {
+            $sql = "SELECT email, phone FROM users WHERE email = :email OR phone = :phone LIMIT 1";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([':email' => $email, ':phone' => $phone]);
+        } else {
+            // Nếu không nhập SĐT thì chỉ check Email
+            $sql = "SELECT email FROM users WHERE email = :email LIMIT 1";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([':email' => $email]);
+        }
+        
+        // Trả về dữ liệu nếu tìm thấy (tức là bị trùng), ngược lại trả về false
+        return $stmt->fetch(PDO::FETCH_ASSOC); 
+    }
+
     // 2. Lấy toàn bộ thông tin Profile (JOIN 3 bảng)
     public function getUserProfile($user_id) {
         $sql = "SELECT u.email, u.phone, i.firstname, i.lastname, i.address_id, a.street, a.ward, a.city 
@@ -96,17 +113,14 @@ class UserModel extends Database {
         }
     }
 
-    // 6. Đăng nhập - Nối (JOIN) thêm bảng information để lấy Họ Tên (Đã thêm điều kiện is_verified = 1)
-    public function getUserByEmailOrPhone($login_id) {
+    // 6. Đăng nhập - Chỉ sử dụng Email (Đã thêm điều kiện is_verified = 1)
+    public function getUserByEmailForLogin($email) {
         $sql = "SELECT u.*, i.firstname, i.lastname 
                 FROM users u 
                 LEFT JOIN information i ON u.user_id = i.user_id 
-                WHERE (u.email = :email OR u.phone = :phone) AND u.is_verified = 1 LIMIT 1";
+                WHERE u.email = :email AND u.is_verified = 1 LIMIT 1";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([
-            'email' => $login_id,
-            'phone' => $login_id
-        ]);
+        $stmt->execute(['email' => $email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 

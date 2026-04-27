@@ -19,8 +19,8 @@
 
                 <form action="<?php echo BASE_URL; ?>auth/processLogin" method="POST">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Số điện thoại/Email</label>
-                        <input type="text" name="login_id" value="<?php echo htmlspecialchars($old_login_id); ?>" class="form-control py-2" required placeholder="Nhập SĐT hoặc Email">
+                        <label class="form-label fw-bold">Email</label>
+                        <input type="email" name="login_id" value="<?php echo htmlspecialchars($old_login_id); ?>" class="form-control py-2" required placeholder="Nhập địa chỉ email của bạn">
                     </div>
                     
                     <div class="mb-2"> 
