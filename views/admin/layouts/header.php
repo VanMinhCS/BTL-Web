@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -60,7 +60,6 @@
                 <div class="menu-inner">
                     <nav>
                         <?php 
-                        // SỬA Ở ĐÂY: Bắt biến bằng 2 cách để đảm bảo 100% không bị hụt dữ liệu
                         $current = '';
                         if (isset($currentPage)) {
                             $current = $currentPage;
@@ -101,7 +100,7 @@
                                     </li>
                                 </ul>
                             </li>
-
+                            
                             <li class="<?php echo ($current == 'news') ? 'active' : ''; ?>">
                                 <a href="<?php echo BASE_URL; ?>admin/news">
                                     <i class="ti-book"></i><span>Quản lý tin tức</span>

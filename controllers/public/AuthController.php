@@ -46,10 +46,22 @@ class AuthController extends Controller {
             require_once __DIR__ . '/../../models/UserModel.php';
             $userModel = new UserModel();
 
-            // 2. Kiểm tra Email tồn tại
-            if ($userModel->checkEmailExists($email)) {
-                echo json_encode(['status' => 'error', 'message' => 'Email này đã được đăng ký!']);
-                return;
+            // ==========================================
+            // 2. CHẶN TRÙNG LẶP EMAIL VÀ SỐ ĐIỆN THOẠI Ở ĐÂY
+            // ==========================================
+            $existingUser = $userModel->checkUserExists($email, $phone);
+            
+            if ($existingUser) {
+                // Nếu bị trùng, kiểm tra xem lỗi do Email hay do SĐT để báo chính xác cho người dùng
+                if ($existingUser['email'] === $email) {
+                    echo json_encode(['status' => 'error', 'message' => 'Email này đã được sử dụng. Vui lòng chọn email khác!']);
+                    return; // Dừng luồng chạy ngay lập tức
+                }
+                
+                if (!empty($phone) && isset($existingUser['phone']) && $existingUser['phone'] === $phone) {
+                    echo json_encode(['status' => 'error', 'message' => 'Số điện thoại này đã được đăng ký!']);
+                    return; // Dừng luồng chạy ngay lập tức
+                }
             }
 
             // 3. Mã hóa mật khẩu và Lưu vào Database
@@ -200,7 +212,7 @@ class AuthController extends Controller {
             $password = $_POST['password'] ?? '';
             $isAjax   = isset($_POST['ajax']) && $_POST['ajax'] == 1;
 
-            $user = $this->userModel->getUserByEmailOrPhone($login_id);
+            $user = $this->userModel->getUserByEmailForLogin($login_id);
 
             // Chấp nhận cả mật khẩu đã hash VÀ mật khẩu thô
             if ($user && (password_verify($password, $user['password']) || $password === $user['password'])) {
@@ -216,7 +228,7 @@ class AuthController extends Controller {
                     unset($_SESSION['redirect_after_login']);
                 } else {
                     if ($_SESSION['user_role'] === 1) {
-                        $redirectUrl = BASE_URL . "admin/news";
+                        $redirectUrl = BASE_URL . "admin";
                     } else {
                         $redirectUrl = BASE_URL . "home";
                     }

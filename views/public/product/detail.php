@@ -1,5 +1,6 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+<link rel="stylesheet" href="assets/css/public/product-list.css"/>
 
 <style>
     .slick-prev:before, .slick-next:before { color: #1a1a1a; font-size: 24px; }
@@ -7,6 +8,48 @@
     .slick-next { right: -30px; }
     .qty-btn { width: 40px; border: 1px solid #ced4da; background: #fff; font-weight: bold; }
     .qty-input { width: 60px; text-align: center; border: 1px solid #ced4da; border-left: none; border-right: none; }
+
+</style>
+
+<style>
+    /* ... các style cũ giữ nguyên ... */
+    
+    /* Bao bọc ảnh để căn giữa chữ Hết Hàng */
+    .product-img-wrapper { position: relative; display: block; overflow: hidden; }
+
+    /* Hiệu ứng làm mờ ảnh khi hết hàng */
+    .img-dimmed { 
+        opacity: 0.4; 
+        filter: grayscale(100%); 
+        transition: 0.3s ease; 
+    }
+
+    /* Vòng tròn đen mờ chứa chữ Hết Hàng (trang Detail làm to hơn) */
+    .out-of-stock-overlay {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #fff !important;
+        width: 120px; /* To hơn trang danh sách */
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px; /* Chữ to rõ hơn */
+        font-weight: bold;
+        pointer-events: none;
+        z-index: 10;
+        text-transform: uppercase;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    /* Cấm click và hiện icon cấm */
+    .btn-disabled-strict {
+        opacity: 0.5;
+        cursor: not-allowed !important;
+    }
 </style>
 
 <div class="container py-5 mt-4">
@@ -14,12 +57,18 @@
     <div class="row gx-5 mb-5 pb-5 border-bottom">
         
         <div class="col-md-6 mb-4 mb-md-0">
-            <div class="bg-light d-flex justify-content-center align-items-center p-5 rounded" style="aspect-ratio: 1/1;">
-                <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $currentProduct['item_image']; ?>" 
-                     alt="<?php echo htmlspecialchars($currentProduct['item_name']); ?>" 
-                     class="img-fluid object-fit-contain" 
-                     style="max-height: 100%;"
-                     onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($currentProduct['item_name']); ?>'">
+            <?php $isOutOfStock = ($currentProduct['item_stock'] <= 0); ?>
+            
+            <div class="bg-light d-flex justify-content-center align-items-center p-5 rounded product-img-wrapper" style="aspect-ratio: 1/1;">
+                <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $currentProduct['item_image']; ?>" 
+                    alt="<?php echo htmlspecialchars($currentProduct['item_name']); ?>" 
+                    class="img-fluid object-fit-contain <?php echo $isOutOfStock ? 'img-dimmed' : ''; ?>" 
+                    style="max-height: 100%;"
+                    onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($currentProduct['item_name']); ?>'">
+                
+                <?php if ($isOutOfStock): ?>
+                    <div class="out-of-stock-overlay">Hết Hàng</div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -46,11 +95,17 @@
                 </div>
 
                 <div class="d-grid gap-3">
-                    <button type="submit" class="btn btn-outline-dark py-3 fw-bold text-uppercase" style="border-width: 2px; letter-spacing: 1px;">
+                    <button type="submit" 
+                            class="btn btn-outline-dark py-3 fw-bold text-uppercase <?php echo $isOutOfStock ? 'btn-disabled-strict' : ''; ?>" 
+                            style="border-width: 2px; letter-spacing: 1px;"
+                            <?php echo $isOutOfStock ? 'disabled' : ''; ?>>
                         Thêm vào giỏ hàng
                     </button>
                     
-                    <button type="button" class="btn py-3 fw-bold text-uppercase text-white" style="background-color: #0d6efd; letter-spacing: 1px;">
+                    <button type="button" 
+                            id="buyNowBtn" class="btn py-3 fw-bold text-uppercase text-white <?php echo $isOutOfStock ? 'btn-disabled-strict' : ''; ?>" 
+                            style="background-color: #0d6efd; letter-spacing: 1px;"
+                            <?php echo $isOutOfStock ? 'disabled' : ''; ?>>
                         Mua ngay
                     </button>
                 </div>
@@ -76,10 +131,10 @@
                     <div class="card h-100 border-0 shadow-sm">
                         <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['item_id']; ?>" class="text-decoration-none">
                             <div class="position-relative bg-light" style="aspect-ratio: 1/1.2; display: flex; align-items: center; justify-content: center;">
-                                <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['item_image']; ?>" 
-                                     alt="<?php echo htmlspecialchars($item['item_name']); ?>" 
-                                     class="w-100 h-100 object-fit-contain p-3"
-                                     onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($item['item_name']); ?>'">
+                                <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $item['item_image']; ?>" 
+                                    alt="<?php echo htmlspecialchars($item['item_name']); ?>" 
+                                    class="w-100 h-100 object-fit-contain p-3"
+                                    onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($item['item_name']); ?>'">
                             </div>
                         </a>
                         <div class="card-body text-center pt-3 pb-4">
@@ -211,4 +266,40 @@
             alert("Có lỗi xảy ra khi thêm vào giỏ hàng!");
         });
     });
+
+    // --- XỬ LÝ SỰ KIỆN NÚT "MUA NGAY" ---
+    let buyNowBtn = document.getElementById('buyNowBtn');
+    if (buyNowBtn) {
+        buyNowBtn.addEventListener('click', function() {
+            // 1. Lấy dữ liệu từ form giống hệt như nút Thêm vào giỏ
+            let form = document.querySelector('form[action*="cart/add"]');
+            let formData = new FormData(form);
+            formData.append('ajax', 1);
+
+            // Đổi text nút thành "Đang xử lý..." để tăng trải nghiệm (UX)
+            let originalText = this.innerHTML;
+            this.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
+            this.style.pointerEvents = 'none'; // Chặn click đúp
+
+            // 2. Gửi ngầm dữ liệu lên server
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(cartCount => {
+                // 3. THÀNH CÔNG: Chuyển hướng khách thẳng sang trang Giỏ Hàng
+                window.location.href = '<?php echo BASE_URL; ?>cart'; 
+                
+                // (Ghi chú: Nếu hệ thống của bạn muốn nhảy thẳng qua bước thanh toán, 
+                // bạn có thể đổi 'cart' thành 'onestepcheckout' nhé)
+            })
+            .catch(error => {
+                console.error("Lỗi khi mua ngay:", error);
+                alert("Có lỗi xảy ra, vui lòng thử lại!");
+                this.innerHTML = originalText;
+                this.style.pointerEvents = 'auto';
+            });
+        });
+    }
 </script>

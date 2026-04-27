@@ -39,7 +39,7 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="bg-light p-2 rounded me-3" style="width: 80px; height: 100px; display: flex; align-items: center;">
-                                            <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" class="img-fluid object-fit-contain" onerror="this.src='https://placehold.co/80x100/1a1a1a/FFF?text=BK'">
+                                            <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" class="img-fluid object-fit-contain" onerror="this.src='https://placehold.co/80x100/1a1a1a/FFF?text=BK'">
                                         </div>
                                         <div>
                                             <h6 class="fw-bold mb-1"><?php echo $item['name']; ?></h6>
