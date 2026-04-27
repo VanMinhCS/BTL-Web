@@ -30,7 +30,7 @@
     color:black;
 }
 
-a#openEditor, a.like-btn, a.dislike-btn {
+a.hvr-icon, a.like-btn, a.dislike-btn {
     text-decoration: none;
     color: black;
     font-weight: bold;
@@ -40,7 +40,6 @@ textarea.form_area {
   resize: none;   /* tắt kéo giãn */
   overflow: auto; /* cho phép cuộn nội dung */
 }
-
 
 .disabled {
   pointer-events: none;
@@ -74,18 +73,33 @@ textarea.form_area {
   }
 }
 
-.edit-btn, .delete-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  color: inherit;
-  cursor: pointer;
-  text-decoration: none;
-}
-.edit-btn:hover, .delete-btn:hover {
-  text-decoration: underline;
+.like-btn.active-vote,
+.dislike-btn.active-vote {
+  color: #0d6efd;
+  font-weight: bold;
 }
 
+.edit-textarea,
+.reply-area {
+  resize: none;       
+  min-height: 80px;  
+}
 
+#notification-panel {
+  max-width: 600px;   /* rộng hơn */
+  font-size: 1.2rem;  /* chữ to hơn */
+  padding: 20px;      /* khoảng cách trong */
+  z-index: 20;
+}
 
+#notification-message {
+  font-weight: bold;
+}
 
+#notification-timer {
+  height: 8px;        /* thanh timer dày hơn */
+}
+
+.modal-content{
+  z-index: 10;
+}

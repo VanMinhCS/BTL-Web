@@ -1,5 +1,5 @@
 <?php
-class NewsController extends Controller { 
+class NotificationController extends Controller { 
     public function __construct() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -17,7 +17,7 @@ class NewsController extends Controller {
             exit;
         }
         $data['title'] = "Trang tin tức của BK88";
-        $this->view('admin/news/index', $data);
+        $this->view('admin/notification/index', $data);
     }
 
     public function view($view, $data = []) {
@@ -30,111 +30,6 @@ class NewsController extends Controller {
             require_once $fullPath;
         } else {
             die("View không tồn tại: " . $fullPath);
-        }
-    }
-    
-    public function getNews() {
-        require_once __DIR__ . "/../../models/Article.php";
-        $articleModel = new Article();
-
-        $page    = isset($_GET['page']) ? intval($_GET['page']) : 1;
-        $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : "";
-
-        $itemsPerPage = 5;
-
-        if ($keyword !== "") {
-            $rows = $articleModel->searchArticles($keyword);
-        } else {
-            $rows = $articleModel->getAllArticles();
-        }
-
-        $totalItems = count($rows);
-
-        // cắt mảng theo trang ngay tại controller
-        $offset = ($page - 1) * $itemsPerPage;
-        $pagedRows = array_slice($rows, $offset, $itemsPerPage);
-
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode([
-            "totalItems" => $totalItems,
-            "items" => array_map(function($row){
-                return [
-                    "id"          => $row['id_article'],
-                    "title"       => $row['title'],
-                    "description" => $row['description'],
-                    "upload_date" => date("d/m/Y", strtotime($row['time_modified'])),
-                    "status"      => $row['status']
-                ];
-            }, $pagedRows)
-        ]);
-    }
-
-    public function toggleStatus() {
-        require_once __DIR__ . "/../../models/Article.php";
-        $articleModel = new Article();
-
-        if (isset($_POST['id'])) {
-            $id = intval($_POST['id']);
-            $articleModel->setIdArticle($id);
-
-            $newStatus = $articleModel->getStatus() == 1 ? 0 : 1;
-            $articleModel->setStatus($newStatus);
-
-            header('Content-Type: application/json; charset=utf-8');
-            if ($articleModel->update()) {
-                echo json_encode(["success" => true, "status" => $newStatus]);
-            } else {
-                echo json_encode(["success" => false]);
-            }
-        }
-    }
-
-    public function bulkAction() {
-        require_once __DIR__ . "/../../models/Article.php";
-        $data = json_decode(file_get_contents("php://input"), true);
-        $ids = $data['ids'];
-        $action = $data['action'];
-
-        $articleModel = new Article();
-
-        if ($action === 'delete') {
-            $articleModel->deleteArticles($ids);
-        } elseif ($action === 'hide') {
-            $articleModel->hideArticles($ids);
-        } elseif ($action === 'show') {
-            $articleModel->showArticles($ids);
-        }
-
-        echo json_encode(["success" => true]);
-    }
-
-    public function create() {
-        require_once __DIR__ . "/../../models/Article.php";
-
-        $title       = $_POST['title'] ?? '';
-        $description = $_POST['description'] ?? '';
-        $content     = $_POST['content'] ?? '';
-        $background  = $_POST['background'] ?? '';
-        $status      = 0; 
-
-        $news = new Article();
-        $news->setTitle($title);
-        $news->setDescription($description);
-        $news->setContent($content);
-        $news->setBackground($background);
-        $news->setStatus($status);
-
-        if($news->create()){
-            echo json_encode([
-                "success" => true,
-                "message" => "Thêm bài viết thành công",
-                "id"      => $news->getIdArticle()
-            ]);
-        } else {
-            echo json_encode([
-                "success" => false,
-                "message" => "Thêm bài viết thất bại"
-            ]);
         }
     }
 
@@ -285,12 +180,49 @@ class NewsController extends Controller {
         ]);
     }
 
+    public function getAllNotifications() {
+        require_once __DIR__ . "/../../models/Notification.php";
+        $notificationModel = new Notification();
+        $adminId = $_SESSION['user_id'] ?? 0;
+        if (!$adminId) {
+            echo json_encode(["success" => false, "error" => "No user"]);
+            return;
+        }
+
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $itemsPerPage = 5;
+        $keyword = $_GET['keyword'] ?? "";
+        $status = $_GET['status'] ?? ""; // read/unread
+        $type   = $_GET['type'] ?? "";   // comment, reply_comment, edit_comment, vote_comment
+        $sort   = $_GET['sort'] ?? "desc"; // asc/desc theo thời gian
+
+        $notifications = $notificationModel->getAll($page, $itemsPerPage, $keyword, $status, $type, $sort);
+        $totalItems = $notificationModel->countAll($keyword);
+
+        echo json_encode([
+            "success" => true,
+            "totalItems" => $totalItems,
+            "notifications" => array_map(function($n) use ($notificationModel){
+                return [
+                    "id"          => $n['id'],
+                    "id_user"     => $n['id_user'],
+                    "type"        => $n['type'],
+                    "created_at"  => $n['created_at'],
+                    "id_article"  => $n['article_id'] ?? $n['vote_article_id'] ?? null,
+                    "id_comment"  => $n['comment_id'] ?? $n['vote_comment_id'] ?? null,
+                    "is_read"     => $n['is_read'],
+                    "message"     => $notificationModel->map($n)
+                ];
+            }, $notifications)
+        ]);
+    }
+
     public function markRead() {
         require_once __DIR__ . "/../../models/Notification.php";
         $model = new Notification();
 
         $adminId = $_SESSION['user_id'] ?? 0;
-        $id = $_POST['id'] ?? 0;   // lấy id từ POST
+        $id = $_POST['id'] ?? 0;   
 
         if ($adminId && $id && $model->markAsRead($id)) {
             echo json_encode(["success" => true]);
@@ -310,5 +242,21 @@ class NewsController extends Controller {
         }
     }
 
+    public function bulkAction() {
+        require_once __DIR__ . "/../../models/Notification.php";
+        $data = json_decode(file_get_contents("php://input"), true);
+        $ids = $data['ids'] ?? [];
+        $action = $data['action'] ?? "";
+
+        $notificationModel = new Notification();
+
+        if ($action === 'delete') {
+            $notificationModel->deleteNotifications($ids);
+        } elseif ($action === 'read') {
+            $notificationModel->markAsReadMultiple($ids);
+        }
+
+        echo json_encode(["success" => true]);
+    }
 
 }

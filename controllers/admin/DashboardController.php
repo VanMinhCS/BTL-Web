@@ -5,5 +5,6 @@ class DashboardController extends Controller {
         header("Location: " . BASE_URL . "admin/news");
         exit;
     }
+    
 }
 
