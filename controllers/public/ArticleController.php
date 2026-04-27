@@ -309,5 +309,6 @@ class ArticleController extends Controller {
             "newest" => $newest ? BASE_URL . "article?id=" . $newest['id_article'] : null
         ]);
     }
+    
 
 }

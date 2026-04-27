@@ -5,7 +5,7 @@
   <title>Bài viết</title>
 
   <!-- CSS riêng -->
-  <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/article.css">
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/admin/article.css">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap&subset=vietnamese" rel="stylesheet">
@@ -24,28 +24,74 @@
 </head>
 <body>
 
+<!-- Panel thông báo -->
+<div id="notification-panel" 
+     class="alert alert-success position-fixed top-0 start-50 translate-middle-x d-none"
+     style="z-index:1050; width:400px;">
+  <span id="notification-message"></span>
+  <button type="button" class="btn-close float-end" aria-label="Close" onclick="hideNotification()"></button>
+  <div id="notification-timer" style="height:4px;background:#28a745;margin-top:8px;"></div>
+</div>
+
 
 <!-- Header -->
 <div class="row text-start">
   <div class="col background_image d-flex flex-column justify-content-center">
-    <p class="row time_upload me-5">12/05/2025</p>
-    <div class="row">
-      <div class="row justify-content-end">
-        <!-- Nút chỉnh sửa title -->
-        <div class="fw-icons col-lg-3 col-sm-6 d-flex">
-          <a href="javascript:void(0)" id="editTitleBtn" class="btn">
-            <i class="fa-solid fa-pen-to-square"></i>
-          </a>
-        </div>
+    <!-- Ngày đăng -->
+    <p class="time_upload me-5">12/05/2025</p>
+
+    <!-- Tiêu đề + nút mở panel -->
+    <div class="d-flex align-items-center gap-2">
+      <p class="title mb-0" id="articleTitle">Bài viết</p>
+      <a href="javascript:void(0)" id="editPanelBtn" class="btn btn-sm btn-outline-primary">
+        <i class="fa-solid fa-pen-to-square"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Panel -->
+<div class="modal fade" id="editPanelModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Chỉnh sửa bài viết</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <!-- Title -->
-      <p class="col title pt-0" id="articleTitle">Bài viết</p>
-      <!-- Ô nhập title (ẩn mặc định) -->
-      <div class="col" id="titleEditorSection" style="display:none;">
-        <input type="text" id="titleInput" class="form-control mb-2" />
-        <button id="saveTitleBtn" class="btn btn-success btn-sm">
-          <i class="fa-solid fa-save"></i> Lưu tiêu đề
-        </button>
+      <div class="modal-body">
+        <!-- Ngăn đổi title -->
+        <div class="mb-4">
+          <h6>Đổi tiêu đề</h6>
+          <input type="text" id="titleInput" class="form-control mb-2" placeholder="Nhập tiêu đề mới..." />
+          <button id="saveTitleBtn" class="btn btn-success btn-sm">
+            <i class="fa-solid fa-save"></i> Lưu tiêu đề
+          </button>
+        </div>
+
+        <!-- Ngăn đổi description -->
+        <div class="mb-4">
+          <h6>Đổi mô tả</h6>
+          <textarea id="descriptionInput" class="form-control mb-2" rows="3" placeholder="Nhập mô tả mới..."></textarea>
+          <button id="saveDescriptionBtn" class="btn btn-success btn-sm">
+            <i class="fa-solid fa-save"></i> Lưu mô tả
+          </button>
+        </div>
+
+        <!-- Ngăn upload ảnh -->
+        <div>
+          <h6>Upload ảnh nền</h6>
+          <label for="uploadImage" class="btn btn-outline-secondary mb-2">
+            <i class="fa-solid fa-image"></i> Chọn ảnh
+          </label>
+          <input type="file" id="uploadImage" name="background" accept="image/*" style="display:none;">
+          <div id="previewContainer">
+            <img id="previewImg" src="" alt="Preview" style="max-width:150px; display:none; border:1px solid #ccc; margin-top:10px;">
+          </div>
+          <div id="previewImage" class="mt-2"></div>
+          <button id="saveImageBtn" class="btn btn-success btn-sm mt-2">
+            <i class="fa-solid fa-save"></i> Lưu ảnh nền
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -64,8 +110,6 @@
 <div class="container justify-content-start">
   <!-- Nội dung -->
   <div class="row content">
-    <p>Đây là trang bài viết của BK88...</p>
-    <p>Hãy thường xuyên truy cập trang này...</p>
   </div>
 
 
@@ -150,6 +194,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-<script src="<?php echo BASE_URL; ?>assets/js/article.js"></script>
+<script src="<?php echo BASE_URL; ?>assets/js/admin/article.js"></script>
 </body>
 </html>

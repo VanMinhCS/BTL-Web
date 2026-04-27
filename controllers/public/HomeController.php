@@ -1,11 +1,12 @@
 <?php
 class HomeController extends Controller {
     public function index() {
+        // 1. Giữ lại phần khởi tạo Session của nhánh Task_3
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
-        // ... Các code lấy dữ liệu trang chủ cũ của bạn giữ nguyên ở dưới đây ...
+        // 2. Giữ lại phần gọi View của nhánh news-admin
         $data['title'] = "Trang chủ BK88";
         $this->view('public/home/index', $data);
     }
