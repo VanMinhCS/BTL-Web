@@ -8,7 +8,7 @@
             <div class="col-12 col-md-3 mb-4">
                 <div class="d-flex align-items-center gap-2">
                     <!-- Logo ảnh -->
-                    <img src="<?php echo BASE_URL; ?>assets/img/logoBK.png"
+                    <img src="<?php echo BASE_URL; ?>assets/img/logo88.png"
                          alt="Logo" height="50"
                          onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                     <!-- Fallback text nếu không có logo -->
@@ -17,7 +17,7 @@
                 </div>
 
                 <p class="footer-muted mt-3 small">
-                    Chưa tới 18h30 chưa biết ai giàu hơn ai.
+                    Website cung cấp giáo trình hàng đầu.
                 </p>
             </div>
 
@@ -37,7 +37,7 @@
             <!-- CỘT 3: NEWSLETTER + MẠNG XÃ HỘI -->
             <div class="col-12 col-md-6 mb-4">
                 <h6 class="footer-heading fw-bold mb-2">NEWSLETTER</h6>
-                <p class="footer-muted small">Đăng ký nhận ưu đãi và tin tức mới nhất từ chúng tôi và biết đâu người tiếp theo trúng jackpot là bạn.</p>
+                <p class="footer-muted small">Đăng ký nhận ưu đãi và tin tức mới nhất từ chúng tôi.</p>
 
                 <!-- Form email -->
                 <div class="newsletter-form d-flex align-items-center mb-4">
@@ -80,7 +80,7 @@
         <!-- BOTTOM BAR -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-2">
             <p class="footer-muted small mb-2 mb-md-0">
-                © 2026 <strong class="text-white">BK-88</strong>. Mang đến hạnh phúc cho mọi nhà.
+                © 2026 <strong class="text-white">BK-88</strong>
             </p>
             <div class="d-flex gap-2">
                 <a href="<?php echo BASE_URL; ?>contact" class="footer-link small">Liên hệ</a>
@@ -93,5 +93,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?php echo BASE_URL; ?>assets/js/main.js"></script>
+<?php if (!empty($data['pageJs']) && is_array($data['pageJs'])): ?>
+    <?php foreach ($data['pageJs'] as $jsPath): ?>
+        <script src="<?= BASE_URL . $jsPath ?>"></script>
+    <?php endforeach; ?>
+<?php endif; ?>
 </body>
 </html>

@@ -1,0 +1,61 @@
+/* Chiều cao của toàn bộ Slider */
+.main-slider .item {
+    height: 500px; 
+}
+
+.slide-bg {
+    width: 100%;
+    height: 100%;
+    background-size: cover;   
+    background-position: center;
+    position: relative;         
+}
+
+/* Lớp phủ mờ để Quote dễ đọc hơn (tùy chọn) */
+.slide-bg::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.main-slider .slick-prev,
+.main-slider .slick-next {
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+}
+
+.main-slider .slick-prev { left: 20px; }
+.main-slider .slick-next { right: 20px; }
+
+.main-slider .slick-prev::before,
+.main-slider .slick-next::before {
+    font-size: 35px;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 2px 5px rgba(0,0,0,0.7);
+}
+
+.main-slider .slick-prev:hover::before,
+.main-slider .slick-next:hover::before {
+    color: #ffffff;
+}
+
+/* Định vị Quote vào góc dưới bên phải */
+.quote-box {
+    position: absolute;
+    bottom: 30px; 
+    right: 30px;
+    color: white;
+    text-align: right;
+    max-width: 350px;
+    z-index: 2;
+}
+
+.quote-text {
+    font-size: 1.2rem;
+    font-style: italic;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Đổ bóng cho chữ dễ đọc */
+}

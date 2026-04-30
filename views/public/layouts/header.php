@@ -7,6 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/header.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/footer.css">
+    <?php if (!empty($data['pageCss']) && is_array($data['pageCss'])): ?>
+        <?php foreach ($data['pageCss'] as $cssPath): ?>
+            <link rel="stylesheet" href="<?= BASE_URL . $cssPath ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -16,7 +21,7 @@
 
         <!-- LOGO -->
         <a class="navbar-brand d-flex align-items-center gap-2" href="<?php echo BASE_URL; ?>home">
-            <img src="<?php echo BASE_URL; ?>assets/img/logoBK.png"
+            <img src="<?php echo BASE_URL; ?>assets/img/logo88.png"
                  alt="Logo"
                  height="40"
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">

@@ -1,5 +1,3 @@
-<?php require_once '../views/public/layouts/header.php'; ?>
-
 <div class="container py-5">
     <div class="row text-center mb-5">
         <h2 class="fw-bold">Liên hệ với chúng tôi</h2>
@@ -29,6 +27,14 @@
 
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm p-4 h-100">
+                
+                <?php if (isset($_GET['status']) && $_GET['status'] == 'success'): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Tin nhắn đã được gửi đi!</strong> Cảm ơn bạn đã liên hệ với chúng tôi. Chúng tôi sẽ phản hồi trong thời gian sớm nhất.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
                 <form action="<?php echo BASE_URL; ?>contact/submit" method="POST">
                     
                     <div class="row mb-3">
@@ -58,5 +64,3 @@
         </div>
     </div>
 </div>
-
-<?php require_once '../views/public/layouts/footer.php'; ?>
