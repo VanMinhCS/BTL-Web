@@ -1,6 +1,6 @@
 /* Chiều cao của toàn bộ Slider */
 .main-slider .item {
-    height: 500px; 
+    height: 600px !important; 
 }
 
 .slide-bg {
