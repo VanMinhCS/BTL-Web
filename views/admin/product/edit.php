@@ -1,4 +1,8 @@
-<?php require_once __DIR__ . '/../layouts/header.php'; ?>
+<?php 
+/**
+ * @var array $product
+ */
+require_once __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="row">
     <div class="col-12 mt-5">

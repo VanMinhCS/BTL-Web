@@ -1,4 +1,10 @@
-<?php require_once __DIR__ . '/../layouts/header.php'; ?>
+<?php 
+/**
+ * @var array $stats
+ * @var array $topSelling
+ * @var array $recentOrders
+ */
+require_once __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="sales-report-area sales-style-two">
     <div class="row">
@@ -122,7 +128,9 @@
                             <td>
                                 <?php echo $order['is_paid'] ? '<span class="text-success fw-bold">Đã thanh toán</span>' : '<span class="text-danger fw-bold">Chưa thanh toán</span>'; ?>
                             </td>
-                            <td><a href="<?php echo BASE_URL; ?>admin/product/order" class="text-primary">Xem chi tiết</a></td>
+                            <td>
+                                <a href="<?php echo BASE_URL; ?>admin/product/orderDetail?id=<?php echo $order['order_id']; ?>" class="text-primary fw-bold">Xem chi tiết</a>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
