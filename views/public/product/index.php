@@ -11,6 +11,71 @@
         transition: 0.3s ease;
     }
 
+    /* ========================================================
+    HIỆU ỨNG HOVER CHO SẢN PHẨM (Nảy, Viền xanh, Đổ bóng)
+    ======================================================== */
+    .product-item .card {
+        transition: all 0.3s ease-in-out;
+        border: 1px solid transparent !important; /* Dùng border trong suốt để thẻ không bị giật khi thêm viền màu */
+    }
+
+    .product-item .card:hover {
+        transform: translateY(-8px); /* Sản phẩm nảy lên 8px */
+        box-shadow: 0 12px 25px rgba(13, 110, 253, 0.15) !important; /* Đổ bóng có ánh xanh dương */
+        border-color: #0d6efd !important; /* Viền màu xanh dương (primary) */
+    }
+
+    /* ========================================================
+    HIỆU ỨNG ZOOM ẢNH SẢN PHẨM
+    ======================================================== */
+    .product-item .product-img-wrapper img {
+        transition: transform 0.4s ease; /* Thời gian zoom mượt mà */
+    }
+
+    .product-item .card:hover .product-img-wrapper img {
+        transform: scale(1.08); /* Hình ảnh hơi to ra 8% */
+    }
+
+    /* ========================================================
+    LỚP PHỦ VÀ CHỮ "CHI TIẾT" KHI HOVER
+    ======================================================== */
+    .detail-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.3); /* Lớp phủ trắng mờ nhẹ */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0; /* Mặc định ẩn hoàn toàn */
+        transition: all 0.3s ease;
+        z-index: 5; /* Đảm bảo nằm trên ảnh */
+        pointer-events: none; /* Tránh cản trở việc click vào ảnh */
+    }
+
+    .detail-text {
+        color: #0d6efd; /* Chữ màu xanh dương */
+        font-size: 1.1rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: 0;
+        transform: translateY(15px); /* Kéo chữ xuống dưới một chút để chuẩn bị hiệu ứng trượt */
+        transition: all 0.4s ease;
+    }
+
+    /* Kích hoạt hiển thị lớp phủ và chữ khi hover vào Card */
+    .product-item .card:hover .detail-overlay {
+        opacity: 1;
+    }
+
+    .product-item .card:hover .detail-text {
+        opacity: 1;
+        transform: translateY(0); /* Trượt chữ về đúng vị trí trung tâm */
+    }
+
     /* Vòng tròn đen mờ chứa chữ Hết Hàng */
     .out-of-stock-overlay {
         position: absolute;
