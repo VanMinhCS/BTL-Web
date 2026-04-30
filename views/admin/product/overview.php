@@ -1,4 +1,10 @@
-<?php require_once __DIR__ . '/../layouts/header.php'; ?>
+<?php 
+/**
+ * @var array $stats
+ * @var array $topSelling
+ * @var array $recentOrders
+ */
+require_once __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="sales-report-area sales-style-two">
     <div class="row">

@@ -1,6 +1,11 @@
 <?php 
+    /**
+     * @var array $user
+     */
+
     // Ghép Họ Tên
     $fullName = trim(($user['lastname'] ?? '') . ' ' . ($user['firstname'] ?? ''));
+    
     // Kiểm tra xem đã có địa chỉ chưa (street khác rỗng)
     $hasAddress = !empty($user['street']);
     $fullAddress = $hasAddress ? $user['street'] . ', ' . $user['ward'] . ', ' . $user['city'] : 'Chưa có địa chỉ';

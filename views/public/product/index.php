@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var array $products
+ */
+?>
 <style>
     /* Hiệu ứng làm mờ ảnh khi hết hàng */
     .img-dimmed {

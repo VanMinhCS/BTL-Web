@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var array $cartItems
+ * @var int $totalPrice
+ */
+?>
 <div class="container py-5 mt-4" style="min-height: 60vh;">
     <h2 class="fw-bold text-uppercase mb-4">Giỏ hàng của bạn</h2>
 
