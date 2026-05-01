@@ -112,7 +112,6 @@ class OnestepcheckoutController extends Controller {
                 $orderObj->setOrderDate(date("Y-m-d H:i:s"));
                 $orderObj->setStatus(0); 
                 $orderObj->setIsPaid(0); 
-                $orderObj->setPaymentMethod($payment_method_raw == 'cod' ? 0 : 1);
                 $orderObj->setShippingFee($shipping_fee);
                 
                 $order_id = $orderObj->create();

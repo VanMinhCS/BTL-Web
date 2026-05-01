@@ -54,27 +54,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const pageRegForm = document.getElementById('pageRegisterForm');
     if(pageRegForm) {
         pageRegForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Chặn tải lại trang để không bị in ra JSON
+            e.preventDefault(); 
+
+            // 1. TÌM NÚT SUBMIT VÀ THÊM HIỆU ỨNG LOADING
+            let submitBtn = this.querySelector('button[type="submit"]');
+            let originalText = submitBtn.innerHTML; // Lưu lại chữ "Đăng ký" ban đầu
+            
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Đang xử lý...';
+            submitBtn.disabled = true; // Khóa nút chặn click đúp
 
             let formData = new FormData(this);
-            // Gửi AJAX
             fetch('<?php echo BASE_URL; ?>auth/processRegister', {
                 method: 'POST', body: formData
             })
             .then(res => res.json())
             .then(data => {
+                // 2. NHẬN KẾT QUẢ XONG THÌ TRẢ LẠI NÚT VỀ TRẠNG THÁI CŨ
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
                 if(data.status === 'error') {
-                    // Bạn có thể tự tạo thẻ div error giống ở header, hoặc dùng alert tạm
                     alert(data.message);
                 } else if (data.status === 'otp_required') {
-                    // 1. Điền thông tin vào Modal OTP (Modal này lấy từ header.php qua)
                     document.getElementById('otp_user_id').value = data.user_id;
                     document.getElementById('otp_email_display').innerText = data.email;
-
-                    // 2. Bật Popup OTP lên đè lên trang hiện tại
                     let otpModal = new bootstrap.Modal(document.getElementById('ajaxOtpModal'));
                     otpModal.show();
                 }
+            })
+            .catch(err => {
+                // 3. TRẢ LẠI NÚT NẾU BỊ LỖI MẠNG
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                alert("Lỗi kết nối, vui lòng thử lại!");
             });
         });
     }

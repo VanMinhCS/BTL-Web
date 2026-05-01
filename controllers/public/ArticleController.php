@@ -310,25 +310,5 @@ class ArticleController extends Controller {
         ]);
     }
     
-    public function getArticleAdmin() {
-        require_once __DIR__ . "/../../models/Article.php";
-        $articleModel = new Article();
 
-        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-        $row = $articleModel->findArticleByIdAdmin($id);
-
-        header('Content-Type: application/json; charset=utf-8');
-        if ($row) {
-            echo json_encode([
-                "id"          => $row['id_article'],
-                "title"       => $row['title'],
-                "description" => $row['description'],
-                "upload_date" => date("d/m/Y", strtotime($row['time_modified'])), 
-                "content"     => $row['content'], 
-                "background"  => $row['background']
-            ]);
-        } else {
-            echo json_encode(["error" => "Không tìm thấy bài viết"]);
-        }
-    }
 }

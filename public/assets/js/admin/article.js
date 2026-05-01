@@ -18,7 +18,7 @@ async function fetchArticle() {
   const id = params.get("id");
 
   try {
-    const response = await fetch(`/article/getArticleAdmin?id=${id}`);
+    const response = await fetch(`/admin/article/getArticle?id=${id}`);
     const articleData = await response.json();
 
     if (articleData.error) {
@@ -48,7 +48,7 @@ async function fetchArticle() {
 
 async function fetchComments(articleId) {
   try {
-    const response = await fetch(`article/getComments?id=${articleId}`);
+    const response = await fetch(`/admin/article/getComments?id=${articleId}`);
     const data = await response.json();
 
     // Gán dữ liệu vào mảng comments toàn cục
@@ -61,7 +61,7 @@ async function fetchComments(articleId) {
 }
 
 async function loadComments(page = 1){
-  const response = await fetch(`/article/getComments?id=${articleId}`);
+  const response = await fetch(`/admin/article/getComments?id=${articleId}`);
   const data = await response.json();
 
   // Gán lại dữ liệu mới vào biến toàn cục
@@ -74,7 +74,7 @@ async function loadComments(page = 1){
 
 async function sendVote(commentId, voteType) {
   try {
-    const response = await fetch("/article/voteComment", {
+    const response = await fetch("/admin/article/voteComment", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `comment_id=${commentId}&vote=${voteType}`
@@ -124,7 +124,7 @@ function hideNotification() {
 }
 
 function fetchUserRole() {
-  fetch("/article/getRole")
+  fetch("/admin/article/getRole")
     .then(res => res.json())
     .then(data => {
       // giả sử API trả về { "role": 1 } hoặc { "role": 0 }
@@ -149,6 +149,59 @@ function applyRolePermissions() {
   } else {
     commentForm.style.display = "block";  // Member thấy form
   }
+}
+
+function addImageUploadHandler(quillInstance) {
+  if (!quillInstance) return; // chưa khởi tạo thì thoát
+
+  const toolbar = quillInstance.getModule('toolbar');
+  toolbar.addHandler('image', () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = () => {
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch('/admin/article/uploadImage', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          const range = quillInstance.getSelection();
+          quillInstance.insertEmbed(range.index, 'image', result.url);
+        } else {
+          alert("Upload thất bại");
+        }
+      })
+      .catch(err => console.error(err));
+    };
+  });
+}
+
+function preserveSpacesInTextNodes(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(textNode => {
+    let s = textNode.nodeValue;
+    if (!s) return;
+    // thay chuỗi 2+ spaces: giữ 1 bình thường + phần còn lại NBSP
+    s = s.replace(/ {2,}/g, match => {
+      const n = match.length;
+      return ' ' + '\u00A0'.repeat(n - 1);
+    });
+    // giữ leading space
+    s = s.replace(/^ /, '\u00A0');
+    // giữ trailing space
+    s = s.replace(/ $/, '\u00A0');
+    textNode.nodeValue = s;
+  });
 }
 
 function renderComments() {
@@ -181,6 +234,7 @@ function renderComments() {
     const div = document.createElement("div");
     div.className = "comment mb-3 text-start border p-3 rounded";
     div.dataset.commentId = c.id; 
+    div.id = "comment-" + c.id;
     div.innerHTML = `
       <div class="d-flex justify-content-between align-items-center">
         <p class="mb-1">
@@ -258,21 +312,48 @@ function renderComments() {
 function renderPagination(total) {
   const ul = document.getElementById("commentPagination");
   ul.innerHTML = "";
-  const pages = Math.ceil(total/perPage);
-  for(let i=1;i<=pages;i++){
+  const pages = Math.ceil(total / perPage);
+
+  // Hàm tạo item trang
+  function appendPageItem(i) {
     const li = document.createElement("li");
-    li.className = "page-item"+(i===currentPage?" active":"");
+    li.className = "page-item" + (i === currentPage ? " active" : "");
     li.innerHTML = `<a class="page-link" href="javascript:void(0)">${i}</a>`;
-    li.addEventListener("click", ()=>{
+    li.addEventListener("click", () => {
       currentPage = i;
       const url = new URL(window.location);
       url.searchParams.delete("comment");
       url.searchParams.set("page", i);
       window.history.pushState({}, "", url);
-
-      loadComments(i); // gọi lại API để lấy dữ liệu mới
+      loadComments(i);
     });
     ul.appendChild(li);
+  }
+
+  // Hàm tạo dấu ...
+  function appendDots() {
+    const li = document.createElement("li");
+    li.className = "page-item disabled";
+    li.innerHTML = `<span class="page-link">...</span>`;
+    ul.appendChild(li);
+  }
+
+  if (pages <= 3) {
+    // Nếu tổng số trang <= 3 thì hiện hết
+    for (let i = 1; i <= pages; i++) appendPageItem(i);
+  } else {
+    appendPageItem(1); // trang đầu
+
+    if (currentPage > 2) appendDots();
+
+    // hiện trang hiện tại và lân cận
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(pages - 1, currentPage + 1);
+    for (let i = start; i <= end; i++) appendPageItem(i);
+
+    if (currentPage < pages - 1) appendDots();
+
+    appendPageItem(pages); // trang cuối
   }
 }
 
@@ -336,7 +417,7 @@ document.addEventListener("click", async e => {
     sendBtn.addEventListener("click", () => {
       const replyText = textarea.value.trim();
       if(replyText){
-        fetch("/article/replyComment", {
+        fetch("/admin/article/replyComment", {
           method: "POST",
           headers: {"Content-Type": "application/x-www-form-urlencoded"},
           body: `article_id=${articleId}&parent_id=${id}&text=${encodeURIComponent(replyText)}`
@@ -387,7 +468,7 @@ document.addEventListener("click", e => {
     const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
     const newText = commentDiv.querySelector(".edit-textarea").value;
 
-    fetch("/article/editComment", {
+    fetch("/admin/article/editComment", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: "comment_id=" + encodeURIComponent(commentId) +
@@ -420,7 +501,7 @@ document.addEventListener("click", e => {
     const commentId = btn.dataset.id;
 
     if(confirm("Bạn có chắc muốn xóa bình luận này?")){
-      fetch("/article/deleteComment", {
+      fetch("/admin/article/deleteComment", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "comment_id=" + encodeURIComponent(commentId)
@@ -454,25 +535,35 @@ document.addEventListener("click", e=>{
   }
 });
 
-document.getElementById("commentForm").addEventListener("submit", e => {
+document.getElementById("commentForm").addEventListener("submit", async e => {
   e.preventDefault();
-  if(userRole === "guest") return; // guest không được gửi
+  if (userRole === "guest") return;
 
   const textarea = e.target.querySelector("textarea");
   const text = textarea.value.trim();
-  if(text){
-    const newComment = {
-      id: comments.length+1,
-      user: "Bạn", // giả lập tên người dùng
-      text: text,
-      likes: 0,
-      dislikes: 0,
-      date: new Date().toISOString().split("T")[0] // yyyy-mm-dd
-    };
-    comments.unshift(newComment); // thêm vào đầu danh sách
-    textarea.value = "";
-    currentPage = 1;
-    renderComments();
+  if (text) {
+    try {
+      const response = await fetch("admin/article/addComment", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `article_id=${articleId}&text=${encodeURIComponent(text)}`
+      });
+
+      const raw = await response.text();
+      console.log("Raw response:", raw);
+      const data = JSON.parse(raw);
+
+      if (data.success) {
+        comments.unshift(data.comment); 
+        textarea.value = "";
+        currentPage = 1;
+        renderComments();
+      } else {
+        console.error("Lỗi thêm bình luận:", data.error);
+      }
+    } catch (err) {
+      console.error("Lỗi AJAX:", err);
+    }
   }
 });
 
@@ -500,7 +591,7 @@ document.getElementById("commentForm").addEventListener("submit", async e => {
   const text = textarea.value.trim();
   if (text) {
     try {
-      const response = await fetch("/article/addComment", {
+      const response = await fetch("/admin/article/addComment", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `article_id=${articleId}&text=${encodeURIComponent(text)}`
@@ -550,6 +641,7 @@ document.getElementById("openEditor").addEventListener("click", async () => {
       modules: { syntax: true, toolbar: '#toolbar-container' },
       theme: 'snow'
     });
+    addImageUploadHandler(quill);
   }
 
   // Lấy id bài viết từ URL
@@ -569,7 +661,14 @@ document.getElementById("openEditor").addEventListener("click", async () => {
 
 document.getElementById("btnSave").addEventListener("click", async () => {
   if (!quill) return;
-  const newContent = quill.root.innerHTML;
+
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = quill.root.innerHTML;
+
+  // Nếu muốn giữ khoảng trắng, chỉ thay trong text nodes:
+  preserveSpacesInTextNodes(tempDiv);
+
+  const newContent = tempDiv.innerHTML;
 
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get("id");
@@ -585,10 +684,7 @@ document.getElementById("btnSave").addEventListener("click", async () => {
     const contentDiv = document.querySelector(".row.content");
     contentDiv.innerHTML = newContent;
     contentDiv.style.display = "block";
-
     document.getElementById("editorSection").style.display = "none";
-
-    // 🔔 Thay alert bằng notification
     showNotification("Nội dung đã lưu thành công");
   } else {
     showNotification("Lưu nội dung thất bại");
@@ -634,7 +730,6 @@ document.getElementById("saveDescriptionBtn").addEventListener("click", async fu
     });
     const data = await res.json();
     if(data.success){
-      document.getElementById("articleDescription").textContent = newDescription;
       showNotification("Mô tả đã được cập nhật");
     } else {
       showNotification("Cập nhật mô tả thất bại");
@@ -681,7 +776,6 @@ uploadInput.addEventListener("change", function(){
     previewImg.style.display = "none"; // nếu không chọn file thì ẩn
   }
 });
-
 
 
 

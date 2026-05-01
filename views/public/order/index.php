@@ -31,7 +31,7 @@
                                             case 1: echo '<span class="badge bg-info text-white px-3 py-2 rounded-pill">Đang chuẩn bị hàng</span>'; break;
                                             case 2: echo '<span class="badge bg-primary text-white px-3 py-2 rounded-pill">Đang giao hàng</span>'; break;
                                             case 3: echo '<span class="badge bg-success px-3 py-2 rounded-pill">Giao thành công</span>'; break;
-                                            case 4: echo '<span class="badge bg-danger px-3 py-2 rounded-pill">Chuyển hoàn</span>'; break;
+                                            case 4: echo '<span class="badge bg-danger px-3 py-2 rounded-pill">Thất bại / Đã hủy</span>'; break;
                                             default: echo '<span class="badge bg-secondary px-3 py-2 rounded-pill">Không xác định</span>';
                                         }
                                     } else {
@@ -39,9 +39,9 @@
                                         switch($status) {
                                             case 0: echo '<span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Chờ xác nhận</span>'; break;
                                             case 1: echo '<span class="badge bg-info text-white px-3 py-2 rounded-pill">Đang chuẩn bị hàng</span>'; break;
-                                            case 2: echo '<span class="badge bg-primary text-white px-3 py-2 rounded-pill">Sẵn sàng nhận hàng</span>'; break;
-                                            case 3: echo '<span class="badge bg-success px-3 py-2 rounded-pill">Đã lấy hàng</span>'; break;
-                                            case 4: echo '<span class="badge bg-danger px-3 py-2 rounded-pill">Đã hủy</span>'; break;
+                                            case 2: echo '<span class="badge bg-primary text-white px-3 py-2 rounded-pill">Sẵn sàng nhận</span>'; break;
+                                            case 3: echo '<span class="badge bg-success px-3 py-2 rounded-pill">Đã nhận hàng</span>'; break;
+                                            case 4: echo '<span class="badge bg-danger px-3 py-2 rounded-pill">Thất bại / Đã hủy</span>'; break;
                                             default: echo '<span class="badge bg-secondary px-3 py-2 rounded-pill">Không xác định</span>';
                                         }
                                     }
@@ -53,7 +53,7 @@
                             <?php foreach ($order['details'] as $item): ?>
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="bg-light p-2 rounded" style="width: 80px; height: 100px; display: flex; align-items: center; justify-content: center;">
-                                        <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['item_image']; ?>" alt="<?php echo htmlspecialchars($item['item_name']); ?>" class="img-fluid object-fit-contain" style="max-height: 100%;">
+                                        <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $item['item_image']; ?>" alt="<?php echo htmlspecialchars($item['item_name']); ?>" class="img-fluid object-fit-contain" style="max-height: 100%;">
                                     </div>
                                     <div class="ms-4 flex-grow-1">
                                         <h6 class="fw-bold mb-1 fs-5"><?php echo $item['item_name']; ?></h6>

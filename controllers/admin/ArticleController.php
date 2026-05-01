@@ -37,30 +37,18 @@ class ArticleController extends Controller {
             die("View không tồn tại: " . $fullPath);
         }
     }
-    
-    public function getArticle() {
-        require_once __DIR__ . "/../../models/Article.php";
-        $articleModel = new Article();
 
-        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-        $row = $articleModel->findArticleById($id);
+    public function getRole() {
+        // session đã được khởi tạo trong __construct()
+        $role = $_SESSION['user_role'] ?? null;
 
         header('Content-Type: application/json; charset=utf-8');
-        if ($row) {
-            echo json_encode([
-                "id"          => $row['id_article'],
-                "title"       => $row['title'],
-                "description" => $row['description'],
-                "upload_date" => date("d/m/Y", strtotime($row['time_modified'])), 
-                "content"     => $row['content'], 
-                "background"  => $row['background']
-            ]);
-        } else {
-            echo json_encode(["error" => "Không tìm thấy bài viết"]);
-        }
+        echo json_encode([
+            "role" => $role
+        ]);
     }
 
-    public function getArticleAdmin() {
+    public function getArticle() {
         require_once __DIR__ . "/../../models/Article.php";
         $articleModel = new Article();
 
@@ -348,22 +336,17 @@ class ArticleController extends Controller {
     public function updateDescription() {
         require_once __DIR__ . "/../../models/Article.php";
 
-        $id          = $_POST['id'] ?? null;
-        $description = $_POST['description'] ?? '';
-
-        if(!$id){
-            echo json_encode(["success"=>false,"message"=>"Thiếu id bài viết"]);
-            return;
-        }
+        $id    = intval($_POST['id']);
+        $description = $_POST['description'];
 
         $article = new Article();
         $article->setIdArticle($id);
         $article->setDescription($description);
 
         if($article->update()){
-            echo json_encode(["success"=>true,"message"=>"Cập nhật mô tả thành công"]);
+            echo json_encode(["success"=>true, "description"=>$description]);
         } else {
-            echo json_encode(["success"=>false,"message"=>"Cập nhật mô tả thất bại"]);
+            echo json_encode(["success"=>false]);
         }
     }
 
@@ -396,7 +379,7 @@ class ArticleController extends Controller {
                 $article->setIdArticle($id);
 
                 // URL lưu vào DB
-                $server_url = '/assets/img/article/' . $final_name;
+                $server_url = 'assets/img/article/' . $final_name;
 
                 $article->setBackground($server_url);
 
@@ -444,6 +427,32 @@ class ArticleController extends Controller {
             ]);
         } else {
             echo json_encode(["success" => false]);
+        }
+    }
+    
+    public function uploadImage() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
+            $target_dir = __DIR__ . "../../../public/assets/img/article/";
+
+            if (!is_dir($target_dir)) {
+                mkdir($target_dir, 0777, true);
+            }
+
+            // Lấy phần mở rộng
+            $path_info = pathinfo($_FILES['file']['name']);
+            $ext = isset($path_info['extension']) ? "." . $path_info['extension'] : "";
+
+            // Đặt tên file ngẫu nhiên hoặc theo ý bạn
+            $final_name = uniqid("quill_", true) . $ext;
+            $folder = $target_dir . $final_name;
+
+            if (move_uploaded_file($_FILES["file"]["tmp_name"], $folder)) {
+                // URL trả về cho Quill
+                $server_url = '/assets/img/article/' . $final_name;
+                echo json_encode(["success" => true, "url" => $server_url]);
+            } else {
+                echo json_encode(["success" => false]);
+            }
         }
     }
 

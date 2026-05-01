@@ -3,7 +3,6 @@ let bulkMode = false;
 let selectedIds = [];
 let newsData = { totalItems: 0, items: [] };
 
-
 async function fetchNews(page = 1, keyword = "") {
   try {
     const response = await fetch(`/admin/news/getNews?page=${page}&keyword=${encodeURIComponent(keyword)}`);
@@ -23,7 +22,36 @@ function renderPagination(totalItems, itemsPerPage, currentPage, keyword = "") {
   const pagination = document.getElementById("pagination");
   pagination.innerHTML = "";
 
-  for (let i = 1; i <= totalPages; i++) {
+  const maxVisible = 3; // số trang hiển thị quanh currentPage
+  let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  let end = start + maxVisible - 1;
+
+  if (end > totalPages) {
+    end = totalPages;
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  // Trang đầu
+  if (start > 1) {
+    const first = document.createElement("li");
+    first.className = "page-item";
+    first.innerHTML = `<a class="page-link" href="#">1</a>`;
+    first.addEventListener("click", (e) => {
+      e.preventDefault();
+      fetchNews(1, keyword);
+    });
+    pagination.appendChild(first);
+
+    if (start > 2) {
+      const dots = document.createElement("li");
+      dots.className = "page-item disabled";
+      dots.innerHTML = `<span class="page-link">...</span>`;
+      pagination.appendChild(dots);
+    }
+  }
+
+  // Các trang quanh currentPage
+  for (let i = start; i <= end; i++) {
     const pageItem = document.createElement("li");
     pageItem.className = "page-item" + (i === currentPage ? " active" : "");
     pageItem.innerHTML = `<a class="page-link" href="#">${i}</a>`;
@@ -32,6 +60,25 @@ function renderPagination(totalItems, itemsPerPage, currentPage, keyword = "") {
       fetchNews(i, keyword);
     });
     pagination.appendChild(pageItem);
+  }
+
+  // Trang cuối
+  if (end < totalPages) {
+    if (end < totalPages - 1) {
+      const dots = document.createElement("li");
+      dots.className = "page-item disabled";
+      dots.innerHTML = `<span class="page-link">...</span>`;
+      pagination.appendChild(dots);
+    }
+
+    const last = document.createElement("li");
+    last.className = "page-item";
+    last.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
+    last.addEventListener("click", (e) => {
+      e.preventDefault();
+      fetchNews(totalPages, keyword);
+    });
+    pagination.appendChild(last);
   }
 }
 
@@ -121,6 +168,92 @@ function hideNotification() {
   document.getElementById("notification-panel").classList.add("d-none");
 }
 
+function loadNotifications(){
+    fetch("/admin/news/getNotifications")
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            // Hiển thị số thông báo chưa đọc trên chuông
+            const bellCount = document.querySelector(".ti-bell span");
+            if (bellCount) {
+                bellCount.textContent = data.count > 99 ? "+99" : data.count;
+            }
+
+            // Tiêu đề dropdown
+            const notifyTitle = document.querySelector(".notify-title");
+            if (notifyTitle) {
+                notifyTitle.innerHTML = data.count > 0
+                    ? `Bạn có ${data.count} thông báo mới <a href="/admin/notification">xem tất cả</a>`
+                    : `Bạn không có thông báo mới <a href="/admin/notification">xem tất cả</a>`;
+
+                const markAllLink = notifyTitle.querySelector("a");
+                if (markAllLink) {
+                    markAllLink.addEventListener("click", function(e){
+                        e.preventDefault();
+                        fetch("/admin/notification/markAllRead", { method: "POST" })
+                            .then(() => loadNotifications());
+                    });
+                }
+            }
+
+            // Danh sách dropdown
+            const list = document.querySelector(".notify-list");
+            if (list) {
+                list.innerHTML = "";
+                data.notifications.forEach(n => {
+                    const item = document.createElement("a");
+
+                    if (n.id_article && n.id_comment) {
+                        item.href = `/article?id=${n.id_article}&comment=${n.id_comment}`;
+                    } else if (n.id_article) {
+                        item.href = `/article?id=${n.id_article}`;
+                    } else {
+                        item.href = "#";
+                    }
+
+                    item.className = "notify-item";
+                    item.dataset.id = n.id;
+                    item.innerHTML = `
+                        <div class="notify-thumb"><i class="ti-info bg-info"></i></div>
+                        <div class="notify-text">
+                            <p>${n.message}</p>
+                            <span>${n.created_at}</span>
+                        </div>`;
+                    
+                    item.addEventListener("click", function(e){
+                        e.preventDefault();
+                        fetch("/admin/news/markRead", {   // API markRead cho từng thông báo
+                            method: "POST",
+                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                            body: "id=" + this.dataset.id
+                        }).then(() => {
+                            window.location.href = this.href;
+                        });
+                    });
+                    list.appendChild(item);
+                });
+
+                // Nếu có nhiều hơn 3 thông báo, thêm link "Xem tất cả"
+                if (data.count > 3) {
+                    const more = document.createElement("a");
+                    more.href = "/admin/notification";
+                    more.className = "notify-item text-center fw-bold";
+                    more.textContent = "Xem tất cả thông báo";
+                    list.appendChild(more);
+                }
+            }
+
+            const readAllBtn = document.getElementById("readAllBtn");
+            if (readAllBtn) {
+                readAllBtn.onclick = () => {
+                    fetch("/admin/notification/markAllRead", { method: "POST" })
+                        .then(() => loadNotifications());
+                };
+            }
+        }
+    });
+}
+
 document.addEventListener("click", function(e){
   if(bulkMode && e.target.classList.contains("article-icon")){
     const id = e.target.dataset.id;
@@ -164,6 +297,99 @@ document.addEventListener("click", function(e) {
   }
 });
 
+document.getElementById("searchForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const keyword = document.getElementById("searchInput").value.trim();
+
+  // Luôn gọi fetchNews với keyword, nếu rỗng thì load toàn bộ
+  fetchNews(1, keyword);
+});
+
+document.getElementById("addArticleBtn").addEventListener("click", function(e){
+  e.preventDefault(); // chặn chuyển trang ngay lập tức
+
+  // gọi API tạo bài viết mới (ví dụ)
+  fetch("/admin/news/create", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "title=Bài viết mới" // tuỳ theo backend
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success){
+      showNotification("Thêm bài viết thành công");
+      // reload danh sách
+      fetchNews();
+    } else {
+      showNotification("Thêm bài viết thất bại");
+    }
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+  const markAllLink = document.querySelector(".notify-title a");
+  if (markAllLink) {
+    markAllLink.addEventListener("click", function(e){
+      e.preventDefault();
+      fetch("/admin/notification/markAllRead", { method: "POST" })
+        .then(() => loadNotifications());
+    });
+  }
+});
+
+document.addEventListener("DOMContentLoaded", function(){
+    const mainSwitch = document.getElementById("switch-main");
+    const subSwitches = {
+        comment: document.getElementById("switch-comment"),
+        reply: document.getElementById("switch-reply"),
+        edit: document.getElementById("switch-edit"),
+        vote: document.getElementById("switch-vote")
+    };
+
+    // Load settings từ DB
+    fetch("/admin/news/getNotificationSettings")
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            mainSwitch.checked = data.is_enabled == 1;
+            subSwitches.comment.checked = data.enable_comment == 1;
+            subSwitches.reply.checked   = data.enable_reply == 1;
+            subSwitches.edit.checked    = data.enable_edit == 1;
+            subSwitches.vote.checked    = data.enable_vote == 1;
+
+            // nếu nút chính tắt thì disable các nút con
+            Object.values(subSwitches).forEach(sw => sw.disabled = !mainSwitch.checked);
+        }
+    });
+
+    // Khi bật/tắt nút chính
+    mainSwitch.addEventListener("change", function(){
+        const enabled = this.checked;
+        Object.values(subSwitches).forEach(sw => sw.disabled = !enabled);
+        saveSettings();
+    });
+
+    // Khi bật/tắt nút con
+    Object.values(subSwitches).forEach(sw => {
+        sw.addEventListener("change", saveSettings);
+    });
+
+    function saveSettings(){
+        const data = new URLSearchParams();
+        data.append("enable_notifications", mainSwitch.checked ? 1 : 0);
+        data.append("enable_comment", subSwitches.comment.checked ? 1 : 0);
+        data.append("enable_reply", subSwitches.reply.checked ? 1 : 0);
+        data.append("enable_edit", subSwitches.edit.checked ? 1 : 0);
+        data.append("enable_vote", subSwitches.vote.checked ? 1 : 0);
+
+        fetch("/admin/news/updateNotificationSettings", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: data.toString()
+        });
+    }
+});
+
 document.addEventListener("DOMContentLoaded", async function() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
@@ -192,16 +418,9 @@ document.addEventListener("DOMContentLoaded", async function() {
   }
 });
 
-document.getElementById("searchForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const keyword = document.getElementById("searchInput").value.trim();
-
-  // Luôn gọi fetchNews với keyword, nếu rỗng thì load toàn bộ
-  fetchNews(1, keyword);
-});
-
 document.addEventListener("DOMContentLoaded", function() {
   fetchNews();
+
   document.getElementById("toggle-bulk").addEventListener("click", function(){
     bulkMode = !bulkMode;
     document.getElementById("bulk-actions").classList.toggle("d-none", !bulkMode);
@@ -219,42 +438,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
   document.querySelector("#notification-panel .btn-close").addEventListener("click", hideNotification);
 
-  document.getElementById("optionArticles").addEventListener("change", function(){
-    if(this.checked){
-      document.getElementById("pagination").innerHTML = "";
-      document.getElementById("article-list").innerHTML = "";
-      fetchNews(1);
-    }
-  });
+  // Đã bỏ phần optionArticles / optionReviews
+});
 
-  document.getElementById("optionReviews").addEventListener("change", function(){
-    if(this.checked){
-      // tạm thời cũng gọi loadArticles để test
-       document.getElementById("article-list").innerHTML = "";
-       document.getElementById("pagination").innerHTML = "";
-      // sau này thay bằng loadReviews()
-    }
-  });
+document.addEventListener("DOMContentLoaded", function(){
+    loadNotifications(); // chạy ngay khi load trang
+    setInterval(loadNotifications, 1000); // polling mỗi 1 phút
 });
 
 
-document.getElementById("addArticleBtn").addEventListener("click", function(e){
-  e.preventDefault(); // chặn chuyển trang ngay lập tức
 
-  // gọi API tạo bài viết mới (ví dụ)
-  fetch("/admin/news/create", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "title=Bài viết mới" // tuỳ theo backend
-  })
-  .then(res => res.json())
-  .then(data => {
-    if(data.success){
-      showNotification("Thêm bài viết thành công");
-      // reload danh sách
-      fetchNews();
-    } else {
-      showNotification("Thêm bài viết thất bại");
-    }
-  });
-});

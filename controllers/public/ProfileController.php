@@ -2,7 +2,7 @@
 // FILE: controllers/public/ProfileController.php
 
 class ProfileController extends Controller {
-    private $userModel;
+    private UserModel $userModel;
 
     public function __construct() {
         if (session_status() === PHP_SESSION_NONE) session_start();

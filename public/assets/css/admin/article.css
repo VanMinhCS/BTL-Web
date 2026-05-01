@@ -86,9 +86,10 @@ textarea.form_area {
 }
 
 #notification-panel {
-  max-width: 600px;   /* rộng hơn */
-  font-size: 1.2rem;  /* chữ to hơn */
-  padding: 20px;      /* khoảng cách trong */
+  max-width: 600px;   
+  font-size: 1.2rem;  
+  padding: 20px;      
+  z-index: 20;
 }
 
 #notification-message {
@@ -96,5 +97,41 @@ textarea.form_area {
 }
 
 #notification-timer {
-  height: 8px;        /* thanh timer dày hơn */
+  height: 8px;        
+}
+
+.modal-content{
+  z-index: 10;
+}
+
+
+.ql-editor .ql-align-center,
+.ql-align-center,
+.content .ql-align-center {
+  text-align: center !important;
+}
+.ql-editor .ql-align-right,
+.ql-align-right,
+.content .ql-align-right {
+  text-align: right !important;
+}
+.ql-editor .ql-align-justify,
+.ql-align-justify,
+.content .ql-align-justify {
+  text-align: justify !important;
+}
+
+/* Kích cỡ chữ Quill */
+.ql-size-small {
+  font-size: 0.75em !important;
+}
+.ql-size-large {
+  font-size: 1.5em !important;
+}
+.ql-size-huge {
+  font-size: 2.5em !important;
+}
+
+li[data-list="bullet"] {
+  list-style-type: disc !important;  
 }
