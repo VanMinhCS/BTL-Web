@@ -41,6 +41,30 @@
     color: #ffffff;
 }
 
+/* Định dạng mũi tên cho Featured Products
+.featured-products .slick-prev,
+.featured-products .slick-next {
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+}
+.featured-products .slick-prev { left: -15px; }
+.featured-products .slick-next { right: -15px; }
+
+.featured-products .slick-prev::before,
+.featured-products .slick-next::before {
+    font-size: 30px;
+    color: #0d6efd;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.featured-products .slick-prev:hover::before,
+.featured-products .slick-next:hover::before {
+    color: #0b5ed7;
+}
+
+.featured-products { padding: 0 20px; } */
+
 /* Định vị Quote vào góc dưới bên phải */
 .quote-box {
     position: absolute;
@@ -58,4 +82,17 @@
     font-weight: bold;
     margin-bottom: 5px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Đổ bóng cho chữ dễ đọc */
+}
+
+.fp-card .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(13, 110, 253, 0.15) !important;
+    border-color: #0d6efd !important;
+}
+.fp-card .card:hover img {
+    transform: scale(1.08); /* Zoom ảnh lúc hover */
+}
+.img-dimmed {
+    opacity: 0.4;
+    filter: grayscale(100%);
 }

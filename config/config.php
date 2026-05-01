@@ -7,6 +7,7 @@ $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
 $projectPath = str_replace('index.php', '', $scriptName);
 
 define('BASE_URL', $protocol . $host . $projectPath);
+// define('BASE_URL', 'http://localhost/');
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');      

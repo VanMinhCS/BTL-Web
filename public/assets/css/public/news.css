@@ -1,0 +1,60 @@
+figure[class^="imghvr-"] figcaption {
+  background: rgba(0, 0, 0, 0.3);       /* panel mờ */
+  backdrop-filter: blur(0.3px);         /* blur cực nhẹ */
+  -webkit-backdrop-filter: blur(0.3px); /* hỗ trợ Safari */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.3em;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.imghvr-float-up {
+    font-family: 'Montserrat', sans-serif;
+    background-color: white;
+    color: #0d6efd !important;
+    padding: 8px 16px;   
+    width: auto;         
+    height: auto;       
+    display: inline-block; 
+    border-radius: 4px;  
+}
+
+.imghvr-float-up {
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+figure:hover .imghvr-float-up {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+figure.imghvr-fade img {
+  transition: transform 0.5s ease; /* hiệu ứng mượt */
+}
+
+figure.imghvr-fade:hover img {
+  transform: scale(1.05); /* zoom nhẹ 5% */
+}
+
+.time_upload{
+    text-align: left;
+    font-size: 1.1em;
+    font-family: 'Roboto Condensed', sans-serif;
+    color:#0d6efd;
+}
+
+.title{
+    text-align: left;
+    font-size: 1.3em;
+    font-family: 'Montserrat', sans-serif;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}

@@ -15,7 +15,7 @@ class Model {
     }
 
     public function getDb() {
-    return $this->db;
+        return $this->db;
     }
 
 }
