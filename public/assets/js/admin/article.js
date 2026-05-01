@@ -151,6 +151,59 @@ function applyRolePermissions() {
   }
 }
 
+function addImageUploadHandler(quillInstance) {
+  if (!quillInstance) return; // chưa khởi tạo thì thoát
+
+  const toolbar = quillInstance.getModule('toolbar');
+  toolbar.addHandler('image', () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = () => {
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch('/admin/article/uploadImage', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          const range = quillInstance.getSelection();
+          quillInstance.insertEmbed(range.index, 'image', result.url);
+        } else {
+          alert("Upload thất bại");
+        }
+      })
+      .catch(err => console.error(err));
+    };
+  });
+}
+
+function preserveSpacesInTextNodes(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(textNode => {
+    let s = textNode.nodeValue;
+    if (!s) return;
+    // thay chuỗi 2+ spaces: giữ 1 bình thường + phần còn lại NBSP
+    s = s.replace(/ {2,}/g, match => {
+      const n = match.length;
+      return ' ' + '\u00A0'.repeat(n - 1);
+    });
+    // giữ leading space
+    s = s.replace(/^ /, '\u00A0');
+    // giữ trailing space
+    s = s.replace(/ $/, '\u00A0');
+    textNode.nodeValue = s;
+  });
+}
+
 function renderComments() {
   const list = document.getElementById("commentList");
   list.innerHTML = "";
@@ -588,6 +641,7 @@ document.getElementById("openEditor").addEventListener("click", async () => {
       modules: { syntax: true, toolbar: '#toolbar-container' },
       theme: 'snow'
     });
+    addImageUploadHandler(quill);
   }
 
   // Lấy id bài viết từ URL
@@ -607,7 +661,14 @@ document.getElementById("openEditor").addEventListener("click", async () => {
 
 document.getElementById("btnSave").addEventListener("click", async () => {
   if (!quill) return;
-  const newContent = quill.root.innerHTML;
+
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = quill.root.innerHTML;
+
+  // Nếu muốn giữ khoảng trắng, chỉ thay trong text nodes:
+  preserveSpacesInTextNodes(tempDiv);
+
+  const newContent = tempDiv.innerHTML;
 
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get("id");
@@ -623,10 +684,7 @@ document.getElementById("btnSave").addEventListener("click", async () => {
     const contentDiv = document.querySelector(".row.content");
     contentDiv.innerHTML = newContent;
     contentDiv.style.display = "block";
-
     document.getElementById("editorSection").style.display = "none";
-
-    // 🔔 Thay alert bằng notification
     showNotification("Nội dung đã lưu thành công");
   } else {
     showNotification("Lưu nội dung thất bại");
@@ -718,7 +776,6 @@ uploadInput.addEventListener("change", function(){
     previewImg.style.display = "none"; // nếu không chọn file thì ẩn
   }
 });
-
 
 
 

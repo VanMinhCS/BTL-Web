@@ -379,7 +379,7 @@ class ArticleController extends Controller {
                 $article->setIdArticle($id);
 
                 // URL lưu vào DB
-                $server_url = '/assets/img/article/' . $final_name;
+                $server_url = 'assets/img/article/' . $final_name;
 
                 $article->setBackground($server_url);
 
@@ -429,7 +429,31 @@ class ArticleController extends Controller {
             echo json_encode(["success" => false]);
         }
     }
+    
+    public function uploadImage() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
+            $target_dir = __DIR__ . "../../../public/assets/img/article/";
 
+            if (!is_dir($target_dir)) {
+                mkdir($target_dir, 0777, true);
+            }
 
+            // Lấy phần mở rộng
+            $path_info = pathinfo($_FILES['file']['name']);
+            $ext = isset($path_info['extension']) ? "." . $path_info['extension'] : "";
+
+            // Đặt tên file ngẫu nhiên hoặc theo ý bạn
+            $final_name = uniqid("quill_", true) . $ext;
+            $folder = $target_dir . $final_name;
+
+            if (move_uploaded_file($_FILES["file"]["tmp_name"], $folder)) {
+                // URL trả về cho Quill
+                $server_url = '/assets/img/article/' . $final_name;
+                echo json_encode(["success" => true, "url" => $server_url]);
+            } else {
+                echo json_encode(["success" => false]);
+            }
+        }
+    }
 
 }
