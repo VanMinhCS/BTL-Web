@@ -110,4 +110,52 @@ class Article extends Model {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function findArticleByIdAdmin($id) {
+        $stmt = $this->getDb()->prepare("
+            SELECT id_article, title, description, time_modified, content, background 
+            FROM articles 
+            WHERE id_article = ?
+        ");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllArticles() {
+        $stmt = $this->getDb()->query(
+            "SELECT id_article, title, description, time_modified, status 
+            FROM articles ORDER BY time_modified DESC"
+        );
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteArticles(array $ids) {
+        $in  = str_repeat('?,', count($ids) - 1) . '?';
+        $stmt = $this->getDb()->prepare("DELETE FROM articles WHERE id_article IN ($in)");
+        return $stmt->execute($ids);
+    }
+
+    public function hideArticles(array $ids) {
+        $in  = str_repeat('?,', count($ids) - 1) . '?';
+        $stmt = $this->getDb()->prepare("UPDATE articles SET status = 0 WHERE id_article IN ($in)");
+        return $stmt->execute($ids);
+    }
+
+    public function showArticles(array $ids) {
+        $in  = str_repeat('?,', count($ids) - 1) . '?';
+        $stmt = $this->getDb()->prepare("UPDATE articles SET status = 1 WHERE id_article IN ($in)");
+        return $stmt->execute($ids);
+    }
+
+    public function searchArticles($keyword) {
+        $sql = "SELECT * FROM articles 
+                WHERE title LIKE :kw1 OR description LIKE :kw2 
+                ORDER BY time_modified DESC";
+        $stmt = $this->getDb()->prepare($sql);
+        $stmt->bindValue(':kw1', "%".$keyword."%", PDO::PARAM_STR);
+        $stmt->bindValue(':kw2', "%".$keyword."%", PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
 }

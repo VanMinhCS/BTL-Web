@@ -1,28 +1,34 @@
 const itemsPerPage = 5; 
 let bulkMode = false;
 let selectedIds = [];
-let newsData = { totalItems: 0, items: [] };
+let notificationsData = {};
 
-async function fetchNews(page = 1, keyword = "") {
+async function fetchNotifications(page = 1, keyword = "", status = "", type = "", sort = "desc") {
   try {
-    const response = await fetch(`/admin/news/getNews?page=${page}&keyword=${encodeURIComponent(keyword)}`);
-    const result = await response.json();
-    newsData = result;
+    const url = `/admin/notification/getAllNotifications?page=${page}&itemsPerPage=${itemsPerPage}`
+      + `&keyword=${encodeURIComponent(keyword)}`
+      + `&status=${encodeURIComponent(status)}`
+      + `&type=${encodeURIComponent(type)}`
+      + `&sort=${encodeURIComponent(sort)}`;
 
-    // KHÔNG slice nữa, vì server đã cắt theo trang
-    renderArticles(newsData.items);
-    renderPagination(newsData.totalItems, itemsPerPage, page, keyword);
+    const response = await fetch(url);
+    const result = await response.json();
+    notificationsData = result;
+
+    renderNotifications(notificationsData.notifications);
+    renderPagination(notificationsData.totalItems, itemsPerPage, page, keyword, status, type, sort);
   } catch (error) {
-    console.error("Lỗi khi tải dữ liệu news:", error);
+    console.error("Lỗi khi tải dữ liệu thông báo:", error);
   }
 }
 
-function renderPagination(totalItems, itemsPerPage, currentPage, keyword = "") {
+function renderPagination(totalItems, itemsPerPage, currentPage, keyword = "", status = "", type = "", sort = "desc") {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const pagination = document.getElementById("pagination");
   pagination.innerHTML = "";
 
-  const maxVisible = 3; // số trang hiển thị quanh currentPage
+  // Giới hạn số trang hiển thị
+  const maxVisible = 3; // số trang muốn hiển thị
   let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
   let end = start + maxVisible - 1;
 
@@ -31,14 +37,14 @@ function renderPagination(totalItems, itemsPerPage, currentPage, keyword = "") {
     start = Math.max(1, end - maxVisible + 1);
   }
 
-  // Trang đầu
+  // Nút "Trang đầu"
   if (start > 1) {
     const first = document.createElement("li");
     first.className = "page-item";
     first.innerHTML = `<a class="page-link" href="#">1</a>`;
     first.addEventListener("click", (e) => {
       e.preventDefault();
-      fetchNews(1, keyword);
+      fetchNotifications(1, keyword, status, type, sort);
     });
     pagination.appendChild(first);
 
@@ -57,12 +63,12 @@ function renderPagination(totalItems, itemsPerPage, currentPage, keyword = "") {
     pageItem.innerHTML = `<a class="page-link" href="#">${i}</a>`;
     pageItem.addEventListener("click", (e) => {
       e.preventDefault();
-      fetchNews(i, keyword);
+      fetchNotifications(i, keyword, status, type, sort);
     });
     pagination.appendChild(pageItem);
   }
 
-  // Trang cuối
+  // Nút "Trang cuối"
   if (end < totalPages) {
     if (end < totalPages - 1) {
       const dots = document.createElement("li");
@@ -76,71 +82,38 @@ function renderPagination(totalItems, itemsPerPage, currentPage, keyword = "") {
     last.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
     last.addEventListener("click", (e) => {
       e.preventDefault();
-      fetchNews(totalPages, keyword);
+      fetchNotifications(totalPages, keyword, status, type, sort);
     });
     pagination.appendChild(last);
   }
 }
 
-function renderArticles(articles) {
-  const list = document.getElementById("article-list");
+function renderNotifications(notifications) {
+  const list = document.getElementById("notification-list");
   list.innerHTML = "";
 
-  articles.forEach(article => {
+  notifications.forEach(n => {
     const div = document.createElement("div");
-    div.className = "article-entry d-flex align-items-start p-3 border-bottom";
+    div.className = "notification-entry d-flex align-items-start p-3 border-bottom";
+
+    const readStatus = n.is_read == 1 ? "Read" : "Unread";
+
     div.innerHTML = `
       <div class="me-3">
-        <i class="ti-file ${article.status === 1 ? 'bg-primary' : 'bg-danger'} article-icon"
-           data-id="${article.id}"
+        <i class="ti-info bg-info notification-icon"
+           data-id="${n.id}"
            style="height:45px;width:45px;line-height:45px;display:block;border-radius:50%;text-align:center;color:#fff;font-size:18px;cursor:pointer;"></i>
       </div>
-      <div class="flex-grow-1 article-content">
-        <h6 class="mb-1">${article.title}</h6>
-        <p class="text-muted mb-1">${article.description}</p>
-        <small class="text-muted">Đăng ngày: ${article.upload_date}</small>
+      <div class="flex-grow-1 notification-content">
+        <h6 class="mb-1">${n.message}</h6>
+        <small class="text-muted">Ngày: ${n.created_at} | Status: ${readStatus}</small>
       </div>
       <button class="btn btn-sm btn-outline-primary"
-              onclick="window.location.href='article?id=${article.id}'">Edit</button>
-      <button class="btn btn-sm ${article.status === 1 ? 'btn-outline-secondary' : 'btn-outline-danger'} toggle-btn"
-              data-id="${article.id}">
-        ${article.status === 1 ? 'Hide' : 'Show'}
+              onclick="window.location.href='/admin/article?id=${n.id_article}${n.id_comment ? '&comment='+n.id_comment : ''}'">
+        View
       </button>
     `;
     list.appendChild(div);
-  });
-}
-
-function bulkAction(action) {
-  if(selectedIds.length === 0) {
-    alert("Chưa chọn bài viết nào");
-    return;
-  }
-
-  fetch("/admin/news/bulkAction", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ids: selectedIds, action })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if(data.success){
-      let message = "";
-      switch(action) {
-        case "delete":
-          message = "Xóa bài viết thành công";
-          break;
-        case "hide":
-          message = "Ẩn bài viết thành công";
-          break;
-        case "show":
-          message = "Hiện bài viết thành công";
-          break;
-      }
-      showNotification(message);
-      fetchNews(1);
-      selectedIds = []; // reset sau khi thao tác
-    }
   });
 }
 
@@ -169,11 +142,11 @@ function hideNotification() {
 }
 
 function loadNotifications(){
-    fetch("/admin/news/getNotifications")
+    fetch("/admin/notification/getNotifications")
     .then(res => res.json())
     .then(data => {
         if(data.success){
-            // Hiển thị số thông báo chưa đọc trên chuông
+            // Chuông hiển thị tổng số chưa đọc
             const bellCount = document.querySelector(".ti-bell span");
             if (bellCount) {
                 bellCount.textContent = data.count > 99 ? "+99" : data.count;
@@ -183,26 +156,26 @@ function loadNotifications(){
             const notifyTitle = document.querySelector(".notify-title");
             if (notifyTitle) {
                 notifyTitle.innerHTML = data.count > 0
-                    ? `Bạn có ${data.count} thông báo mới <a href="/admin/notification">xem tất cả</a>`
-                    : `Bạn không có thông báo mới <a href="/admin/notification">xem tất cả</a>`;
+                    ? `Bạn có ${data.count} thông báo mới <a href="#">xem tất cả</a>`
+                    : `Bạn không có thông báo mới <a href="#">xem tất cả</a>`;
 
+                // Gắn sự kiện cho link "xem tất cả" trong tiêu đề
                 const markAllLink = notifyTitle.querySelector("a");
                 if (markAllLink) {
                     markAllLink.addEventListener("click", function(e){
                         e.preventDefault();
                         fetch("/admin/notification/markAllRead", { method: "POST" })
-                            .then(() => loadNotifications());
+                            .then(() => loadNotifications()); // reload lại để cập nhật
                     });
                 }
             }
 
-            // Danh sách dropdown
+            // Danh sách dropdown: chỉ hiển thị 3 thông báo
             const list = document.querySelector(".notify-list");
             if (list) {
                 list.innerHTML = "";
-                data.notifications.forEach(n => {
+                data.notifications.slice(0, 3).forEach(n => {
                     const item = document.createElement("a");
-
                     if (n.id_article && n.id_comment) {
                         item.href = `/article?id=${n.id_article}&comment=${n.id_comment}`;
                     } else if (n.id_article) {
@@ -216,13 +189,12 @@ function loadNotifications(){
                     item.innerHTML = `
                         <div class="notify-thumb"><i class="ti-info bg-info"></i></div>
                         <div class="notify-text">
-                            <p>${n.message}</p>
+                            <p>${n.message ?? "Thông báo mới"}</p>
                             <span>${n.created_at}</span>
                         </div>`;
-                    
                     item.addEventListener("click", function(e){
                         e.preventDefault();
-                        fetch("/admin/news/markRead", {   // API markRead cho từng thông báo
+                        fetch("/admin/news/markRead", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded" },
                             body: "id=" + this.dataset.id
@@ -233,97 +205,108 @@ function loadNotifications(){
                     list.appendChild(item);
                 });
 
-                // Nếu có nhiều hơn 3 thông báo, thêm link "Xem tất cả"
                 if (data.count > 3) {
                     const more = document.createElement("a");
-                    more.href = "/admin/notification";
                     more.className = "notify-item text-center fw-bold";
                     more.textContent = "Xem tất cả thông báo";
+                    more.href = "#"; // không điều hướng
+
+                    // Gắn sự kiện click cho nút "view all"
+                    more.addEventListener("click", function(e){
+                        e.preventDefault();
+                        fetch("/admin/notification/markAllRead", { method: "POST" })
+                            .then(() => loadNotifications()); // reload lại để cập nhật
+                    });
+
                     list.appendChild(more);
                 }
             }
 
+            // Nút "Read All"
             const readAllBtn = document.getElementById("readAllBtn");
             if (readAllBtn) {
                 readAllBtn.onclick = () => {
                     fetch("/admin/notification/markAllRead", { method: "POST" })
-                        .then(() => loadNotifications());
+                        .then(() => loadNotifications()); // reload lại để cập nhật số lượng
                 };
             }
         }
     });
 }
 
+function bulkAction(action) {
+  if(selectedIds.length === 0) {
+    alert("Chưa chọn thông báo nào");
+    return;
+  }
+
+  fetch("/admin/notification/bulkAction", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids: selectedIds, action })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success){
+      let message = "";
+      switch(action) {
+        case "delete":
+          message = "Xóa thông báo thành công";
+          break;
+        case "read":
+          message = "Đánh dấu đã đọc thành công";
+          break;
+      }
+      showNotification(message);
+      fetchNotifications(1); // reload danh sách
+      selectedIds = []; // reset sau khi thao tác
+    }
+  });
+}
+
+function applyFilters(page = 1) {
+  const keyword = document.getElementById("searchInput").value.trim();
+  const status  = document.getElementById("filter-status").value;
+  const type    = document.getElementById("filter-type").value;
+  const sort    = document.getElementById("filter-sort").value;
+
+  fetchNotifications(page, keyword, status, type, sort);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const searchForm = document.getElementById("searchForm");
+  if (searchForm) {
+    searchForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      applyFilters(1);
+    });
+  }
+
+  // Nếu muốn tự động lọc khi thay đổi select
+  document.getElementById("filter-status").addEventListener("change", () => applyFilters(1));
+  document.getElementById("filter-type").addEventListener("change", () => applyFilters(1));
+  document.getElementById("filter-sort").addEventListener("change", () => applyFilters(1));
+});
+
+document.getElementById("filter-status").addEventListener("change", () => applyFilters(1));
+
+document.getElementById("filter-type").addEventListener("change", () => applyFilters(1));
+
+document.getElementById("filter-sort").addEventListener("change", () => applyFilters(1));
+
 document.addEventListener("click", function(e){
-  if(bulkMode && e.target.classList.contains("article-icon")){
+  if(bulkMode && e.target.classList.contains("notification-icon")){
     const id = e.target.dataset.id;
     if(selectedIds.includes(id)){
       // bỏ chọn
       selectedIds = selectedIds.filter(x => x !== id);
       e.target.style.outline = "none";
-      e.target.style.backgroundColor = e.target.classList.contains("bg-primary") ? "#0d6efd" : "#dc3545";
     } else {
       // chọn
       selectedIds.push(id);
       e.target.style.outline = "3px solid #28a745"; 
     }
   }
-});
-
-document.addEventListener("click", function(e) {
-  if(e.target.classList.contains("toggle-btn")){
-    const btn = e.target;
-    const id = btn.getAttribute("data-id");
-
-    fetch("/admin/news/toggleStatus", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: "id=" + id
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data.success){
-        if(data.status === 1){
-          btn.textContent = "Hide";
-          btn.classList.remove("btn-outline-danger");
-          btn.classList.add("btn-outline-secondary");
-        } else {
-          btn.textContent = "Show";
-          btn.classList.remove("btn-outline-secondary");
-          btn.classList.add("btn-outline-danger");
-        }
-      }
-    });
-  }
-});
-
-document.getElementById("searchForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const keyword = document.getElementById("searchInput").value.trim();
-
-  // Luôn gọi fetchNews với keyword, nếu rỗng thì load toàn bộ
-  fetchNews(1, keyword);
-});
-
-document.getElementById("addArticleBtn").addEventListener("click", function(e){
-  e.preventDefault(); // chặn chuyển trang ngay lập tức
-
-  // gọi API tạo bài viết mới (ví dụ)
-  fetch("/admin/news/create", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "title=Bài viết mới" // tuỳ theo backend
-  })
-  .then(res => res.json())
-  .then(data => {
-    if(data.success){
-      showNotification("Thêm bài viết thành công");
-      // reload danh sách
-      fetchNews();
-    } else {
-      showNotification("Thêm bài viết thất bại");
-    }
-  });
 });
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -390,55 +373,58 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 });
 
-document.addEventListener("DOMContentLoaded", async function() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
+document.addEventListener("DOMContentLoaded", function() {
+  // load trang đầu tiên
+  fetchNotifications();
 
-  if(id){
+  // nút Read All
+  document.getElementById("readAllBtn").addEventListener("click", async () => {
     try {
-      const response = await fetch(`/admin/news/getNews?id=${id}`);
-      const article = await response.json();
-
-      if(article.error){
-        document.getElementById("article-container").innerHTML = `<p>${article.error}</p>`;
-        return;
-      }
-
-      // render dữ liệu ra trang
-      document.getElementById("article-container").innerHTML = `
-        <h2>${article.title}</h2>
-        <p><strong>Mô tả:</strong> ${article.description}</p>
-        <p><strong>Ngày đăng:</strong> ${article.upload_date}</p>
-        <div class="content">${article.content}</div>
-        <img src="${article.background}" alt="Background" class="img-fluid mt-2">
-      `;
-    } catch (error) {
-      console.error("Lỗi khi tải bài viết:", error);
+      await fetch("/admin/news/readAll", { method: "POST" });
+      fetchNotifications(); 
+      showNotification("Đã đánh dấu tất cả thông báo là đã đọc");
+    } catch (err) {
+      showNotification("Không thể đánh dấu tất cả thông báo là đã đọc");
+      console.error("Lỗi khi Read All:", err);
     }
-  }
+    
+  });
+
+  // form tìm kiếm
+  document.getElementById("searchForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const keyword = document.getElementById("searchInput").value;
+    fetchNotifications(1, keyword);
+  });
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-  fetchNews();
+  fetchNotifications();
 
   document.getElementById("toggle-bulk").addEventListener("click", function(){
     bulkMode = !bulkMode;
     document.getElementById("bulk-actions").classList.toggle("d-none", !bulkMode);
     selectedIds = [];
-    document.querySelectorAll(".article-icon").forEach(icon => {
+    document.querySelectorAll(".notification-icon").forEach(icon => {
       icon.style.outline = "none";
-      icon.style.backgroundColor = icon.classList.contains("bg-primary") ? "#0d6efd" : "#dc3545";
     });
   });
 
   // Bulk actions
   document.getElementById("bulk-delete").addEventListener("click", () => bulkAction("delete"));
-  document.getElementById("bulk-hide").addEventListener("click", () => bulkAction("hide"));
-  document.getElementById("bulk-show").addEventListener("click", () => bulkAction("show"));
+  document.getElementById("bulk-read").addEventListener("click", () => bulkAction("read"));
 
   document.querySelector("#notification-panel .btn-close").addEventListener("click", hideNotification);
 
-  // Đã bỏ phần optionArticles / optionReviews
+  // Form tìm kiếm
+  document.getElementById("searchForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const keyword = document.getElementById("searchInput").value;
+    fetchNotifications(1, keyword);
+  });
+
+  // Nút Read All
+
 });
 
 document.addEventListener("DOMContentLoaded", function(){

@@ -85,4 +85,32 @@ textarea.form_area {
   min-height: 80px;  
 }
 
+.ql-editor .ql-align-center,
+.ql-align-center,
+.content .ql-align-center {
+  text-align: center !important;
+}
+.ql-editor .ql-align-right,
+.ql-align-right,
+.content .ql-align-right {
+  text-align: right !important;
+}
+.ql-editor .ql-align-justify,
+.ql-align-justify,
+.content .ql-align-justify {
+  text-align: justify !important;
+}
 
+.ql-size-small {
+  font-size: 0.75em !important;
+}
+.ql-size-large {
+  font-size: 1.5em !important;
+}
+.ql-size-huge {
+  font-size: 2.5em !important;
+}
+
+li[data-list="bullet"] {
+  list-style-type: disc !important;  
+}
