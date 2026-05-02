@@ -66,6 +66,21 @@
                             <?php endforeach; ?>
                         </div>
 
+                        <!-- BỔ SUNG KHỐI HIỂN THỊ GHI CHÚ TẠI ĐÂY -->
+                        <?php if (!empty($order['note'])): ?>
+                            <div class="px-4 pb-3">
+                                <div class="p-3 rounded" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+                                    <span class="fw-bold small text-muted text-uppercase d-block mb-1">
+                                        <i class="fas fa-comment-alt me-1"></i> Ghi chú đơn hàng:
+                                    </span>
+                                    <span class="text-dark fst-italic" style="white-space: pre-line;">
+                                        <?php echo htmlspecialchars($order['note']); ?>
+                                    </span>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                        <!-- KẾT THÚC KHỐI GHI CHÚ -->
+
                         <div class="card-footer bg-white border-top py-3 px-4 d-flex justify-content-end align-items-center">
                             <span class="text-muted me-3">
                                 <?php 

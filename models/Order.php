@@ -65,6 +65,7 @@ class Order extends Database {
     private $status;
     private $is_paid;
     private $shipping_fee;
+    private $note;
 
     public function getOrderId() { return $this->order_id; }
     public function setOrderId($id) { $this->order_id = $id; $this->loadById($id); }
@@ -84,6 +85,9 @@ class Order extends Database {
     public function getShippingFee() { return $this->shipping_fee; }
     public function setShippingFee($fee) { $this->shipping_fee = $fee; }
 
+    public function getNote() { return $this->note; }
+    public function setNote($note) { $this->note = $note; }
+
     private function loadById($id) {
         $stmt = $this->conn->prepare("SELECT * FROM orders WHERE order_id=?");
         $stmt->execute([$id]);
@@ -95,17 +99,22 @@ class Order extends Database {
             $this->status         = $result['status'];
             $this->is_paid        = $result['is_paid'];
             $this->shipping_fee   = $result['shipping_fee'];
+            // Bổ sung load note
+            $this->note           = $result['note'] ?? null; 
         }
     }
 
     public function create() {
-        $stmt = $this->conn->prepare("INSERT INTO orders (user_id, order_date, status, is_paid, shipping_fee) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->shipping_fee]);
+        // Bổ sung trường note vào câu lệnh INSERT
+        $stmt = $this->conn->prepare("INSERT INTO orders (user_id, order_date, status, is_paid, shipping_fee, note) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->shipping_fee, $this->note]);
         return $this->conn->lastInsertId();
     }
+
     public function update() {
-        $stmt = $this->conn->prepare("UPDATE orders SET user_id=?, order_date=?, status=?, is_paid=?, shipping_fee=? WHERE order_id=?");
-        return $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->shipping_fee, $this->order_id]);
+        // Bổ sung trường note vào câu lệnh UPDATE
+        $stmt = $this->conn->prepare("UPDATE orders SET user_id=?, order_date=?, status=?, is_paid=?, shipping_fee=?, note=? WHERE order_id=?");
+        return $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->shipping_fee, $this->note, $this->order_id]);
     }
 
     public function delete() {
@@ -114,6 +123,8 @@ class Order extends Database {
     }
 
     public function getFullOrderHistory($user_id) {
+        // Hàm này đang dùng SELECT *, nên nó ĐÃ lấy được cột note nếu Database có.
+        // Vấn đề trước đây là do hàm create() chưa lưu cột note vào.
         $sqlOrders = "SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC";
         $stmtOrders = $this->conn->prepare($sqlOrders);
         $stmtOrders->execute([$user_id]);

@@ -9,6 +9,27 @@
 <link rel="stylesheet" href="assets/css/public/product-list.css"/>
 
 <style>
+    .qty-btn { width: 40px; border: 1px solid #ced4da; background: #fff; font-weight: bold; transition: 0.2s; }
+    .qty-input { width: 60px; text-align: center; border: 1px solid #ced4da; border-left: none; border-right: none; }
+
+    .qty-btn:disabled {
+        background-color: #e9ecef;
+        color: #adb5bd;
+        cursor: not-allowed;
+    }
+
+    /* Ẩn mũi tên lên xuống của thẻ input number trên Chrome, Safari, Edge, Opera */
+    .qty-input::-webkit-inner-spin-button, 
+    .qty-input::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }
+
+    /* Ẩn mũi tên lên xuống của thẻ input number trên Firefox */
+    .qty-input {
+        -moz-appearance: textfield;
+    }
+
     .slick-prev:before, .slick-next:before { color: #1a1a1a; font-size: 24px; }
     .slick-prev { left: -30px; }
     .slick-next { right: -30px; }
@@ -92,9 +113,9 @@
                 <div class="mb-4">
                     <label class="fw-bold mb-2">Số lượng</label>
                     <div class="d-flex">
-                        <button type="button" class="qty-btn rounded-start" onclick="decreaseQty()">-</button>
+                        <button type="button" id="btn-decrease" class="qty-btn rounded-start" onclick="decreaseQty()" disabled>-</button>
                         
-                        <input type="text" id="quantity" name="quantity" value="1" class="qty-input" readonly>
+                        <input type="number" id="quantity" name="quantity" value="1" class="qty-input" min="1" oninput="checkQtyState()" onblur="validateEmptyQty()">
                         
                         <button type="button" class="qty-btn rounded-end" onclick="increaseQty()">+</button>
                     </div>
@@ -166,43 +187,62 @@
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
 <script>
-    // Xử lý tăng giảm số lượng
-    function increaseQty() {
+    // Hàm kiểm tra và cập nhật trạng thái của nút "-"
+    function checkQtyState() {
         let input = document.getElementById('quantity');
-        input.value = parseInt(input.value) + 1;
-    }
-    
-    function decreaseQty() {
-        let input = document.getElementById('quantity');
-        if (parseInt(input.value) > 1) {
-            input.value = parseInt(input.value) - 1;
+        let btnDecrease = document.getElementById('btn-decrease');
+        let currentVal = parseInt(input.value);
+
+        // Bôi xám nút "-" nếu giá trị <= 1 hoặc người dùng chưa nhập gì
+        if (isNaN(currentVal) || currentVal <= 1) {
+            btnDecrease.disabled = true;
+        } else {
+            btnDecrease.disabled = false;
         }
     }
 
-    // Khởi tạo Slick Carousel khi trang đã load xong
-    $(document).ready(function(){
-        $('.related-products-slider').slick({
-            slidesToShow: 4,      // Hiện 4 sản phẩm trên màn hình máy tính
-            slidesToScroll: 1,    // Cuộn 1 sản phẩm mỗi lần bấm
-            autoplay: true,       // Tự động trượt
-            autoplaySpeed: 3000,  // Tốc độ 3 giây
-            arrows: true,         // Hiện mũi tên trái/phải
-            dots: false,
-            responsive: [
-                {
-                    breakpoint: 992, // Tablet
-                    settings: { slidesToShow: 3 }
-                },
-                {
-                    breakpoint: 768, // Mobile ngang
-                    settings: { slidesToShow: 2 }
-                },
-                {
-                    breakpoint: 576, // Mobile dọc
-                    settings: { slidesToShow: 1, arrows: false }
+    // Hàm chốt chặn: Nếu người dùng xóa trống ô rồi click ra ngoài, tự động điền lại số 1
+    function validateEmptyQty() {
+        let input = document.getElementById('quantity');
+        let currentVal = parseInt(input.value);
+        if (isNaN(currentVal) || currentVal < 1) {
+            input.value = 1;
+        }
+        checkQtyState();
+    }
+
+    // Xử lý nút tăng (+)
+    function increaseQty() {
+        let input = document.getElementById('quantity');
+        let currentVal = parseInt(input.value) || 0; // Nếu trống thì coi như là 0
+        input.value = currentVal + 1;
+        checkQtyState();
+    }
+    
+    // Xử lý nút giảm (-)
+    function decreaseQty() {
+        let input = document.getElementById('quantity');
+        let currentVal = parseInt(input.value) || 1;
+        if (currentVal > 1) {
+            input.value = currentVal - 1;
+        }
+        checkQtyState();
+    }
+
+    // Chạy kiểm tra ngay lần đầu trang được load để bôi xám nút "-" (vì mặc định là 1)
+    document.addEventListener("DOMContentLoaded", function() {
+        checkQtyState();
+
+        // Lắng nghe và chặn sự kiện nhấn Enter trong ô nhập số lượng
+        let qtyInput = document.getElementById('quantity');
+        if (qtyInput) {
+            qtyInput.addEventListener('keydown', function(event) {
+                // Nếu phím được nhấn là phím Enter
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Ngăn chặn hành vi tự động submit form
                 }
-            ]
-        });
+            });
+        }
     });
 </script>
 

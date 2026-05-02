@@ -81,6 +81,9 @@ class CartController extends Controller {
     public function update() {
         $id = $_POST['product_id'] ?? null;
         $action = $_POST['action'] ?? null;
+        
+        // Hứng thêm biến quantity từ AJAX gửi lên (mặc định là 1 nếu không có)
+        $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
 
         if ($id && isset($_SESSION['cart'][$id])) {
             if ($action === 'increase') {
@@ -89,9 +92,26 @@ class CartController extends Controller {
                 if ($_SESSION['cart'][$id]['quantity'] > 1) {
                     $_SESSION['cart'][$id]['quantity']--; 
                 }
+            } elseif ($action === 'set' && $quantity >= 1) {
+                // LƯU SỐ LƯỢNG KHI KHÁCH NHẬP TAY
+                $_SESSION['cart'][$id]['quantity'] = $quantity;
             }
         }
         
+        // TRẢ VỀ JSON CHO AJAX (Không tải lại trang)
+        if (isset($_POST['ajax']) && $_POST['ajax'] == 1) {
+            $cartCount = 0;
+            if (isset($_SESSION['cart'])) {
+                foreach ($_SESSION['cart'] as $item) { 
+                    $cartCount += $item['quantity']; 
+                }
+            }
+            // Trả về số lượng tổng để View cập nhật lại bong bóng đỏ trên Header
+            echo json_encode(['status' => 'success', 'cartCount' => $cartCount]);
+            exit();
+        }
+        
+        // Fallback: Dành cho trường hợp không dùng AJAX
         header('Location: ' . BASE_URL . 'cart');
         exit();
     }
