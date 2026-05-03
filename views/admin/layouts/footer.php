@@ -88,7 +88,7 @@
     <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/pie-chart.js"></script>
     
     <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/scripts.js"></script>
-
+    <script src="<?php echo BASE_URL; ?>assets/js/admin/header.js"></script>
 
 </body>
 

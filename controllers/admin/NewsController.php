@@ -235,56 +235,6 @@ class NewsController extends Controller {
         }
     }
 
-    public function getNotifications() {
-        require_once __DIR__ . "/../../models/Notification.php";
-
-        $adminId = $_SESSION['user_id'] ?? 0;
-        if (!$adminId) {
-            echo json_encode(["success" => false, "error" => "No user"]);
-            return;
-        }
-
-        // Load setting
-        $setting = new NotificationSetting();
-        $setting->loadByAdminId($adminId);
-
-        $notificationModel = new Notification();
-
-        // Lấy tổng số chưa đọc (không giới hạn)
-        $totalUnread = $notificationModel->countAllUnread();
-
-        // Lấy danh sách thông báo (giới hạn 10 cái để hiển thị dropdown)
-        $notifications = $notificationModel->getUnread(3);
-
-        // Lọc theo setting
-        $filtered = array_filter($notifications, function($n) use ($setting) {
-            if ($setting->getIsEnabled() == 0) return false;
-            switch ($n['type']) {
-                case 'comment':       return $setting->getEnableComment() == 1;
-                case 'reply_comment': return $setting->getEnableReply() == 1;
-                case 'edit_comment':  return $setting->getEnableEdit() == 1;
-                case 'vote_comment':  return $setting->getEnableVote() == 1;
-                default:              return true;
-            }
-        });
-
-        // Trả về JSON cho frontend
-        echo json_encode([
-            "success" => true,
-            "count" => $totalUnread, // tổng số chưa đọc để hiển thị trên chuông
-            "notifications" => array_map(function($n){
-                return [
-                    "id"         => $n['id'],
-                    "message"    => $n['message'] ?? null,
-                    "created_at" => $n['created_at'],
-                    "id_article" => $n['article_id'] ?? null,
-                    "id_comment" => $n['comment_id'] ?? null,
-                    "type"       => $n['type']
-                ];
-            }, array_values($filtered))
-        ]);
-    }
-
     public function markRead() {
         require_once __DIR__ . "/../../models/Notification.php";
         $model = new Notification();

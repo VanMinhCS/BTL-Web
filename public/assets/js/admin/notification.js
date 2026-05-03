@@ -377,7 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("filter-type")?.addEventListener("change", () => applyFilters(1));
     document.getElementById("filter-sort")?.addEventListener("change", () => applyFilters(1));
 
-  // 6.3 Sự kiện Bulk (Chọn nhiều kiểu Gmail)
+    // 6.3 Sự kiện Bulk (Chọn nhiều kiểu Gmail)
     initGmailStyleSelection();
     
     // Vẫn giữ lại 2 sự kiện click cho nút Xóa và nút Đánh dấu đã đọc
