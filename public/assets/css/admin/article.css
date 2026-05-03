@@ -135,3 +135,11 @@ textarea.form_area {
 li[data-list="bullet"] {
   list-style-type: disc !important;  
 }
+
+.ql-video {
+  width: 100% !important;          
+  height: 400px !important;        
+  max-width: 800px !important;     
+  display: block !important;
+  margin: 0 auto !important;       
+}
