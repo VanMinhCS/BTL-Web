@@ -74,8 +74,8 @@ class OnestepcheckoutController extends Controller {
             $city = trim($_POST['city'] ?? '');
             $ward = trim($_POST['ward'] ?? '');
             $street = trim($_POST['street'] ?? ''); 
-            
             $payment_method_raw = $_POST['payment_method'] ?? 'cod';
+            $note = isset($_POST['note']) ? trim($_POST['note']) : '';
 
             try {
                 // --- BƯỚC 1: XỬ LÝ ĐỊA CHỈ (CẬP NHẬT ĐỊA CHỈ CÓ SẴN CỦA USER) ---
@@ -113,6 +113,7 @@ class OnestepcheckoutController extends Controller {
                 $orderObj->setStatus(0); 
                 $orderObj->setIsPaid(0); 
                 $orderObj->setShippingFee($shipping_fee);
+                $orderObj->setNote($note);
                 
                 $order_id = $orderObj->create();
 

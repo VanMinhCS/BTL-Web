@@ -161,7 +161,7 @@ class AuthController extends Controller {
                     echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống khi gửi mail!']);
                 }
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Email không tồn tại hoặc chưa được kích hoạt!']);
+                echo json_encode(['status' => 'error', 'message' => 'Email không đúng với tài khoản đã đăng ký!']);
             }
         }
     }

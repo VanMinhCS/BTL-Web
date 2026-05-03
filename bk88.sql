@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 26, 2026 at 03:03 PM
+-- Generation Time: May 03, 2026 at 11:04 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -43,7 +43,10 @@ INSERT INTO `addresses` (`address_id`, `street`, `ward`, `city`) VALUES
 (2, '45 Lê Lợi', 'Phường Bến Thành', 'TP.HCM'),
 (3, '', '', ''),
 (4, '', '', ''),
-(5, '', '', '');
+(5, '', '', ''),
+(6, '1/2/13 Đường 5E', 'Phường Bình Hưng Hòa', 'TP.HCM'),
+(7, '', '', ''),
+(8, '1/2/13 Đường 5E', 'Bình Hưng Hòa', 'TP.HCM');
 
 -- --------------------------------------------------------
 
@@ -66,28 +69,7 @@ CREATE TABLE `articles` (
 --
 
 INSERT INTO `articles` (`id_article`, `title`, `description`, `time_modified`, `status`, `content`, `background`) VALUES
-(1, 'bk88', 'Giới thiệu', '2026-04-26 12:30:24', 1, '<ol><li data-list=\"ordered\"><span class=\"ql-ui\" contenteditable=\"false\"></span><u>sdsddsds</u></li></ol>', '/assets/img/article/mountain(2).jpg'),
-(2, 'Khuyến mãi mùa hè', 'Giảm giá đặc biệt', '2026-04-24 11:21:22', 1, 'Nội dung khuyến mãi chi tiết...', '../../assets/img/summer.jpg'),
-(4, 'Mẹo sức khỏe', 'Ăn uống lành mạnh', '2026-04-24 11:21:22', 1, 'Hướng dẫn chế độ ăn uống...', '../../assets/img/health.jpg'),
-(5, 'Du lịch Đà Lạt', 'Trải nghiệm núi rừng', '2026-04-24 11:21:22', 1, 'Review chuyến đi Đà Lạt...', '../../assets/img/dalat.jpg'),
-(9, 'Ẩm thực Việt', 'Món ngon ba miền', '2026-04-26 12:17:25', 0, 'Giới thiệu các món ăn truyền thống...', '../../assets/img/food.jpg'),
-(12, 'Công nghệ AI', 'Ứng dụng trong đời sống', '2026-04-24 11:37:21', 1, 'AI đang thay đổi mọi lĩnh vực...', '../../assets/img/ai.jpg'),
-(13, 'Sức khỏe cộng đồng', 'Phòng chống dịch bệnh', '2026-04-24 11:37:21', 1, 'Các biện pháp phòng chống dịch...', '../../assets/img/health2.jpg'),
-(14, 'Giáo dục hiện đại', 'Đổi mới phương pháp học', '2026-04-24 11:37:21', 1, 'Ứng dụng công nghệ trong giáo dục...', '../../assets/img/education.jpg'),
-(15, 'Âm nhạc trẻ', 'Top hit 2026', '2026-04-24 11:37:21', 1, 'Danh sách bài hát hot nhất...', '../../assets/img/music.jpg'),
-(19, 'bk88', 'Giới thiệu', '2026-04-26 12:17:25', 0, '<ol><li data-list=\"ordered\"><span class=\"ql-ui\" co...', '/assets/img/article/mountain(2).jpg'),
-(20, 'Khuyến mãi mùa hè', 'Giảm giá đặc biệt', '2026-04-24 11:21:22', 1, 'Nội dung khuyến mãi chi tiết...', '../../assets/img/summer.jpg'),
-(21, 'Mẹo sức khỏe', 'Ăn uống lành mạnh', '2026-04-24 11:21:22', 1, 'Hướng dẫn chế độ ăn uống...', '../../assets/img/health.jpg'),
-(22, 'Du lịch Đà Lạt', 'Trải nghiệm núi rừng', '2026-04-24 11:21:22', 1, 'Review chuyến đi Đà Lạt...', '../../assets/img/dalat.jpg'),
-(23, 'Ẩm thực Việt', 'Món ngon ba miền', '2026-04-24 11:37:21', 1, 'Giới thiệu các món ăn truyền thống...', '../../assets/img/food.jpg'),
-(24, 'Thời trang 2026', 'Xu hướng mới', '2026-04-24 11:37:21', 1, 'Phong cách thời trang hiện đại...', '../../assets/img/fashion.jpg'),
-(25, 'Du lịch Phú Quốc', 'Trải nghiệm biển đảo', '2026-04-24 11:37:21', 1, 'Review chuyến đi Phú Quốc...', '../../assets/img/phuquoc.jpg'),
-(26, 'Công nghệ AI', 'Ứng dụng trong đời sống', '2026-04-24 11:37:21', 1, 'AI đang thay đổi mọi lĩnh vực...', '../../assets/img/ai.jpg'),
-(27, 'Sức khỏe cộng đồng', 'Phòng chống dịch bệnh', '2026-04-24 11:37:21', 1, 'Các biện pháp phòng chống dịch...', '../../assets/img/health2.jpg'),
-(28, 'Giáo dục hiện đại', 'Đổi mới phương pháp học', '2026-04-24 11:37:21', 1, 'Ứng dụng công nghệ trong giáo dục...', '../../assets/img/education.jpg'),
-(29, 'Âm nhạc trẻ', 'Top hit 2026', '2026-04-24 11:37:21', 1, 'Danh sách bài hát hot nhất...', '../../assets/img/music.jpg'),
-(30, 'd', 'd', '2026-04-26 12:54:02', 1, '', '/assets/img/article/article30.png'),
-(31, 'Bài viết mới', '', '2026-04-26 12:30:51', 0, '', '');
+(1, 'Bài viết mẫu BK88', 'Giới thiệu', '2026-04-15 09:35:06', 1, 'Nội dung thử nghiệm...', '../../assets/img/mountain.jpg');
 
 -- --------------------------------------------------------
 
@@ -140,51 +122,7 @@ INSERT INTO `comments` (`id_comment`, `id_article`, `id_user`, `text`, `date_mod
 (101, 1, 6, 'hello', '2026-04-23 07:49:12', 0, 99),
 (105, 1, 6, 'đa', '2026-04-23 09:47:38', 0, NULL),
 (106, 1, 6, 'đe', '2026-04-23 09:51:10', 1, 105),
-(107, 1, 5, 'hay', '2026-04-23 12:16:38', 0, NULL),
-(109, 1, 5, 'd', '2026-04-24 13:40:50', 0, NULL),
-(116, 1, 5, 'đe', '2026-04-25 10:04:42', 0, NULL),
-(117, 1, 5, 'alo', '2026-04-25 10:13:14', 0, NULL),
-(119, 1, 5, 'đ', '2026-04-25 10:14:30', 0, 117),
-(120, 1, 5, 'd', '2026-04-25 10:14:34', 0, 117),
-(121, 1, 5, 'đ', '2026-04-25 10:17:29', 1, NULL),
-(122, 1, 5, 'j', '2026-04-25 10:37:37', 0, NULL),
-(123, 1, 5, 'j', '2026-04-25 10:37:46', 0, NULL),
-(124, 1, 5, 'd', '2026-04-25 10:57:03', 0, NULL),
-(125, 1, 5, 'xc', '2026-04-25 11:05:17', 0, 124),
-(126, 1, 5, 'đsd', '2026-04-26 06:07:24', 0, NULL),
-(127, 1, 5, 'sdsd', '2026-04-26 06:07:26', 0, NULL),
-(128, 1, 5, 'sdsd', '2026-04-26 06:07:27', 0, NULL),
-(129, 1, 5, 'sdsds', '2026-04-26 06:07:29', 0, NULL),
-(130, 1, 5, 'sd', '2026-04-26 06:18:42', 0, NULL),
-(131, 1, 5, 'sd', '2026-04-26 06:19:11', 0, NULL),
-(132, 1, 5, 'sdsd', '2026-04-26 06:19:13', 0, NULL),
-(133, 1, 5, 'sds', '2026-04-26 06:19:14', 0, NULL),
-(134, 1, 5, 'sds', '2026-04-26 06:19:15', 0, NULL),
-(135, 1, 5, 'd', '2026-04-26 06:19:16', 0, NULL),
-(136, 1, 5, 'dsd', '2026-04-26 06:21:09', 0, 2),
-(137, 1, 5, 'd', '2026-04-26 09:28:32', 0, NULL),
-(138, 1, 5, 'fs', '2026-04-26 09:28:54', 0, NULL),
-(139, 1, 5, 'ff', '2026-04-26 09:29:04', 1, 138),
-(140, 1, 5, 'f', '2026-04-26 09:29:48', 0, NULL),
-(141, 1, 5, 'c', '2026-04-26 09:41:56', 0, NULL),
-(142, 1, 5, 'd', '2026-04-26 09:47:23', 0, NULL),
-(143, 1, 5, 'd', '2026-04-26 11:24:39', 0, NULL),
-(144, 1, 5, 'd', '2026-04-26 11:25:01', 0, NULL),
-(145, 1, 5, 'd', '2026-04-26 11:25:40', 0, NULL),
-(146, 1, 5, 'đs', '2026-04-26 11:32:59', 0, NULL),
-(147, 1, 5, 'd', '2026-04-26 11:33:00', 0, NULL),
-(148, 1, 5, 'ds', '2026-04-26 11:33:37', 0, NULL),
-(149, 1, 5, 'd', '2026-04-26 11:36:43', 0, NULL),
-(150, 1, 5, 'đ', '2026-04-26 11:38:24', 0, 149),
-(151, 1, 5, 'd', '2026-04-26 11:38:27', 0, NULL),
-(152, 1, 5, 'd', '2026-04-26 11:38:48', 0, NULL),
-(153, 1, 5, 'c', '2026-04-26 12:22:47', 0, NULL),
-(154, 1, 5, 'đá', '2026-04-26 12:23:21', 0, NULL),
-(155, 1, 5, 'ds', '2026-04-26 12:25:57', 0, NULL),
-(156, 31, 5, 'd', '2026-04-26 12:26:09', 0, NULL),
-(157, 1, 5, 'g', '2026-04-26 12:30:32', 0, NULL),
-(158, 30, 5, 'c', '2026-04-26 12:31:27', 0, NULL),
-(159, 30, 5, 'dssd', '2026-04-26 12:32:38', 1, 158);
+(107, 1, 5, 'hay', '2026-04-23 12:16:38', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -215,21 +153,7 @@ INSERT INTO `comment_votes` (`id`, `comment_id`, `user_id`, `vote`) VALUES
 (70, 82, 1, 'dislike'),
 (86, 98, 1, 'dislike'),
 (110, 102, 6, 'dislike'),
-(125, 106, 5, 'like'),
-(127, 107, 5, 'like'),
-(128, 118, 5, 'like'),
-(129, 124, 5, 'like'),
-(130, 139, 5, 'like'),
-(131, 135, 5, 'like'),
-(132, 132, 5, 'dislike'),
-(133, 133, 5, 'like'),
-(134, 134, 5, 'like'),
-(135, 131, 5, 'like'),
-(136, 142, 5, 'dislike'),
-(137, 149, 5, 'like'),
-(138, 151, 5, 'like'),
-(153, 1, 5, 'like'),
-(156, 156, 5, 'like');
+(122, 106, 5, 'like');
 
 -- --------------------------------------------------------
 
@@ -242,20 +166,22 @@ CREATE TABLE `information` (
   `user_id` int(11) NOT NULL,
   `address_id` int(11) NOT NULL,
   `firstname` varchar(50) DEFAULT NULL,
-  `lastname` varchar(50) DEFAULT NULL,
-  `payment_method` tinyint(1) DEFAULT 0
+  `lastname` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `information`
 --
 
-INSERT INTO `information` (`info_id`, `user_id`, `address_id`, `firstname`, `lastname`, `payment_method`) VALUES
-(1, 1, 1, 'Trung', 'Admin', 1),
-(2, 2, 2, 'Ngọc', 'User', 0),
-(5, 5, 3, 'T', 'N', 0),
-(6, 6, 4, 't', 'n', 0),
-(7, 7, 5, '2', '', 0);
+INSERT INTO `information` (`info_id`, `user_id`, `address_id`, `firstname`, `lastname`) VALUES
+(1, 1, 1, 'Trung', 'Admin'),
+(2, 2, 2, 'Ngọc', 'User'),
+(5, 5, 3, 'T', 'N'),
+(6, 6, 4, 't', 'n'),
+(7, 7, 5, '2', ''),
+(8, 8, 6, 'Tuấn', 'Hồ Ngọc Anh'),
+(9, 9, 7, 'Tuan', 'Ho Ngoc Anh'),
+(10, 10, 8, 'Tuan', 'Ho Ngoc Anh');
 
 -- --------------------------------------------------------
 
@@ -269,6 +195,7 @@ CREATE TABLE `items` (
   `item_stock` int(11) DEFAULT 0,
   `description` text DEFAULT NULL,
   `price` decimal(10,2) NOT NULL,
+  `cost_price` decimal(10,2) NOT NULL DEFAULT 0.00,
   `item_image` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -276,9 +203,18 @@ CREATE TABLE `items` (
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `description`, `price`, `item_image`) VALUES
-(1, 'Laptop Dell', 10, 'Laptop văn phòng', 1500.00, 'dell.jpg'),
-(2, 'Chuột Logitech', 50, 'Chuột không dây', 25.00, 'logitech.jpg');
+INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `description`, `price`, `cost_price`, `item_image`) VALUES
+(1, 'Giải tích 1', 88, 'Giáo trình Giải tích 1', 75000.00, 61000.00, '1777112063_gt1.png'),
+(2, 'Giải tích 2', 99, 'Giáo trình Giải tích 2', 75000.00, 60000.00, '1777212188_gt2.png'),
+(3, 'Đại số tuyến tính', 99, 'Giáo trình Đại số tuyến tính', 85000.00, 70000.00, '1777212218_dstt.png'),
+(4, 'Hóa đại cương', 100, 'Giáo trình Hóa đại cương', 100000.00, 85000.00, '1777212252_hdc.png'),
+(5, 'Kỹ thuật Lập trình', 99, 'Giáo trình Kỹ thuật Lập trình', 150000.00, 135000.00, '1777212284_ktlt.png'),
+(6, 'Cấu trúc dữ liệu & Giải thuật', 100, 'Giáo trình CTDL&GT', 100000.00, 80000.00, '1777212312_ctdlgt.png'),
+(7, 'Triết học Mác - Lênin', 100, 'Giáo trình Triết học Mác - Lênin', 85000.00, 70000.00, '1777212345_triethoc.png'),
+(8, 'Kinh tế chính trị Mác - Lênin', 100, 'Giáo trình Kinh tế chính trị Mác - Lênin', 72000.00, 60000.00, '1777212383_ktct.png'),
+(9, 'Chủ nghĩa Xã hội Khoa học', 100, 'Giáo trình CNXHKH', 77000.00, 60000.00, '1777212448_cnxhkh.png'),
+(11, 'Lịch sử Đảng Cộng sản Việt Nam', 0, 'Giáo trình LSĐCSVN', 75000.00, 60000.00, '1777213030_lsd.png'),
+(15, 'Tư tưởng Hồ Chí Minh', 98, 'Giáo trình TTHCM', 80000.00, 65000.00, '1777521969_tthcm.png');
 
 -- --------------------------------------------------------
 
@@ -293,162 +229,75 @@ CREATE TABLE `notifications` (
   `notification_comment_id` int(11) DEFAULT NULL,
   `is_read` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `notification_vote_comment_id` int(11) DEFAULT NULL
+  `notification_vote_comment_id` int(11) DEFAULT NULL,
+  `notification_order_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `notifications`
 --
 
-INSERT INTO `notifications` (`id`, `type`, `user_id`, `notification_comment_id`, `is_read`, `created_at`, `notification_vote_comment_id`) VALUES
-(1, 'vote_comment', 1, NULL, 1, '2026-04-17 10:27:50', 1),
-(2, 'vote_comment', 1, NULL, 1, '2026-04-17 10:28:19', 2),
-(3, 'vote_comment', 1, NULL, 1, '2026-04-17 10:28:30', 3),
-(4, 'vote_comment', 1, NULL, 1, '2026-04-17 10:31:44', 4),
-(5, 'comment', 1, 1, 1, '2026-04-17 10:33:39', NULL),
-(6, 'reply_comment', 1, 2, 1, '2026-04-17 10:35:38', NULL),
-(7, 'edit_comment', 1, 3, 1, '2026-04-17 10:37:42', NULL),
-(8, 'comment', 1, 4, 1, '2026-04-19 14:08:47', NULL),
-(9, 'reply_comment', 1, 5, 1, '2026-04-19 14:09:18', NULL),
-(10, 'comment', 1, 6, 1, '2026-04-23 07:34:17', NULL),
-(11, 'vote_comment', 1, NULL, 1, '2026-04-23 07:35:15', 5),
-(12, 'vote_comment', 1, NULL, 1, '2026-04-23 07:35:17', 6),
-(13, 'vote_comment', 1, NULL, 1, '2026-04-23 07:35:19', 7),
-(14, 'vote_comment', 1, NULL, 1, '2026-04-23 07:35:24', 8),
-(15, 'vote_comment', 6, NULL, 1, '2026-04-23 07:37:24', 9),
-(16, 'vote_comment', 6, NULL, 1, '2026-04-23 07:37:28', 10),
-(17, 'vote_comment', 6, NULL, 1, '2026-04-23 07:37:29', 11),
-(18, 'vote_comment', 6, NULL, 1, '2026-04-23 07:37:29', 12),
-(19, 'vote_comment', 6, NULL, 1, '2026-04-23 07:39:33', 13),
-(20, 'vote_comment', 6, NULL, 1, '2026-04-23 07:39:34', 14),
-(21, 'vote_comment', 6, NULL, 1, '2026-04-23 07:41:36', 15),
-(22, 'vote_comment', 6, NULL, 1, '2026-04-23 07:41:44', 16),
-(23, 'vote_comment', 6, NULL, 1, '2026-04-23 07:41:46', 17),
-(24, 'vote_comment', 6, NULL, 1, '2026-04-23 07:41:47', 18),
-(25, 'vote_comment', 6, NULL, 1, '2026-04-23 07:41:56', 19),
-(26, 'vote_comment', 6, NULL, 1, '2026-04-23 07:41:58', 20),
-(27, 'vote_comment', 6, NULL, 1, '2026-04-23 07:42:08', 21),
-(28, 'vote_comment', 6, NULL, 1, '2026-04-23 07:42:53', 22),
-(29, 'vote_comment', 6, NULL, 1, '2026-04-23 07:42:57', 23),
-(30, 'vote_comment', 6, NULL, 1, '2026-04-23 07:43:20', 24),
-(31, 'vote_comment', 6, NULL, 1, '2026-04-23 07:43:21', 25),
-(32, 'vote_comment', 6, NULL, 1, '2026-04-23 07:44:39', 26),
-(33, 'vote_comment', 6, NULL, 1, '2026-04-23 07:44:40', 27),
-(34, 'vote_comment', 6, NULL, 1, '2026-04-23 07:44:42', 28),
-(35, 'vote_comment', 6, NULL, 1, '2026-04-23 07:44:43', 29),
-(36, 'vote_comment', 6, NULL, 1, '2026-04-23 07:44:44', 30),
-(37, 'vote_comment', 6, NULL, 1, '2026-04-23 07:44:47', 31),
-(38, 'vote_comment', 6, NULL, 1, '2026-04-23 07:44:48', 32),
-(39, 'vote_comment', 6, NULL, 1, '2026-04-23 07:44:52', 33),
-(40, 'comment', 6, 7, 1, '2026-04-23 07:46:11', NULL),
-(41, 'vote_comment', 6, NULL, 1, '2026-04-23 07:46:18', 34),
-(42, 'vote_comment', 6, NULL, 1, '2026-04-23 07:46:19', 35),
-(43, 'vote_comment', 6, NULL, 1, '2026-04-23 07:46:21', 36),
-(44, 'vote_comment', 6, NULL, 1, '2026-04-23 07:46:22', 37),
-(45, 'vote_comment', 6, NULL, 1, '2026-04-23 07:46:25', 38),
-(46, 'reply_comment', 6, 8, 1, '2026-04-23 07:49:12', NULL),
-(47, 'edit_comment', 6, 9, 1, '2026-04-23 07:53:37', NULL),
-(53, 'vote_comment', 6, NULL, 1, '2026-04-23 09:38:46', 40),
-(54, 'vote_comment', 6, NULL, 1, '2026-04-23 09:38:47', 41),
-(55, 'vote_comment', 6, NULL, 1, '2026-04-23 09:38:47', 42),
-(56, 'vote_comment', 6, NULL, 1, '2026-04-23 09:39:10', 43),
-(57, 'vote_comment', 6, NULL, 1, '2026-04-23 09:40:49', 44),
-(58, 'vote_comment', 6, NULL, 1, '2026-04-23 09:40:51', 45),
-(59, 'vote_comment', 6, NULL, 1, '2026-04-23 09:44:01', 46),
-(60, 'vote_comment', 6, NULL, 1, '2026-04-23 09:44:02', 47),
-(61, 'comment', 6, 14, 1, '2026-04-23 09:47:38', NULL),
-(62, 'reply_comment', 6, 15, 1, '2026-04-23 09:49:24', NULL),
-(63, 'edit_comment', 6, 16, 1, '2026-04-23 09:51:10', NULL),
-(64, 'vote_comment', 5, NULL, 1, '2026-04-23 12:16:33', 48),
-(65, 'comment', 5, 17, 1, '2026-04-23 12:16:38', NULL),
-(66, 'vote_comment', 5, NULL, 1, '2026-04-24 11:10:22', 49),
-(67, 'vote_comment', 5, NULL, 1, '2026-04-24 11:10:23', 50),
-(68, 'vote_comment', 5, NULL, 1, '2026-04-24 11:10:25', 51),
-(69, 'vote_comment', 5, NULL, 1, '2026-04-24 11:10:28', 52),
-(70, 'vote_comment', 5, NULL, 1, '2026-04-24 11:10:30', 53),
-(71, 'vote_comment', 5, NULL, 1, '2026-04-24 11:10:35', 54),
-(72, 'vote_comment', 5, NULL, 1, '2026-04-24 11:11:07', 55),
-(75, 'vote_comment', 5, NULL, 1, '2026-04-24 11:14:22', 56),
-(76, 'comment', 5, 20, 1, '2026-04-24 13:40:50', NULL),
-(78, 'comment', 1, 1, 1, '2026-04-25 09:51:35', NULL),
-(79, 'comment', 1, 2, 1, '2026-04-25 10:00:11', NULL),
-(80, 'comment', 1, 2, 1, '2026-04-25 10:01:24', NULL),
-(81, 'comment', 5, 21, 1, '2026-04-25 10:04:42', NULL),
-(82, 'comment', 5, 22, 1, '2026-04-25 10:13:14', NULL),
-(86, 'reply_comment', 5, 25, 1, '2026-04-25 10:14:30', NULL),
-(87, 'reply_comment', 5, 26, 1, '2026-04-25 10:14:34', NULL),
-(88, 'comment', 5, 27, 1, '2026-04-25 10:14:42', NULL),
-(89, 'edit_comment', 5, 28, 1, '2026-04-25 10:17:29', NULL),
-(90, 'comment', 5, 29, 1, '2026-04-25 10:37:37', NULL),
-(91, 'comment', 5, 30, 1, '2026-04-25 10:37:46', NULL),
-(92, 'comment', 5, 31, 1, '2026-04-25 10:57:03', NULL),
-(93, 'vote_comment', 5, NULL, 1, '2026-04-25 11:05:13', 58),
-(94, 'reply_comment', 5, 32, 1, '2026-04-25 11:05:17', NULL),
-(95, 'comment', 5, 33, 1, '2026-04-26 06:07:24', NULL),
-(96, 'comment', 5, 34, 1, '2026-04-26 06:07:26', NULL),
-(97, 'comment', 5, 35, 1, '2026-04-26 06:07:27', NULL),
-(98, 'comment', 5, 36, 1, '2026-04-26 06:07:29', NULL),
-(99, 'comment', 5, 37, 1, '2026-04-26 06:18:42', NULL),
-(100, 'comment', 5, 38, 1, '2026-04-26 06:19:11', NULL),
-(101, 'comment', 5, 39, 1, '2026-04-26 06:19:13', NULL),
-(102, 'comment', 5, 40, 1, '2026-04-26 06:19:14', NULL),
-(103, 'comment', 5, 41, 1, '2026-04-26 06:19:15', NULL),
-(106, 'comment', 5, 44, 1, '2026-04-26 09:28:32', NULL),
-(107, 'comment', 5, 45, 1, '2026-04-26 09:28:54', NULL),
-(108, 'reply_comment', 5, 46, 1, '2026-04-26 09:28:58', NULL),
-(109, 'edit_comment', 5, 47, 1, '2026-04-26 09:29:04', NULL),
-(110, 'vote_comment', 5, NULL, 1, '2026-04-26 09:29:08', 59),
-(111, 'comment', 5, 48, 1, '2026-04-26 09:29:48', NULL),
-(112, 'vote_comment', 5, NULL, 1, '2026-04-26 09:31:09', 60),
-(113, 'vote_comment', 5, NULL, 1, '2026-04-26 09:31:11', 61),
-(114, 'vote_comment', 5, NULL, 1, '2026-04-26 09:31:12', 62),
-(115, 'vote_comment', 5, NULL, 1, '2026-04-26 09:31:12', 63),
-(116, 'vote_comment', 5, NULL, 1, '2026-04-26 09:31:15', 64),
-(117, 'vote_comment', 5, NULL, 1, '2026-04-26 09:39:32', 65),
-(118, 'vote_comment', 5, NULL, 1, '2026-04-26 09:39:33', 66),
-(120, 'comment', 5, 50, 1, '2026-04-26 09:47:23', NULL),
-(123, 'vote_comment', 5, NULL, 1, '2026-04-26 11:19:23', 69),
-(124, 'comment', 5, 51, 1, '2026-04-26 11:24:39', NULL),
-(125, 'comment', 5, 52, 1, '2026-04-26 11:25:01', NULL),
-(126, 'comment', 5, 53, 1, '2026-04-26 11:25:40', NULL),
-(127, 'comment', 5, 54, 1, '2026-04-26 11:32:59', NULL),
-(128, 'comment', 5, 55, 1, '2026-04-26 11:33:00', NULL),
-(129, 'comment', 5, 56, 1, '2026-04-26 11:33:37', NULL),
-(130, 'comment', 5, 57, 1, '2026-04-26 11:36:43', NULL),
-(131, 'vote_comment', 5, NULL, 1, '2026-04-26 11:38:15', 70),
-(132, 'reply_comment', 5, 58, 1, '2026-04-26 11:38:24', NULL),
-(133, 'comment', 5, 59, 1, '2026-04-26 11:38:27', NULL),
-(134, 'vote_comment', 5, NULL, 1, '2026-04-26 11:38:30', 71),
-(135, 'comment', 5, 60, 1, '2026-04-26 11:38:48', NULL),
-(136, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:45', 72),
-(137, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:47', 73),
-(138, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:51', 74),
-(139, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:52', 75),
-(140, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:53', 76),
-(141, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:56', 77),
-(142, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:56', 78),
-(143, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:57', 79),
-(144, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:57', 80),
-(145, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:58', 81),
-(146, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:59', 82),
-(147, 'vote_comment', 5, NULL, 0, '2026-04-26 12:21:59', 83),
-(148, 'vote_comment', 5, NULL, 0, '2026-04-26 12:22:09', 84),
-(149, 'vote_comment', 5, NULL, 0, '2026-04-26 12:22:09', 85),
-(150, 'vote_comment', 5, NULL, 0, '2026-04-26 12:22:29', 86),
-(151, 'vote_comment', 5, NULL, 0, '2026-04-26 12:22:31', 87),
-(152, 'comment', 5, 61, 0, '2026-04-26 12:22:47', NULL),
-(153, 'comment', 5, 62, 0, '2026-04-26 12:23:21', NULL),
-(154, 'comment', 5, 63, 0, '2026-04-26 12:25:57', NULL),
-(155, 'comment', 5, 64, 0, '2026-04-26 12:26:09', NULL),
-(156, 'vote_comment', 5, NULL, 0, '2026-04-26 12:27:58', 88),
-(157, 'vote_comment', 5, NULL, 0, '2026-04-26 12:28:00', 89),
-(158, 'vote_comment', 5, NULL, 0, '2026-04-26 12:28:02', 90),
-(159, 'vote_comment', 5, NULL, 0, '2026-04-26 12:28:02', 91),
-(160, 'vote_comment', 5, NULL, 0, '2026-04-26 12:28:03', 92),
-(161, 'comment', 5, 65, 0, '2026-04-26 12:30:33', NULL),
-(162, 'comment', 5, 66, 0, '2026-04-26 12:31:27', NULL),
-(163, 'reply_comment', 5, 67, 0, '2026-04-26 12:32:27', NULL),
-(164, 'edit_comment', 5, 68, 0, '2026-04-26 12:32:38', NULL);
+INSERT INTO `notifications` (`id`, `type`, `user_id`, `notification_comment_id`, `is_read`, `created_at`, `notification_vote_comment_id`, `notification_order_id`) VALUES
+(1, 'vote_comment', 1, NULL, 0, '2026-04-17 10:27:50', 1, NULL),
+(2, 'vote_comment', 1, NULL, 0, '2026-04-17 10:28:19', 2, NULL),
+(3, 'vote_comment', 1, NULL, 0, '2026-04-17 10:28:30', 3, NULL),
+(4, 'vote_comment', 1, NULL, 0, '2026-04-17 10:31:44', 4, NULL),
+(5, 'comment', 1, 1, 0, '2026-04-17 10:33:39', NULL, NULL),
+(6, 'reply_comment', 1, 2, 0, '2026-04-17 10:35:38', NULL, NULL),
+(7, 'edit_comment', 1, 3, 0, '2026-04-17 10:37:42', NULL, NULL),
+(8, 'comment', 1, 4, 0, '2026-04-19 14:08:47', NULL, NULL),
+(9, 'reply_comment', 1, 5, 0, '2026-04-19 14:09:18', NULL, NULL),
+(10, 'comment', 1, 6, 0, '2026-04-23 07:34:17', NULL, NULL),
+(11, 'vote_comment', 1, NULL, 0, '2026-04-23 07:35:15', 5, NULL),
+(12, 'vote_comment', 1, NULL, 0, '2026-04-23 07:35:17', 6, NULL),
+(13, 'vote_comment', 1, NULL, 0, '2026-04-23 07:35:19', 7, NULL),
+(14, 'vote_comment', 1, NULL, 0, '2026-04-23 07:35:24', 8, NULL),
+(15, 'vote_comment', 6, NULL, 0, '2026-04-23 07:37:24', 9, NULL),
+(16, 'vote_comment', 6, NULL, 0, '2026-04-23 07:37:28', 10, NULL),
+(17, 'vote_comment', 6, NULL, 0, '2026-04-23 07:37:29', 11, NULL),
+(18, 'vote_comment', 6, NULL, 0, '2026-04-23 07:37:29', 12, NULL),
+(19, 'vote_comment', 6, NULL, 0, '2026-04-23 07:39:33', 13, NULL),
+(20, 'vote_comment', 6, NULL, 0, '2026-04-23 07:39:34', 14, NULL),
+(21, 'vote_comment', 6, NULL, 0, '2026-04-23 07:41:36', 15, NULL),
+(22, 'vote_comment', 6, NULL, 0, '2026-04-23 07:41:44', 16, NULL),
+(23, 'vote_comment', 6, NULL, 0, '2026-04-23 07:41:46', 17, NULL),
+(24, 'vote_comment', 6, NULL, 0, '2026-04-23 07:41:47', 18, NULL),
+(25, 'vote_comment', 6, NULL, 0, '2026-04-23 07:41:56', 19, NULL),
+(26, 'vote_comment', 6, NULL, 0, '2026-04-23 07:41:58', 20, NULL),
+(27, 'vote_comment', 6, NULL, 0, '2026-04-23 07:42:08', 21, NULL),
+(28, 'vote_comment', 6, NULL, 0, '2026-04-23 07:42:53', 22, NULL),
+(29, 'vote_comment', 6, NULL, 0, '2026-04-23 07:42:57', 23, NULL),
+(30, 'vote_comment', 6, NULL, 0, '2026-04-23 07:43:20', 24, NULL),
+(31, 'vote_comment', 6, NULL, 0, '2026-04-23 07:43:21', 25, NULL),
+(32, 'vote_comment', 6, NULL, 0, '2026-04-23 07:44:39', 26, NULL),
+(33, 'vote_comment', 6, NULL, 0, '2026-04-23 07:44:40', 27, NULL),
+(34, 'vote_comment', 6, NULL, 0, '2026-04-23 07:44:42', 28, NULL),
+(35, 'vote_comment', 6, NULL, 0, '2026-04-23 07:44:43', 29, NULL),
+(36, 'vote_comment', 6, NULL, 0, '2026-04-23 07:44:44', 30, NULL),
+(37, 'vote_comment', 6, NULL, 0, '2026-04-23 07:44:47', 31, NULL),
+(38, 'vote_comment', 6, NULL, 0, '2026-04-23 07:44:48', 32, NULL),
+(39, 'vote_comment', 6, NULL, 0, '2026-04-23 07:44:52', 33, NULL),
+(40, 'comment', 6, 7, 0, '2026-04-23 07:46:11', NULL, NULL),
+(41, 'vote_comment', 6, NULL, 0, '2026-04-23 07:46:18', 34, NULL),
+(42, 'vote_comment', 6, NULL, 0, '2026-04-23 07:46:19', 35, NULL),
+(43, 'vote_comment', 6, NULL, 0, '2026-04-23 07:46:21', 36, NULL),
+(44, 'vote_comment', 6, NULL, 0, '2026-04-23 07:46:22', 37, NULL),
+(45, 'vote_comment', 6, NULL, 0, '2026-04-23 07:46:25', 38, NULL),
+(46, 'reply_comment', 6, 8, 0, '2026-04-23 07:49:12', NULL, NULL),
+(47, 'edit_comment', 6, 9, 0, '2026-04-23 07:53:37', NULL, NULL),
+(53, 'vote_comment', 6, NULL, 0, '2026-04-23 09:38:46', 40, NULL),
+(54, 'vote_comment', 6, NULL, 0, '2026-04-23 09:38:47', 41, NULL),
+(55, 'vote_comment', 6, NULL, 0, '2026-04-23 09:38:47', 42, NULL),
+(56, 'vote_comment', 6, NULL, 0, '2026-04-23 09:39:10', 43, NULL),
+(57, 'vote_comment', 6, NULL, 0, '2026-04-23 09:40:49', 44, NULL),
+(58, 'vote_comment', 6, NULL, 0, '2026-04-23 09:40:51', 45, NULL),
+(59, 'vote_comment', 6, NULL, 0, '2026-04-23 09:44:01', 46, NULL),
+(60, 'vote_comment', 6, NULL, 0, '2026-04-23 09:44:02', 47, NULL),
+(61, 'comment', 6, 14, 0, '2026-04-23 09:47:38', NULL, NULL),
+(62, 'reply_comment', 6, 15, 0, '2026-04-23 09:49:24', NULL, NULL),
+(63, 'edit_comment', 6, 16, 0, '2026-04-23 09:51:10', NULL, NULL),
+(64, 'vote_comment', 5, NULL, 0, '2026-04-23 12:16:33', 48, NULL),
+(65, 'comment', 5, 17, 0, '2026-04-23 12:16:38', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -482,93 +331,20 @@ INSERT INTO `notification_comment` (`id`, `article_id`, `comment_id`, `content`,
 (14, 1, 105, 'đa', NULL, '2026-04-23 09:47:38'),
 (15, 1, 106, 'de', 105, '2026-04-23 09:49:24'),
 (16, 1, 106, 'đe', 105, '2026-04-23 09:51:10'),
-(17, 1, 107, 'hay', NULL, '2026-04-23 12:16:38'),
-(20, 1, 109, 'd', NULL, '2026-04-24 13:40:50'),
-(21, 1, 116, 'đe', NULL, '2026-04-25 10:04:42'),
-(22, 1, 117, 'alo', NULL, '2026-04-25 10:13:14'),
-(25, 1, 119, 'đ', 117, '2026-04-25 10:14:30'),
-(26, 1, 120, 'd', 117, '2026-04-25 10:14:34'),
-(27, 1, 121, 'd', NULL, '2026-04-25 10:14:42'),
-(28, 1, 121, 'đ', NULL, '2026-04-25 10:17:29'),
-(29, 1, 122, 'j', NULL, '2026-04-25 10:37:37'),
-(30, 1, 123, 'j', NULL, '2026-04-25 10:37:46'),
-(31, 1, 124, 'd', NULL, '2026-04-25 10:57:03'),
-(32, 1, 125, 'xc', 124, '2026-04-25 11:05:17'),
-(33, 1, 126, 'đsd', NULL, '2026-04-26 06:07:24'),
-(34, 1, 127, 'sdsd', NULL, '2026-04-26 06:07:26'),
-(35, 1, 128, 'sdsd', NULL, '2026-04-26 06:07:27'),
-(36, 1, 129, 'sdsds', NULL, '2026-04-26 06:07:29'),
-(37, 1, 130, 'sd', NULL, '2026-04-26 06:18:42'),
-(38, 1, 131, 'sd', NULL, '2026-04-26 06:19:11'),
-(39, 1, 132, 'sdsd', NULL, '2026-04-26 06:19:13'),
-(40, 1, 133, 'sds', NULL, '2026-04-26 06:19:14'),
-(41, 1, 134, 'sds', NULL, '2026-04-26 06:19:15'),
-(42, 1, 135, 'd', NULL, '2026-04-26 06:19:16'),
-(43, 1, 136, 'dsd', 2, '2026-04-26 06:21:09'),
-(44, 1, 137, 'd', NULL, '2026-04-26 09:28:32'),
-(45, 1, 138, 'fs', NULL, '2026-04-26 09:28:54'),
-(46, 1, 139, 'f', 138, '2026-04-26 09:28:58'),
-(47, 1, 139, 'ff', 138, '2026-04-26 09:29:04'),
-(48, 1, 140, 'f', NULL, '2026-04-26 09:29:48'),
-(49, 1, 141, 'c', NULL, '2026-04-26 09:41:56'),
-(50, 1, 142, 'd', NULL, '2026-04-26 09:47:23'),
-(51, 1, 143, 'd', NULL, '2026-04-26 11:24:39'),
-(52, 1, 144, 'd', NULL, '2026-04-26 11:25:01'),
-(53, 1, 145, 'd', NULL, '2026-04-26 11:25:40'),
-(54, 1, 146, 'đs', NULL, '2026-04-26 11:32:59'),
-(55, 1, 147, 'd', NULL, '2026-04-26 11:33:00'),
-(56, 1, 148, 'ds', NULL, '2026-04-26 11:33:37'),
-(57, 1, 149, 'd', NULL, '2026-04-26 11:36:43'),
-(58, 1, 150, 'đ', 149, '2026-04-26 11:38:24'),
-(59, 1, 151, 'd', NULL, '2026-04-26 11:38:27'),
-(60, 1, 152, 'd', NULL, '2026-04-26 11:38:48'),
-(61, 1, 153, 'c', NULL, '2026-04-26 12:22:47'),
-(62, 1, 154, 'đá', NULL, '2026-04-26 12:23:21'),
-(63, 1, 155, 'ds', NULL, '2026-04-26 12:25:57'),
-(64, 31, 156, 'd', NULL, '2026-04-26 12:26:09'),
-(65, 1, 157, 'g', NULL, '2026-04-26 12:30:33'),
-(66, 30, 158, 'c', NULL, '2026-04-26 12:31:27'),
-(67, 30, 159, 'dss', 158, '2026-04-26 12:32:27'),
-(68, 30, 159, 'dssd', 158, '2026-04-26 12:32:38');
+(17, 1, 107, 'hay', NULL, '2026-04-23 12:16:38');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `notification_setting`
+-- Table structure for table `notification_order`
 --
 
-CREATE TABLE `notification_setting` (
-  `setting_id` int(11) NOT NULL,
-  `admin_id` int(11) NOT NULL,
-  `is_enabled` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_comment` tinyint(1) DEFAULT 1,
-  `enable_reply` tinyint(1) DEFAULT 1,
-  `enable_edit` tinyint(1) DEFAULT 1,
-  `enable_vote` tinyint(1) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `notification_setting`
---
-
-INSERT INTO `notification_setting` (`setting_id`, `admin_id`, `is_enabled`, `enable_comment`, `enable_reply`, `enable_edit`, `enable_vote`) VALUES
-(1, 1, 1, 1, 1, 1, 1),
-(2, 5, 1, 1, 1, 1, 1);
-
---
--- Triggers `notification_setting`
---
-DELIMITER $$
-CREATE TRIGGER `check_admin_role` BEFORE INSERT ON `notification_setting` FOR EACH ROW BEGIN
-    DECLARE user_role INT;
-    SELECT role INTO user_role FROM users WHERE user_id = NEW.admin_id;
-    IF user_role <> 1 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'User is not an admin, cannot create notification setting';
-    END IF;
-END
-$$
-DELIMITER ;
+CREATE TABLE `notification_order` (
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `order_status` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -635,50 +411,7 @@ INSERT INTO `notification_vote_comment` (`id`, `comment_id`, `article_id`, `vote
 (45, 100, 1, 'like', '2026-04-23 09:40:51'),
 (46, 100, 1, 'dislike', '2026-04-23 09:44:01'),
 (47, 100, 1, 'like', '2026-04-23 09:44:02'),
-(48, 106, 1, 'like', '2026-04-23 12:16:33'),
-(49, 107, 1, 'dislike', '2026-04-24 11:10:22'),
-(50, 107, 1, 'like', '2026-04-24 11:10:23'),
-(51, 107, 1, 'dislike', '2026-04-24 11:10:25'),
-(52, 106, 1, 'like', '2026-04-24 11:10:28'),
-(53, 106, 1, 'like', '2026-04-24 11:10:30'),
-(54, 107, 1, 'like', '2026-04-24 11:10:35'),
-(55, 107, 1, 'like', '2026-04-24 11:11:07'),
-(56, 107, 1, 'like', '2026-04-24 11:14:22'),
-(58, 124, 1, 'like', '2026-04-25 11:05:13'),
-(59, 139, 1, 'like', '2026-04-26 09:29:08'),
-(60, 135, 1, 'like', '2026-04-26 09:31:09'),
-(61, 132, 1, 'like', '2026-04-26 09:31:11'),
-(62, 133, 1, 'like', '2026-04-26 09:31:12'),
-(63, 134, 1, 'like', '2026-04-26 09:31:12'),
-(64, 131, 1, 'like', '2026-04-26 09:31:15'),
-(65, 134, 1, 'dislike', '2026-04-26 09:39:32'),
-(66, 132, 1, 'dislike', '2026-04-26 09:39:33'),
-(67, 134, 1, 'like', '2026-04-26 09:50:32'),
-(68, 142, 1, 'like', '2026-04-26 09:55:41'),
-(69, 142, 1, 'dislike', '2026-04-26 11:19:23'),
-(70, 149, 1, 'like', '2026-04-26 11:38:15'),
-(71, 151, 1, 'like', '2026-04-26 11:38:30'),
-(72, 1, 1, 'dislike', '2026-04-26 12:21:45'),
-(73, 1, 1, 'dislike', '2026-04-26 12:21:47'),
-(74, 1, 1, 'dislike', '2026-04-26 12:21:51'),
-(75, 1, 1, 'like', '2026-04-26 12:21:52'),
-(76, 1, 1, 'like', '2026-04-26 12:21:53'),
-(77, 2, 1, 'dislike', '2026-04-26 12:21:56'),
-(78, 2, 1, 'dislike', '2026-04-26 12:21:56'),
-(79, 2, 1, 'dislike', '2026-04-26 12:21:57'),
-(80, 2, 1, 'dislike', '2026-04-26 12:21:57'),
-(81, 2, 1, 'like', '2026-04-26 12:21:58'),
-(82, 2, 1, 'like', '2026-04-26 12:21:59'),
-(83, 2, 1, 'like', '2026-04-26 12:21:59'),
-(84, 1, 1, 'dislike', '2026-04-26 12:22:09'),
-(85, 1, 1, 'like', '2026-04-26 12:22:09'),
-(86, 1, 1, 'like', '2026-04-26 12:22:29'),
-(87, 1, 1, 'like', '2026-04-26 12:22:31'),
-(88, 156, 31, 'like', '2026-04-26 12:27:58'),
-(89, 156, 31, 'like', '2026-04-26 12:28:00'),
-(90, 156, 31, 'like', '2026-04-26 12:28:02'),
-(91, 156, 31, 'dislike', '2026-04-26 12:28:02'),
-(92, 156, 31, 'like', '2026-04-26 12:28:03');
+(48, 106, 1, 'like', '2026-04-23 12:16:33');
 
 -- --------------------------------------------------------
 
@@ -692,16 +425,32 @@ CREATE TABLE `orders` (
   `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `status` tinyint(1) DEFAULT 0,
   `is_paid` tinyint(1) DEFAULT 0,
-  `payment_method` tinyint(1) DEFAULT 0
+  `shipping_fee` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `note` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `status`, `is_paid`, `payment_method`) VALUES
-(1, 1, '2026-04-13 09:30:00', 0, 1, 1),
-(2, 2, '2026-04-13 09:40:00', 0, 0, 0);
+INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `status`, `is_paid`, `shipping_fee`, `note`) VALUES
+(1, 8, '2026-04-26 04:46:43', 4, 0, 22000.00, NULL),
+(2, 8, '2026-04-26 04:47:18', 3, 1, 0.00, NULL),
+(3, 8, '2026-04-26 10:27:50', 4, 0, 22000.00, NULL),
+(4, 8, '2026-04-26 10:28:21', 4, 0, 0.00, NULL),
+(5, 8, '2026-04-26 13:57:15', 3, 1, 22000.00, NULL),
+(6, 8, '2026-04-26 13:57:47', 4, 0, 22000.00, NULL),
+(7, 8, '2026-04-26 14:26:10', 4, 0, 22000.00, NULL),
+(8, 8, '2026-04-26 15:02:04', 4, 0, 22000.00, NULL),
+(9, 8, '2026-04-26 15:16:22', 4, 0, 22000.00, NULL),
+(10, 10, '2026-05-02 13:11:21', 1, 0, 22000.00, NULL),
+(11, 10, '2026-05-02 14:41:34', 1, 0, 22000.00, NULL),
+(12, 10, '2026-05-02 14:45:23', 1, 0, 0.00, NULL),
+(13, 10, '2026-05-02 14:56:58', 1, 0, 22000.00, NULL),
+(14, 10, '2026-05-02 15:18:59', 1, 0, 22000.00, NULL),
+(15, 10, '2026-05-02 15:19:18', 3, 1, 22000.00, NULL),
+(16, 10, '2026-05-02 15:28:22', 3, 1, 22000.00, 'ABC'),
+(17, 10, '2026-05-03 08:52:27', 0, 0, 0.00, '');
 
 -- --------------------------------------------------------
 
@@ -722,8 +471,24 @@ CREATE TABLE `order_details` (
 --
 
 INSERT INTO `order_details` (`detail_id`, `order_id`, `item_id`, `quantity`, `price`) VALUES
-(1, 1, 1, 1, 1500.00),
-(2, 2, 2, 2, 25.00);
+(1, 1, 1, 1, 75000.00),
+(2, 2, 1, 1, 75000.00),
+(3, 3, 1, 1, 75000.00),
+(4, 4, 1, 1, 75000.00),
+(5, 5, 1, 2, 75000.00),
+(6, 6, 1, 1, 75000.00),
+(7, 7, 11, 1, 75000.00),
+(8, 8, 2, 1, 75000.00),
+(9, 9, 2, 1, 75000.00),
+(10, 10, 1, 2, 75000.00),
+(11, 10, 15, 2, 80000.00),
+(12, 11, 1, 5, 75000.00),
+(13, 12, 1, 1, 75000.00),
+(14, 13, 1, 1, 75000.00),
+(15, 14, 1, 1, 75000.00),
+(16, 15, 3, 1, 85000.00),
+(17, 16, 5, 1, 150000.00),
+(18, 17, 2, 1, 75000.00);
 
 -- --------------------------------------------------------
 
@@ -748,7 +513,11 @@ INSERT INTO `otp` (`otp_id`, `user_id`, `code`, `time_expire`, `is_active`) VALU
 (2, 2, '654321', '2026-04-13 10:00:00', 0),
 (3, 5, '479881', '2026-04-23 06:58:10', 1),
 (4, 6, '297742', '2026-04-23 06:56:57', 0),
-(5, 7, '811008', '2026-04-23 13:51:34', 0);
+(5, 7, '811008', '2026-04-23 13:51:34', 0),
+(6, 8, '955697', '2026-04-26 04:17:59', 0),
+(7, 9, '515256', '2026-04-27 03:11:25', 1),
+(8, 10, '347422', '2026-04-27 09:09:46', 0),
+(9, 10, '201916', '2026-05-03 02:55:47', 1);
 
 -- --------------------------------------------------------
 
@@ -820,7 +589,10 @@ INSERT INTO `users` (`user_id`, `email`, `password`, `role`, `phone`, `is_verifi
 (4, 'test@example.com', '$2y$10$4kPsaF0qN6uyNwsQ9lGVr.5vdG0nW0JLKOA/EajQEHy9QJaP/AXSy', 0, '0909123456', 1),
 (5, '1@gmail.com', '$2y$10$ATPBYZkLnUraXPXIYs5nVeU8ZBqfn3srgpCe77Y7PrO8DOjL/T4QW', 1, '1234567891', 1),
 (6, 'trung.nong7z@gmail.com', '$2y$10$RQfT1Ad7HJSR/xs1DKcex.7rIsHIDoJQtJ3hzU0Vv2eCo17eldJ3W', 0, '1234567890', 1),
-(7, 'theinspirer2004@gmail.com', '$2y$10$u8SKpul00xAo80c27bY/1Om9gVCeRc8YBZFEToupbbf4o8jAegTcS', 0, '12345678', 1);
+(7, 'theinspirer2004@gmail.com', '$2y$10$u8SKpul00xAo80c27bY/1Om9gVCeRc8YBZFEToupbbf4o8jAegTcS', 0, '12345678', 1),
+(8, 'honatuan2004@gmail.com', '$2y$10$CuGdMneVmEOo8fbx31ppj.NU/3mbTTnjm8qDdoy.A6HWuAplxDoly', 0, '0937980725', 1),
+(9, 'hongocanhtuannoob@gmail.com', '$2y$10$Pssp/..WT6YhbeSadGSEsOPF5gg5Hxs3pvaxz6JSA56yHlV7cuadG', 0, '0937980725', 0),
+(10, 'hongocanhtuan1301@gmail.com', '$2y$10$srN7DyUX5JvRs6ZTUadtGenOq9oXw4VRCR5wRUgs5h7V98peLphO6', 0, '0937980725', 1);
 
 --
 -- Indexes for dumped tables
@@ -887,11 +659,10 @@ ALTER TABLE `notification_comment`
   ADD KEY `notification_comment_ibfk_2` (`comment_id`);
 
 --
--- Indexes for table `notification_setting`
+-- Indexes for table `notification_order`
 --
-ALTER TABLE `notification_setting`
-  ADD PRIMARY KEY (`setting_id`),
-  ADD KEY `fk_admin_user` (`admin_id`);
+ALTER TABLE `notification_order`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `notification_vote_comment`
@@ -960,79 +731,79 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `addresses`
 --
 ALTER TABLE `addresses`
-  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `articles`
 --
 ALTER TABLE `articles`
-  MODIFY `id_article` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id_article` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=160;
+  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT for table `comment_votes`
 --
 ALTER TABLE `comment_votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
 
 --
 -- AUTO_INCREMENT for table `information`
 --
 ALTER TABLE `information`
-  MODIFY `info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `notification_comment`
 --
 ALTER TABLE `notification_comment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
--- AUTO_INCREMENT for table `notification_setting`
+-- AUTO_INCREMENT for table `notification_order`
 --
-ALTER TABLE `notification_setting`
-  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+ALTER TABLE `notification_order`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `notification_vote_comment`
 --
 ALTER TABLE `notification_vote_comment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `order_details`
 --
 ALTER TABLE `order_details`
-  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `otp`
 --
 ALTER TABLE `otp`
-  MODIFY `otp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `otp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `product_reviews`
@@ -1056,7 +827,7 @@ ALTER TABLE `review_details`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
@@ -1092,12 +863,6 @@ ALTER TABLE `notification_comment`
   ADD CONSTRAINT `notification_comment_ibfk_1` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id_article`),
   ADD CONSTRAINT `notification_comment_ibfk_2` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`id_comment`) ON DELETE CASCADE,
   ADD CONSTRAINT `notification_comment_ibfk_3` FOREIGN KEY (`replied`) REFERENCES `comments` (`replied`);
-
---
--- Constraints for table `notification_setting`
---
-ALTER TABLE `notification_setting`
-  ADD CONSTRAINT `fk_admin_user` FOREIGN KEY (`admin_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `notification_vote_comment`

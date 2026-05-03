@@ -65,6 +65,7 @@ class Order extends Database {
     private $status;
     private $is_paid;
     private $shipping_fee;
+    private $note;
 
     public function getOrderId() { return $this->order_id; }
     public function setOrderId($id) { $this->order_id = $id; $this->loadById($id); }
@@ -84,6 +85,9 @@ class Order extends Database {
     public function getShippingFee() { return $this->shipping_fee; }
     public function setShippingFee($fee) { $this->shipping_fee = $fee; }
 
+    public function getNote() { return $this->note; }
+    public function setNote($note) { $this->note = $note; }
+
     private function loadById($id) {
         $stmt = $this->conn->prepare("SELECT * FROM orders WHERE order_id=?");
         $stmt->execute([$id]);
@@ -95,17 +99,22 @@ class Order extends Database {
             $this->status         = $result['status'];
             $this->is_paid        = $result['is_paid'];
             $this->shipping_fee   = $result['shipping_fee'];
+            // Bổ sung load note
+            $this->note           = $result['note'] ?? null; 
         }
     }
 
     public function create() {
-        $stmt = $this->conn->prepare("INSERT INTO orders (user_id, order_date, status, is_paid, shipping_fee) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->shipping_fee]);
+        // Bổ sung trường note vào câu lệnh INSERT
+        $stmt = $this->conn->prepare("INSERT INTO orders (user_id, order_date, status, is_paid, shipping_fee, note) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->shipping_fee, $this->note]);
         return $this->conn->lastInsertId();
     }
+
     public function update() {
-        $stmt = $this->conn->prepare("UPDATE orders SET user_id=?, order_date=?, status=?, is_paid=?, shipping_fee=? WHERE order_id=?");
-        return $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->shipping_fee, $this->order_id]);
+        // Bổ sung trường note vào câu lệnh UPDATE
+        $stmt = $this->conn->prepare("UPDATE orders SET user_id=?, order_date=?, status=?, is_paid=?, shipping_fee=?, note=? WHERE order_id=?");
+        return $stmt->execute([$this->user_id, $this->order_date, $this->status, $this->is_paid, $this->shipping_fee, $this->note, $this->order_id]);
     }
 
     public function delete() {
@@ -114,6 +123,8 @@ class Order extends Database {
     }
 
     public function getFullOrderHistory($user_id) {
+        // Hàm này đang dùng SELECT *, nên nó ĐÃ lấy được cột note nếu Database có.
+        // Vấn đề trước đây là do hàm create() chưa lưu cột note vào.
         $sqlOrders = "SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC";
         $stmtOrders = $this->conn->prepare($sqlOrders);
         $stmtOrders->execute([$user_id]);
@@ -123,6 +134,53 @@ class Order extends Database {
         foreach ($orders as $o) {
             $order_id = $o['order_id'];
             
+            $sqlDetails = "SELECT od.*, i.item_name, i.item_image 
+                           FROM order_details od 
+                           JOIN items i ON od.item_id = i.item_id 
+                           WHERE od.order_id = ?";
+            $stmtDetails = $this->conn->prepare($sqlDetails);
+            $stmtDetails->execute([$order_id]);
+            $details = $stmtDetails->fetchAll(PDO::FETCH_ASSOC);
+            
+            $total = 0;
+            foreach ($details as $d) {
+                $total += $d['price'] * $d['quantity'];
+            }
+            
+            $o['details'] = $details;
+            $o['total_amount'] = $total;
+            $orderData[] = $o;
+        }
+        
+        return $orderData;
+    }
+
+    // 1. Hàm đếm tổng số đơn hàng của user
+    public function countUserOrders($user_id) {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM orders WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+        return $stmt->fetchColumn(); // Trả về con số tổng
+    }
+
+    // 2. Hàm lấy đơn hàng có phân trang
+    public function getPaginatedOrderHistory($user_id, $limit, $offset) {
+        // Dùng LIMIT và OFFSET để cắt nhỏ dữ liệu
+        $sqlOrders = "SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC LIMIT ? OFFSET ?";
+        $stmtOrders = $this->conn->prepare($sqlOrders);
+        
+        // Cần bindValue dạng INT để LIMIT và OFFSET hoạt động đúng trong PDO
+        $stmtOrders->bindValue(1, $user_id, PDO::PARAM_INT);
+        $stmtOrders->bindValue(2, $limit, PDO::PARAM_INT);
+        $stmtOrders->bindValue(3, $offset, PDO::PARAM_INT);
+        $stmtOrders->execute();
+        
+        $orders = $stmtOrders->fetchAll(PDO::FETCH_ASSOC);
+        
+        $orderData = [];
+        foreach ($orders as $o) {
+            $order_id = $o['order_id'];
+            
+            // Lấy chi tiết đơn hàng (giữ nguyên logic cũ của bạn)
             $sqlDetails = "SELECT od.*, i.item_name, i.item_image 
                            FROM order_details od 
                            JOIN items i ON od.item_id = i.item_id 

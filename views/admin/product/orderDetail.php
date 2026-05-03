@@ -33,7 +33,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                     </div>
                 </div>
 
-                <div class="row mb-5">
+                <div class="row mb-4">
                     <div class="col-md-6 mb-3 mb-md-0">
                         <div class="bg-light p-3 rounded h-100">
                             <h6 class="fw-bold mb-3 text-uppercase border-bottom pb-2">Thông tin Khách hàng</h6>
@@ -70,6 +70,23 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                         </div>
                     </div>
                 </div>
+
+                <!-- BỔ SUNG KHỐI HIỂN THỊ GHI CHÚ BÊN ADMIN -->
+                <?php if (!empty($order['note'])): ?>
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <div class="p-3 rounded" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+                            <span class="fw-bold small text-muted text-uppercase d-block mb-1">
+                                <i class="ti-comment me-1"></i> Ghi chú đơn hàng từ khách:
+                            </span>
+                            <span class="text-dark fst-italic" style="white-space: pre-line;">
+                                <?php echo htmlspecialchars($order['note']); ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+                <!-- KẾT THÚC KHỐI GHI CHÚ -->
 
                 <h6 class="fw-bold mb-3 text-uppercase">Danh sách Giáo trình</h6>
                 <div class="table-responsive mb-4">

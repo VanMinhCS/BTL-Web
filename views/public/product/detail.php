@@ -9,6 +9,27 @@
 <link rel="stylesheet" href="assets/css/public/product-list.css"/>
 
 <style>
+    .qty-btn { width: 40px; border: 1px solid #ced4da; background: #fff; font-weight: bold; transition: 0.2s; }
+    .qty-input { width: 60px; text-align: center; border: 1px solid #ced4da; border-left: none; border-right: none; }
+
+    .qty-btn:disabled {
+        background-color: #e9ecef;
+        color: #adb5bd;
+        cursor: not-allowed;
+    }
+
+    /* Ẩn mũi tên lên xuống của thẻ input number trên Chrome, Safari, Edge, Opera */
+    .qty-input::-webkit-inner-spin-button, 
+    .qty-input::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }
+
+    /* Ẩn mũi tên lên xuống của thẻ input number trên Firefox */
+    .qty-input {
+        appearance: textfield;
+    }
+
     .slick-prev:before, .slick-next:before { color: #1a1a1a; font-size: 24px; }
     .slick-prev { left: -30px; }
     .slick-next { right: -30px; }
@@ -49,6 +70,29 @@
         z-index: 10;
         text-transform: uppercase;
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    /* Vòng tròn đen mờ chứa chữ Hết Hàng (Dành cho Slider, kích thước nhỏ hơn) */
+    .out-of-stock-overlay-sm {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #fff !important;
+        width: 70px; /* Nhỏ hơn vòng tròn chính */
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px; /* Chữ nhỏ hơn */
+        font-weight: bold;
+        pointer-events: none;
+        z-index: 10;
+        text-transform: uppercase;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        text-align: center;
+        line-height: 1.2;
     }
 
     /* Cấm click và hiện icon cấm */
@@ -92,9 +136,9 @@
                 <div class="mb-4">
                     <label class="fw-bold mb-2">Số lượng</label>
                     <div class="d-flex">
-                        <button type="button" class="qty-btn rounded-start" onclick="decreaseQty()">-</button>
+                        <button type="button" id="btn-decrease" class="qty-btn rounded-start" onclick="decreaseQty()" disabled>-</button>
                         
-                        <input type="text" id="quantity" name="quantity" value="1" class="qty-input" readonly>
+                        <input type="number" id="quantity" name="quantity" value="1" class="qty-input" min="1" oninput="checkQtyState()" onblur="validateEmptyQty()">
                         
                         <button type="button" class="qty-btn rounded-end" onclick="increaseQty()">+</button>
                     </div>
@@ -133,14 +177,26 @@
             
             <div class="related-products-slider">
                 <?php foreach ($relatedProducts as $item): ?>
+                <?php 
+                    // KIỂM TRA TỒN KHO CỦA TỪNG SẢN PHẨM TRONG SLIDER
+                    $itemIsOutOfStock = ($item['item_stock'] <= 0); 
+                ?>
                 <div class="px-2">
                     <div class="card h-100 border-0 shadow-sm">
                         <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['item_id']; ?>" class="text-decoration-none">
-                            <div class="position-relative bg-light" style="aspect-ratio: 1/1.2; display: flex; align-items: center; justify-content: center;">
+                            <div class="position-relative bg-light product-img-wrapper" style="aspect-ratio: 1/1.2; display: flex; align-items: center; justify-content: center;">
+                                
+                                <!-- Thêm class img-dimmed nếu hết hàng -->
                                 <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $item['item_image']; ?>" 
                                     alt="<?php echo htmlspecialchars($item['item_name']); ?>" 
-                                    class="w-100 h-100 object-fit-contain p-3"
+                                    class="w-100 h-100 object-fit-contain p-3 <?php echo $itemIsOutOfStock ? 'img-dimmed' : ''; ?>"
                                     onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($item['item_name']); ?>'">
+                                
+                                <!-- Hiển thị vòng tròn đen nếu hết hàng -->
+                                <?php if ($itemIsOutOfStock): ?>
+                                    <div class="out-of-stock-overlay-sm">Hết<br>Hàng</div>
+                                <?php endif; ?>
+
                             </div>
                         </a>
                         <div class="card-body text-center pt-3 pb-4">
@@ -166,106 +222,99 @@
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
 <script>
-    // Xử lý tăng giảm số lượng
+    // ==========================================
+    // 1. TĂNG GIẢM SỐ LƯỢNG SẢN PHẨM
+    // ==========================================
+    function checkQtyState() {
+        let input = document.getElementById('quantity');
+        let btnDecrease = document.getElementById('btn-decrease');
+        let currentVal = parseInt(input.value);
+
+        if (isNaN(currentVal) || currentVal <= 1) {
+            btnDecrease.disabled = true;
+        } else {
+            btnDecrease.disabled = false;
+        }
+    }
+
+    function validateEmptyQty() {
+        let input = document.getElementById('quantity');
+        let currentVal = parseInt(input.value);
+        if (isNaN(currentVal) || currentVal < 1) {
+            input.value = 1;
+        }
+        checkQtyState();
+    }
+
     function increaseQty() {
         let input = document.getElementById('quantity');
-        input.value = parseInt(input.value) + 1;
+        let currentVal = parseInt(input.value) || 0; 
+        input.value = currentVal + 1;
+        checkQtyState();
     }
     
     function decreaseQty() {
         let input = document.getElementById('quantity');
-        if (parseInt(input.value) > 1) {
-            input.value = parseInt(input.value) - 1;
+        let currentVal = parseInt(input.value) || 1;
+        if (currentVal > 1) {
+            input.value = currentVal - 1;
         }
+        checkQtyState();
     }
 
-    // Khởi tạo Slick Carousel khi trang đã load xong
-    $(document).ready(function(){
-        $('.related-products-slider').slick({
-            slidesToShow: 4,      // Hiện 4 sản phẩm trên màn hình máy tính
-            slidesToScroll: 1,    // Cuộn 1 sản phẩm mỗi lần bấm
-            autoplay: true,       // Tự động trượt
-            autoplaySpeed: 3000,  // Tốc độ 3 giây
-            arrows: true,         // Hiện mũi tên trái/phải
-            dots: false,
-            responsive: [
-                {
-                    breakpoint: 992, // Tablet
-                    settings: { slidesToShow: 3 }
-                },
-                {
-                    breakpoint: 768, // Mobile ngang
-                    settings: { slidesToShow: 2 }
-                },
-                {
-                    breakpoint: 576, // Mobile dọc
-                    settings: { slidesToShow: 1, arrows: false }
+    document.addEventListener("DOMContentLoaded", function() {
+        checkQtyState();
+        let qtyInput = document.getElementById('quantity');
+        if (qtyInput) {
+            qtyInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); 
                 }
-            ]
-        });
+            });
+        }
     });
-</script>
 
-<script>
-    // Bắt sự kiện khi bấm nút Thêm vào giỏ hàng
+    // ==========================================
+    // 2. XỬ LÝ THÊM VÀO GIỎ HÀNG VÀ MUA NGAY
+    // ==========================================
     document.querySelector('form[action*="cart/add"]').addEventListener('submit', function(e) {
-        e.preventDefault(); // Phanh gấp! Ngăn không cho trình duyệt load lại trang
+        e.preventDefault(); 
 
         let form = this;
         let formData = new FormData(form);
-        formData.append('ajax', 1); // Đính kèm cờ báo hiệu đây là gửi ngầm (AJAX)
+        formData.append('ajax', 1); 
 
-        // Gửi dữ liệu đi một cách âm thầm
         fetch(form.action, {
             method: 'POST',
             body: formData
         })
         .then(response => response.text())
         .then(cartCount => {
-            // 1. TÌM VÀ CẬP NHẬT ĐÚNG CỤC BADGE TRÊN HEADER BẰNG ID
             let badge = document.getElementById('cart-badge');
             if (badge) {
-                badge.innerText = cartCount;         // Cập nhật số lượng mới
-                badge.classList.remove('d-none');    // Gỡ bỏ trạng thái tàng hình (nếu trước đó giỏ hàng trống)
+                badge.innerText = cartCount;         
+                badge.classList.remove('d-none');    
             }
 
-            // 2. HIỆU ỨNG UX: HIỂN THỊ POPUP (TOAST NOTIFICATION)
             let toast = document.getElementById('cart-toast');
-            
             if (!toast) {
                 toast = document.createElement('div');
                 toast.id = 'cart-toast';
-                
                 toast.style.cssText = `
-                    position: fixed;
-                    top: 100px;
-                    right: 20px;
-                    background-color: #198754;
-                    color: #fff;
-                    padding: 12px 24px;
-                    border-radius: 8px;
+                    position: fixed; top: 100px; right: 20px;
+                    background-color: #198754; color: #fff;
+                    padding: 12px 24px; border-radius: 8px;
                     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    z-index: 9999;
-                    font-weight: bold;
+                    z-index: 9999; font-weight: bold;
                     transition: opacity 0.3s ease, transform 0.3s ease;
-                    transform: translateY(-20px);
-                    opacity: 0;
+                    transform: translateY(-20px); opacity: 0;
                 `;
                 toast.innerHTML = '✓ Đã thêm vào giỏ hàng!';
                 document.body.appendChild(toast);
             }
 
-            // Kích hoạt hiệu ứng hiện popup
-            setTimeout(() => {
-                toast.style.opacity = '1';
-                toast.style.transform = 'translateY(0)';
-            }, 10);
-
-            // Tự động biến mất sau 1 giây
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-20px)';
-            }, 1000);
+            setTimeout(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; }, 10);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)'; }, 1000);
         })
         .catch(error => {
             console.error("Lỗi khi thêm vào giỏ hàng:", error);
@@ -273,32 +322,25 @@
         });
     });
 
-    // --- XỬ LÝ SỰ KIỆN NÚT "MUA NGAY" ---
+    // CHỈ KHAI BÁO BIẾN MỘT LẦN DUY NHẤT Ở ĐÂY
     let buyNowBtn = document.getElementById('buyNowBtn');
     if (buyNowBtn) {
         buyNowBtn.addEventListener('click', function() {
-            // 1. Lấy dữ liệu từ form giống hệt như nút Thêm vào giỏ
             let form = document.querySelector('form[action*="cart/add"]');
             let formData = new FormData(form);
             formData.append('ajax', 1);
 
-            // Đổi text nút thành "Đang xử lý..." để tăng trải nghiệm (UX)
             let originalText = this.innerHTML;
             this.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
-            this.style.pointerEvents = 'none'; // Chặn click đúp
+            this.style.pointerEvents = 'none'; 
 
-            // 2. Gửi ngầm dữ liệu lên server
             fetch(form.action, {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.text())
             .then(cartCount => {
-                // 3. THÀNH CÔNG: Chuyển hướng khách thẳng sang trang Giỏ Hàng
                 window.location.href = '<?php echo BASE_URL; ?>cart'; 
-                
-                // (Ghi chú: Nếu hệ thống của bạn muốn nhảy thẳng qua bước thanh toán, 
-                // bạn có thể đổi 'cart' thành 'onestepcheckout' nhé)
             })
             .catch(error => {
                 console.error("Lỗi khi mua ngay:", error);
@@ -308,4 +350,26 @@
             });
         });
     }
+
+    // ==========================================
+    // 3. KHỞI TẠO SLIDER SẢN PHẨM LIÊN QUAN
+    // ==========================================
+    $(document).ready(function(){
+        $('.related-products-slider').slick({
+            dots: false,           
+            infinite: true,        
+            speed: 500,            
+            slidesToShow: 4,       
+            slidesToScroll: 1,     
+            autoplay: true,        
+            autoplaySpeed: 3000,   
+            prevArrow: '<button type="button" class="slick-prev shadow-none border-0 bg-transparent"><i class="fas fa-chevron-left"></i></button>',
+            nextArrow: '<button type="button" class="slick-next shadow-none border-0 bg-transparent"><i class="fas fa-chevron-right"></i></button>',
+            responsive: [
+                { breakpoint: 992, settings: { slidesToShow: 3 } },
+                { breakpoint: 768, settings: { slidesToShow: 2 } },
+                { breakpoint: 576, settings: { slidesToShow: 1 } }
+            ]
+        });
+    });
 </script>
