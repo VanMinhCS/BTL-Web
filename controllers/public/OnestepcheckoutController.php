@@ -136,6 +136,29 @@ class OnestepcheckoutController extends Controller {
                     }
                 }
 
+                // =========================================================
+                // BƯỚC 3.5: GỬI THÔNG BÁO CHO ADMIN (ĐÃ CHÈN)
+                // =========================================================
+                require_once __DIR__ . '/../../models/Notification.php';
+
+                // 1. Tạo chi tiết đơn hàng cho bảng notification_order
+                $notifyOrder = new NotificationOrder();
+                $notifyOrder->setOrderId($order_id); // Dùng biến $order_id có sẵn của hàm
+                $notifyOrder->setOrderStatus('chờ xác nhận');
+                $notifyOrder->create();
+
+                // Lấy ID vừa được sinh ra
+                $notifyOrderId = $notifyOrder->getId();
+
+                // 2. Tạo thông báo tổng quát cho bảng notifications
+                $notification = new Notification();
+                $notification->setType('order');
+                $notification->setUserId($user_id); // Dùng biến $user_id có sẵn của hàm
+                $notification->setNotificationOrderId($notifyOrderId);
+                $notification->setIsRead(0);
+                $notification->create();
+                // =========================================================
+
                 // --- BƯỚC 4: HOÀN TẤT VÀ CHUYỂN HƯỚNG TRANG ---
                 unset($_SESSION['cart']);
 
