@@ -72,6 +72,29 @@
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
 
+    /* Vòng tròn đen mờ chứa chữ Hết Hàng (Dành cho Slider, kích thước nhỏ hơn) */
+    .out-of-stock-overlay-sm {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #fff !important;
+        width: 70px; /* Nhỏ hơn vòng tròn chính */
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px; /* Chữ nhỏ hơn */
+        font-weight: bold;
+        pointer-events: none;
+        z-index: 10;
+        text-transform: uppercase;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        text-align: center;
+        line-height: 1.2;
+    }
+
     /* Cấm click và hiện icon cấm */
     .btn-disabled-strict {
         opacity: 0.5;
@@ -154,14 +177,26 @@
             
             <div class="related-products-slider">
                 <?php foreach ($relatedProducts as $item): ?>
+                <?php 
+                    // KIỂM TRA TỒN KHO CỦA TỪNG SẢN PHẨM TRONG SLIDER
+                    $itemIsOutOfStock = ($item['item_stock'] <= 0); 
+                ?>
                 <div class="px-2">
                     <div class="card h-100 border-0 shadow-sm">
                         <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['item_id']; ?>" class="text-decoration-none">
-                            <div class="position-relative bg-light" style="aspect-ratio: 1/1.2; display: flex; align-items: center; justify-content: center;">
+                            <div class="position-relative bg-light product-img-wrapper" style="aspect-ratio: 1/1.2; display: flex; align-items: center; justify-content: center;">
+                                
+                                <!-- Thêm class img-dimmed nếu hết hàng -->
                                 <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $item['item_image']; ?>" 
                                     alt="<?php echo htmlspecialchars($item['item_name']); ?>" 
-                                    class="w-100 h-100 object-fit-contain p-3"
+                                    class="w-100 h-100 object-fit-contain p-3 <?php echo $itemIsOutOfStock ? 'img-dimmed' : ''; ?>"
                                     onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=<?php echo urlencode($item['item_name']); ?>'">
+                                
+                                <!-- Hiển thị vòng tròn đen nếu hết hàng -->
+                                <?php if ($itemIsOutOfStock): ?>
+                                    <div class="out-of-stock-overlay-sm">Hết<br>Hàng</div>
+                                <?php endif; ?>
+
                             </div>
                         </a>
                         <div class="card-body text-center pt-3 pb-4">
@@ -187,13 +222,14 @@
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
 <script>
-    // Hàm kiểm tra và cập nhật trạng thái của nút "-"
+    // ==========================================
+    // 1. TĂNG GIẢM SỐ LƯỢNG SẢN PHẨM
+    // ==========================================
     function checkQtyState() {
         let input = document.getElementById('quantity');
         let btnDecrease = document.getElementById('btn-decrease');
         let currentVal = parseInt(input.value);
 
-        // Bôi xám nút "-" nếu giá trị <= 1 hoặc người dùng chưa nhập gì
         if (isNaN(currentVal) || currentVal <= 1) {
             btnDecrease.disabled = true;
         } else {
@@ -201,7 +237,6 @@
         }
     }
 
-    // Hàm chốt chặn: Nếu người dùng xóa trống ô rồi click ra ngoài, tự động điền lại số 1
     function validateEmptyQty() {
         let input = document.getElementById('quantity');
         let currentVal = parseInt(input.value);
@@ -211,15 +246,13 @@
         checkQtyState();
     }
 
-    // Xử lý nút tăng (+)
     function increaseQty() {
         let input = document.getElementById('quantity');
-        let currentVal = parseInt(input.value) || 0; // Nếu trống thì coi như là 0
+        let currentVal = parseInt(input.value) || 0; 
         input.value = currentVal + 1;
         checkQtyState();
     }
     
-    // Xử lý nút giảm (-)
     function decreaseQty() {
         let input = document.getElementById('quantity');
         let currentVal = parseInt(input.value) || 1;
@@ -229,83 +262,59 @@
         checkQtyState();
     }
 
-    // Chạy kiểm tra ngay lần đầu trang được load để bôi xám nút "-" (vì mặc định là 1)
     document.addEventListener("DOMContentLoaded", function() {
         checkQtyState();
-
-        // Lắng nghe và chặn sự kiện nhấn Enter trong ô nhập số lượng
         let qtyInput = document.getElementById('quantity');
         if (qtyInput) {
             qtyInput.addEventListener('keydown', function(event) {
-                // Nếu phím được nhấn là phím Enter
                 if (event.key === 'Enter') {
-                    event.preventDefault(); // Ngăn chặn hành vi tự động submit form
+                    event.preventDefault(); 
                 }
             });
         }
     });
-</script>
 
-<script>
-    // Bắt sự kiện khi bấm nút Thêm vào giỏ hàng
+    // ==========================================
+    // 2. XỬ LÝ THÊM VÀO GIỎ HÀNG VÀ MUA NGAY
+    // ==========================================
     document.querySelector('form[action*="cart/add"]').addEventListener('submit', function(e) {
-        e.preventDefault(); // Phanh gấp! Ngăn không cho trình duyệt load lại trang
+        e.preventDefault(); 
 
         let form = this;
         let formData = new FormData(form);
-        formData.append('ajax', 1); // Đính kèm cờ báo hiệu đây là gửi ngầm (AJAX)
+        formData.append('ajax', 1); 
 
-        // Gửi dữ liệu đi một cách âm thầm
         fetch(form.action, {
             method: 'POST',
             body: formData
         })
         .then(response => response.text())
         .then(cartCount => {
-            // 1. TÌM VÀ CẬP NHẬT ĐÚNG CỤC BADGE TRÊN HEADER BẰNG ID
             let badge = document.getElementById('cart-badge');
             if (badge) {
-                badge.innerText = cartCount;         // Cập nhật số lượng mới
-                badge.classList.remove('d-none');    // Gỡ bỏ trạng thái tàng hình (nếu trước đó giỏ hàng trống)
+                badge.innerText = cartCount;         
+                badge.classList.remove('d-none');    
             }
 
-            // 2. HIỆU ỨNG UX: HIỂN THỊ POPUP (TOAST NOTIFICATION)
             let toast = document.getElementById('cart-toast');
-            
             if (!toast) {
                 toast = document.createElement('div');
                 toast.id = 'cart-toast';
-                
                 toast.style.cssText = `
-                    position: fixed;
-                    top: 100px;
-                    right: 20px;
-                    background-color: #198754;
-                    color: #fff;
-                    padding: 12px 24px;
-                    border-radius: 8px;
+                    position: fixed; top: 100px; right: 20px;
+                    background-color: #198754; color: #fff;
+                    padding: 12px 24px; border-radius: 8px;
                     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    z-index: 9999;
-                    font-weight: bold;
+                    z-index: 9999; font-weight: bold;
                     transition: opacity 0.3s ease, transform 0.3s ease;
-                    transform: translateY(-20px);
-                    opacity: 0;
+                    transform: translateY(-20px); opacity: 0;
                 `;
                 toast.innerHTML = '✓ Đã thêm vào giỏ hàng!';
                 document.body.appendChild(toast);
             }
 
-            // Kích hoạt hiệu ứng hiện popup
-            setTimeout(() => {
-                toast.style.opacity = '1';
-                toast.style.transform = 'translateY(0)';
-            }, 10);
-
-            // Tự động biến mất sau 1 giây
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-20px)';
-            }, 1000);
+            setTimeout(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; }, 10);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)'; }, 1000);
         })
         .catch(error => {
             console.error("Lỗi khi thêm vào giỏ hàng:", error);
@@ -313,32 +322,25 @@
         });
     });
 
-    // --- XỬ LÝ SỰ KIỆN NÚT "MUA NGAY" ---
+    // CHỈ KHAI BÁO BIẾN MỘT LẦN DUY NHẤT Ở ĐÂY
     let buyNowBtn = document.getElementById('buyNowBtn');
     if (buyNowBtn) {
         buyNowBtn.addEventListener('click', function() {
-            // 1. Lấy dữ liệu từ form giống hệt như nút Thêm vào giỏ
             let form = document.querySelector('form[action*="cart/add"]');
             let formData = new FormData(form);
             formData.append('ajax', 1);
 
-            // Đổi text nút thành "Đang xử lý..." để tăng trải nghiệm (UX)
             let originalText = this.innerHTML;
             this.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
-            this.style.pointerEvents = 'none'; // Chặn click đúp
+            this.style.pointerEvents = 'none'; 
 
-            // 2. Gửi ngầm dữ liệu lên server
             fetch(form.action, {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.text())
             .then(cartCount => {
-                // 3. THÀNH CÔNG: Chuyển hướng khách thẳng sang trang Giỏ Hàng
                 window.location.href = '<?php echo BASE_URL; ?>cart'; 
-                
-                // (Ghi chú: Nếu hệ thống của bạn muốn nhảy thẳng qua bước thanh toán, 
-                // bạn có thể đổi 'cart' thành 'onestepcheckout' nhé)
             })
             .catch(error => {
                 console.error("Lỗi khi mua ngay:", error);
@@ -348,4 +350,26 @@
             });
         });
     }
+
+    // ==========================================
+    // 3. KHỞI TẠO SLIDER SẢN PHẨM LIÊN QUAN
+    // ==========================================
+    $(document).ready(function(){
+        $('.related-products-slider').slick({
+            dots: false,           
+            infinite: true,        
+            speed: 500,            
+            slidesToShow: 4,       
+            slidesToScroll: 1,     
+            autoplay: true,        
+            autoplaySpeed: 3000,   
+            prevArrow: '<button type="button" class="slick-prev shadow-none border-0 bg-transparent"><i class="fas fa-chevron-left"></i></button>',
+            nextArrow: '<button type="button" class="slick-next shadow-none border-0 bg-transparent"><i class="fas fa-chevron-right"></i></button>',
+            responsive: [
+                { breakpoint: 992, settings: { slidesToShow: 3 } },
+                { breakpoint: 768, settings: { slidesToShow: 2 } },
+                { breakpoint: 576, settings: { slidesToShow: 1 } }
+            ]
+        });
+    });
 </script>
