@@ -20,6 +20,11 @@
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/styles.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/responsive.css">
 
+    <?php if (!empty($data['pageCss']) && is_array($data['pageCss'])): ?>
+        <?php foreach ($data['pageCss'] as $cssPath): ?>
+            <link rel="stylesheet" href="<?= BASE_URL . $cssPath ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
     
     <style>
         /* 1. Ẩn hoàn toàn mũi tên ở những menu KHÔNG có mục con */
@@ -38,6 +43,16 @@
         /* 3. Khi menu xổ xuống (mở), xoay ngược mũi tên hướng LÊN */
         .metismenu > li > a[aria-expanded="true"]::after {
             transform: translateY(-10%) rotate(180deg) !important;
+        }
+
+        .contact-icon {
+            transition: filter 0.2s;
+            width: 16px;
+            height: 16px;
+        }
+
+        a:hover .contact-icon {
+            filter: brightness(0) invert(1);
         }
     </style>
 </head>
@@ -116,6 +131,13 @@
                             <li class="<?php echo ($current == 'user') ? 'active' : ''; ?>">
                                 <a href="<?php echo BASE_URL; ?>admin/user">
                                     <i class="ti-user"></i><span>Quản lý người dùng</span>
+                                </a>
+                            </li>
+
+                            <li class="<?php echo ($current == 'contact') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/contact">
+                                    <img src="<?php echo BASE_URL ?>assets/img/contact-icon.svg" alt="contact-icon" class="contact-icon">
+                                    <span>Quản lý liên hệ</span>
                                 </a>
                             </li>
                             

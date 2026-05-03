@@ -118,7 +118,7 @@
                     <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo urlencode($item['item_id']); ?>" class="text-decoration-none text-dark d-block">
                         <div class="card h-100 border-0 shadow-sm" style="transition: all 0.3s; border:1px solid transparent;">
                             <div class="position-relative bg-light" style="aspect-ratio: 1/1.2; display:flex; align-items:center; justify-content:center; overflow: hidden;">
-                                <img src="<?php echo BASE_URL; ?>assets/img/<?php echo htmlspecialchars($img, ENT_QUOTES, 'UTF-8'); ?>"
+                                <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo htmlspecialchars($img, ENT_QUOTES, 'UTF-8'); ?>"
                                      alt="<?php echo htmlspecialchars($item['item_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                                      class="w-100 h-100 object-fit-contain p-3 <?php echo $isOut ? 'img-dimmed' : ''; ?>"
                                      style="transition: transform 0.4s ease;"

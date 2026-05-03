@@ -89,7 +89,11 @@
     
     <script src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/js/scripts.js"></script>
 
-
-</body>
+    <?php if (!empty($data['pageJs']) && is_array($data['pageJs'])): ?>
+        <?php foreach ($data['pageJs'] as $jsPath): ?>
+            <script src="<?= BASE_URL . $jsPath ?>"></script>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    </body>
 
 </html>

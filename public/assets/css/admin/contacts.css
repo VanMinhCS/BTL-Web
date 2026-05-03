@@ -1,0 +1,31 @@
+.row-select,
+.select-label,
+.bulk-delete-btn {
+    display: none;
+}
+
+.selection-mode .row-actions {
+    display: none;
+}
+
+.selection-mode .row-select {
+    display: flex;
+    justify-content: center;
+}
+
+.selection-mode .actions-label {
+    display: none;
+}
+
+.selection-mode .select-label {
+    display: inline-flex;
+    justify-content: center;
+}
+
+.selection-mode .bulk-delete-btn {
+    display: inline-flex;
+}
+
+.selection-mode .form-check-input {
+    border: 2px solid #0d6efd;
+}
