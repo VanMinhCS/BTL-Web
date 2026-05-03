@@ -3,8 +3,11 @@ class ContactController extends Controller {
     
     public function index() {
         $model = $this->model('ContactModel');
-        $contacts = $model->getAll();
-        $this->view('admin/contacts/index', ['contacts' => $contacts]);
+        // $contacts = $model->getAll();
+        $data['contacts'] = $model->getAll();
+        $data['title']    = "Quản lý liên hệ";
+        $data['currentPage'] = 'contact'; // Để nháy sáng menu
+        $this->view('admin/contacts/index', $data);
     }
 
     public function read() {

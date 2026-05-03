@@ -17,7 +17,7 @@ class HomeController extends Controller {
         $data['title'] = "Trang chủ - BK88";
         $data['pageCss'] = ['assets/css/public/home.css', 'assets/slick/slick.css', 'assets/slick/slick-theme.css'];
         $data['pageJs'] = ['assets/jquery/jquery-1.11.0.min.js', 'assets/jquery/jquery-migrate-1.2.1.min.js', 'assets/slick/slick.min.js', 'assets/js/public/home.js'];
-        $data['currentPage'] = 'home'; // Để Header active cho đúng
+        $data['currentPage'] = 'home'; 
 
         // Đẩy toàn bộ sang View home/index
         $this->view('public/home/index', $data);

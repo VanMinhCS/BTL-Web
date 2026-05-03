@@ -5,10 +5,10 @@ class ArticleController extends Controller {
             session_start();
         }
         // Bắt buộc đăng nhập mới được vào trang này
-        if (!isset($_SESSION['user_id'])) {
-            header("Location: " . BASE_URL . "auth/login");
-            exit;
-        }
+        // if (!isset($_SESSION['user_id'])) {
+        //     header("Location: " . BASE_URL . "auth/login");
+        //     exit;
+        // }
     }
     
     public function index() {
