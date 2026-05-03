@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/styles.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/responsive.css">
 
+    
     <style>
         /* 1. Ẩn hoàn toàn mũi tên ở những menu KHÔNG có mục con */
         .metismenu > li > a:not([aria-expanded])::after {
@@ -59,7 +60,6 @@
                 <div class="menu-inner">
                     <nav>
                         <?php 
-                        // SỬA Ở ĐÂY: Bắt biến bằng 2 cách để đảm bảo 100% không bị hụt dữ liệu
                         $current = '';
                         if (isset($currentPage)) {
                             $current = $currentPage;
@@ -93,7 +93,7 @@
                                     </li>
 
                                     <li class="<?php echo ($current == 'product_list') ? 'active' : ''; ?>">
-                                        <a href="<?php echo BASE_URL; ?>admin/product">Quản lý sản phẩm</a>
+                                        <a href="<?php echo BASE_URL; ?>admin/product">Danh sách giáo trình</a>
                                     </li>
                                     <li class="<?php echo ($current == 'product_create') ? 'active' : ''; ?>">
                                         <a href="<?php echo BASE_URL; ?>admin/product/create">Thêm giáo trình mới</a>
@@ -101,6 +101,18 @@
                                 </ul>
                             </li>
                             
+                            <li class="<?php echo ($current == 'news') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/news">
+                                    <i class="ti-book"></i><span>Quản lý tin tức</span>
+                                </a>
+                            </li>
+
+                            <li class="<?php echo ($current == 'notification') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/notification">
+                                    <i class="ti-bell"></i><span>Quản lý thông báo</span>
+                                </a>
+                            </li>
+
                             <li class="<?php echo ($current == 'user') ? 'active' : ''; ?>">
                                 <a href="<?php echo BASE_URL; ?>admin/user">
                                     <i class="ti-user"></i><span>Quản lý người dùng</span>
@@ -128,23 +140,25 @@
                             </form>
                         </div>
                     </div>
-                    <div class="col-md-6 col-sm-4 clearfix">
-                        <ul class="notification-area float-end">
-                            <li id="full-view"><i class="ti-fullscreen"></i></li>
-                            <li id="full-view-exit"><i class="ti-zoom-out"></i></li>
-                            <li class="dropdown">
-                                <i class="ti-bell dropdown-toggle" data-bs-toggle="dropdown">
-                                    <span>2</span>
-                                </i>
-                            </li>
-                            <li class="dropdown">
-                                <i class="fa-regular fa-envelope dropdown-toggle" data-bs-toggle="dropdown"><span>3</span></i>
-                            </li>
-                            <li class="settings-btn">
-                                <i class="ti-settings"></i>
-                            </li>
-                        </ul>
-                    </div>
+                        <div class="col-md-6 col-sm-4 clearfix">
+                            <ul class="notification-area float-end">
+                                <li id="full-view"><i class="ti-fullscreen"></i></li>
+                                <li id="full-view-exit"><i class="ti-zoom-out"></i></li>
+                                <li class="dropdown">
+                                    <i class="ti-bell dropdown-toggle" data-bs-toggle="dropdown">
+                                        <span>2</span>
+                                    </i>
+                                    <div class="dropdown-menu bell-notify-box notify-box">
+                                        <span class="notify-title"> <a href="#">view all</a></span>
+                                        <div class="notify-list">
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="settings-btn">
+                                    <i class="ti-settings"></i>
+                                </li>
+                            </ul>
+                        </div>
                 </div>
             </div>
             <div class="page-title-area">
@@ -162,7 +176,10 @@
                         <div class="user-profile float-end">
                             <img class="avatar user-thumb" src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/images/author/avatar.png" alt="avatar">
                             
-                            <h4 class="user-name dropdown-toggle" data-bs-toggle="dropdown">Admin BK88 <i class="fa-solid fa-angle-down"></i></h4>
+                            <h4 class="user-name dropdown-toggle" data-bs-toggle="dropdown">
+                                <?php echo isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'Admin BK88'; ?> 
+                                <i class="fa-solid fa-angle-down"></i>
+                            </h4>
                             
                             <div class="dropdown-menu user-dropdown">
                                 <a class="dropdown-item" href="<?php echo BASE_URL; ?>home?view=public"><i class="fa-solid fa-globe"></i> Trang chủ Web</a>

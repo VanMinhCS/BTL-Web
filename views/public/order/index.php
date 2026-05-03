@@ -1,3 +1,30 @@
+<?php 
+    $currentPage = $currentPage ?? 1; 
+    $totalPages = $totalPages ?? 1;
+?>
+
+<style>
+    /* Tùy chỉnh màu sắc cho phân trang giống trang sản phẩm */
+    .custom-pagination .page-item.active .page-link {
+        background-color: #212529; /* Nền xám đen */
+        border-color: #212529;
+        color: #ffffff;
+    }
+    .custom-pagination .page-link {
+        color: #0d6efd; /* Chữ màu xanh cho các trang chưa chọn */
+        font-weight: 600;
+        padding: 0.5rem 0.85rem;
+    }
+    .custom-pagination .page-item.disabled .page-link {
+        background-color: #e9ecef; /* Nền xám nhạt khi bị vô hiệu hóa */
+        color: #6c757d;
+    }
+    .custom-pagination {
+        border-radius: 6px;
+        overflow: hidden; /* Giữ góc bo tròn cho các nút ngoài cùng */
+    }
+</style>
+
 <div class="container py-5 mt-4 mb-5" style="min-height: 60vh;">
     <h2 class="fw-bold mb-4 text-uppercase">Đơn mua của tôi</h2>
 
@@ -53,7 +80,7 @@
                             <?php foreach ($order['details'] as $item): ?>
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="bg-light p-2 rounded" style="width: 80px; height: 100px; display: flex; align-items: center; justify-content: center;">
-                                        <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['item_image']; ?>" alt="<?php echo htmlspecialchars($item['item_name']); ?>" class="img-fluid object-fit-contain" style="max-height: 100%;">
+                                        <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $item['item_image']; ?>" alt="<?php echo htmlspecialchars($item['item_name']); ?>" class="img-fluid object-fit-contain" style="max-height: 100%;">
                                     </div>
                                     <div class="ms-4 flex-grow-1">
                                         <h6 class="fw-bold mb-1 fs-5"><?php echo $item['item_name']; ?></h6>
@@ -65,6 +92,21 @@
                                 </div>
                             <?php endforeach; ?>
                         </div>
+
+                        <!-- BỔ SUNG KHỐI HIỂN THỊ GHI CHÚ TẠI ĐÂY -->
+                        <?php if (!empty($order['note'])): ?>
+                            <div class="px-4 pb-3">
+                                <div class="p-3 rounded" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+                                    <span class="fw-bold small text-muted text-uppercase d-block mb-1">
+                                        <i class="fas fa-comment-alt me-1"></i> Ghi chú đơn hàng:
+                                    </span>
+                                    <span class="text-dark fst-italic" style="white-space: pre-line;">
+                                        <?php echo htmlspecialchars($order['note']); ?>
+                                    </span>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                        <!-- KẾT THÚC KHỐI GHI CHÚ -->
 
                         <div class="card-footer bg-white border-top py-3 px-4 d-flex justify-content-end align-items-center">
                             <span class="text-muted me-3">
@@ -83,6 +125,36 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
+
+                <?php if (isset($totalPages) && $totalPages > 1): ?>
+                    <nav aria-label="Page navigation" class="mt-5 d-flex justify-content-center">
+                        <ul class="pagination custom-pagination shadow-sm">
+                            
+                            <!-- Nút Trước (dùng icon «) -->
+                            <li class="page-item <?php echo ($currentPage <= 1) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=<?php echo $currentPage - 1; ?>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            
+                            <!-- Các số trang -->
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <li class="page-item <?php echo ($i == $currentPage) ? 'active' : ''; ?>">
+                                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                </li>
+                            <?php endfor; ?>
+                            
+                            <!-- Nút Sau (dùng icon ») -->
+                            <li class="page-item <?php echo ($currentPage >= $totalPages) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=<?php echo $currentPage + 1; ?>" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                <?php endif; ?>
+                <!-- KẾT THÚC KHỐI PHÂN TRANG -->
             </div>
         </div>
     <?php endif; ?>

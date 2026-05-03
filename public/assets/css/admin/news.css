@@ -1,0 +1,21 @@
+#notification-panel {
+  max-width: 600px;   /* rộng hơn */
+  font-size: 1.2rem;  /* chữ to hơn */
+  padding: 20px;      /* khoảng cách trong */
+}
+
+#notification-message {
+  font-weight: bold;
+}
+
+#notification-timer {
+  height: 8px;        /* thanh timer dày hơn */
+}
+
+.btn-group{
+  z-index: 0;
+}
+
+.offset-settings h4 {
+  margin-top: 40px; /* đẩy xuống 20px */
+}

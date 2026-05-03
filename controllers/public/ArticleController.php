@@ -136,6 +136,13 @@ class ArticleController extends Controller {
                 echo json_encode(["success" => false, "error" => "Không thể cập nhật vote"]);
             }
         } else {
+            if (!$userId) {
+                echo json_encode([
+                    "success" => false,
+                    "redirect" => "/auth/login"
+                ]);
+                exit;
+            }
             echo json_encode(["success" => false, "error" => "Tham số không hợp lệ hoặc chưa đăng nhập"]);
         }
     }
@@ -144,10 +151,17 @@ class ArticleController extends Controller {
         header('Content-Type: application/json; charset=utf-8');
         require_once __DIR__ . "/../../models/Comment.php";
 
-
         $id_article = intval($_POST['article_id'] ?? 0);
         $text       = trim($_POST['text'] ?? "");
         $userId     = $_SESSION['user_id'] ?? 0; // lấy từ session
+
+        if (!$userId) {
+            echo json_encode([
+                "success" => false,
+                "redirect" => "/auth/login"
+            ]);
+            exit;
+        }
 
         $comment = new Comment();
         $comment->setIdArticle($id_article);
@@ -158,11 +172,7 @@ class ArticleController extends Controller {
 
         if ($comment->create()) {
             $idComment = $comment->getIdComment();
-
-            // gọi service để tạo thông báo
             $comment->createCommentNotification($id_article, $idComment, $text, $userId);
-
-            // lấy thông tin user từ model
             $row = $comment->getCommentWithUserInfo($idComment);
 
             $fullName = trim($row['lastname'] . ' ' . $row['firstname']);
@@ -199,6 +209,15 @@ class ArticleController extends Controller {
         $text       = trim($_POST['text'] ?? "");
         $userId     = $_SESSION['user_id'] ?? 0;
 
+        // Nếu chưa đăng nhập thì trả về redirect
+        if (!$userId) {
+            echo json_encode([
+                "success" => false,
+                "redirect" => "/auth/login"
+            ]);
+            exit;
+        }
+
         $comment = new Comment();
         $comment->setIdArticle($id_article);
         $comment->setIdUser($userId);
@@ -208,11 +227,7 @@ class ArticleController extends Controller {
 
         if ($comment->create()) {
             $idComment = $comment->getIdComment();
-
-            // gọi service để tạo thông báo reply
             $comment->createReplyNotification($id_article, $idComment, $text, $parentId, $userId);
-
-            // lấy thông tin user từ model
             $row = $comment->getReplyWithUserInfo($idComment);
 
             $fullName = trim($row['lastname'] . ' ' . $row['firstname']);
@@ -309,5 +324,6 @@ class ArticleController extends Controller {
             "newest" => $newest ? BASE_URL . "article?id=" . $newest['id_article'] : null
         ]);
     }
+    
 
 }

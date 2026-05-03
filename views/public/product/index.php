@@ -151,7 +151,7 @@
                             <span class="badge bg-danger position-absolute top-0 start-0 m-3 p-2 rounded-0 border border-white" style="z-index: 2;"><?php echo $item['badge']; ?></span>
                         <?php endif; ?>
                         
-                        <img src="<?php echo BASE_URL; ?>assets/img/<?php echo $item['item_image']; ?>" 
+                        <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $item['item_image']; ?>" 
                         alt="<?php echo $item['item_name']; ?>" 
                         class="w-100 h-100 object-fit-contain p-3 <?php echo $isOutOfStock ? 'img-dimmed' : ''; ?>" 
                         onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=BK88'">

@@ -12,7 +12,56 @@
             <link rel="stylesheet" href="<?= BASE_URL . $cssPath ?>">
         <?php endforeach; ?>
     <?php endif; ?>
+
+    <style>
+    @media (min-width: 992px) {
+        .nav-item.dropdown:hover .dropdown-menu {
+            display: block;
+            animation: fadeInDropdown 0.2s ease forwards;
+        }
+
+        .nav-item.dropdown .dropdown-menu {
+            top: 100%;               
+            margin-top: 16px !important;
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%) !important;
+        }
+
+        .nav-item.dropdown .dropdown-menu::before {
+            content: "";
+            position: absolute;
+            top: -30px;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background-color: transparent; 
+        }
+
+        .navbar {
+            position: relative;
+            z-index: 1040 !important; 
+        }
+
+        .nav-item.dropdown .dropdown-menu {
+            z-index: 9999 !important; 
+        }
+
+            /* Xóa nền trắng/xám khi hover vào thẻ menu, thay bằng hiệu ứng đổi màu chữ */
+        .clean-dropdown-item:hover, .clean-dropdown-item:focus {
+            background-color: transparent !important;
+            color: #0d6efd !important;
+            font-weight: bold;
+        }
+    }
+
+    @keyframes fadeInDropdown {
+        from { opacity: 0; transform: translateY(5px) translateX(-50%); }
+        to { opacity: 1; transform: translateY(0) translateX(-50%); }
+    }
+    </style>
 </head>
+
 <body class="d-flex flex-column min-vh-100">
 
 <!-- ===== NAVBAR CHÍNH ===== -->
@@ -66,7 +115,8 @@
             </ul>
 
             <!-- PHẦN PHẢI: tìm kiếm + đăng nhập -->
-            <ul class="navbar-nav align-items-center gap-2">
+            <ul class="navbar-nav align-items-center gap-3">
+                
                 <li class="nav-item">
                     <a class="nav-link" href="#" title="Tìm kiếm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -74,13 +124,429 @@
                         </svg>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="btn btn-outline-light btn-sm px-3"
-                       href="<?php echo BASE_URL; ?>auth/login">Đăng nhập</a>
+
+                <li class="nav-item dropdown position-relative">
+                    <a class="nav-link d-flex align-items-center" href="<?php echo isset($_SESSION['user_id']) ? BASE_URL . 'profile' : BASE_URL . 'auth/login'; ?>" id="userDropdown" aria-expanded="false" style="cursor: pointer;">
+                        <img src="<?php echo BASE_URL; ?>assets/img/user.png" alt="User" style="width: 22px; height: 22px; filter: invert(1);">
+                        
+                        <?php if(isset($_SESSION['user_id'])): ?>
+                            <span class="ms-1 text-white-50 small d-none d-md-inline"><?php echo $_SESSION['user_name']; ?></span>
+                        <?php endif; ?>
+                    </a>
+                    
+                    <ul class="dropdown-menu shadow border-0 p-2" aria-labelledby="userDropdown" style="border-radius: 12px; min-width: 220px;">
+                        <?php if(isset($_SESSION['user_id'])): ?>
+                            <li><h6 class="dropdown-header text-primary fw-bold fs-6 mb-1">Xin chào, <?php echo $_SESSION['user_name']; ?></h6></li>
+                            <li><a class="dropdown-item clean-dropdown-item py-2" href="<?php echo BASE_URL; ?>profile">Tài khoản của tôi</a></li>
+                            <li><a class="dropdown-item clean-dropdown-item py-2" href="<?php echo BASE_URL; ?>order">Đơn mua</a></li>
+                            <li><hr class="dropdown-divider my-2"></li>
+                            <li>
+                                <a class="dropdown-item py-2 text-danger fw-bold" href="<?php echo BASE_URL; ?>auth/logout" 
+                                   onmouseover="this.style.backgroundColor='transparent'; this.style.color='#dc3545';" 
+                                   onmouseout="this.style.backgroundColor='transparent';">
+                                    Đăng xuất
+                                </a>
+                            </li>
+                        <?php else: ?>
+                            <div class="p-2">
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#ajaxLoginModal" class="btn w-100 mb-2 fw-bold text-white" style="background-color: #0d6efd; border-radius: 8px; padding: 10px 0;">Đăng nhập</button>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#ajaxRegisterModal" class="btn w-100 fw-bold" style="color: #0d6efd; border: 2px solid #0d6efd; background-color: white; border-radius: 8px; padding: 8px 0;">Đăng ký</button>
+                            </div>
+                        <?php endif; ?>
+                    </ul>
+                </li>
+
+                <li class="nav-item me-2">
+                    <a class="nav-link position-relative" href="<?php echo BASE_URL; ?>cart" title="Giỏ hàng">
+                        <img src="<?php echo BASE_URL; ?>assets/img/shopping-cart.png" alt="Cart" style="width: 24px; height: 24px; filter: invert(1);">
+                        
+                        <?php 
+                            $cartCount = 0;
+                            if(isset($_SESSION['cart'])) {
+                                foreach($_SESSION['cart'] as $item) { $cartCount += $item['quantity']; }
+                            }
+                        ?>
+                        
+                        <span id="cart-badge" 
+                              class="position-absolute badge rounded-pill bg-danger <?php echo ($cartCount == 0) ? 'd-none' : ''; ?>" 
+                              style="font-size: 0.65rem; top: 0px; right: -5px; padding: 0.25em 0.5em; border: 1px solid #0d6efd;">
+                            <?php echo $cartCount; ?>
+                        </span>
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+
+<div class="modal fade" id="ajaxLoginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Đăng nhập</h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="loginErrorMsg" class="alert alert-danger d-none" style="border-radius: 8px;"></div>
+                <form id="ajaxLoginForm">
+                    <input type="hidden" name="ajax" value="1">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email</label>
+                        <input type="email" name="login_id" class="form-control py-2" required placeholder="Nhập địa chỉ email của bạn">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Mật khẩu</label>
+                        <input type="password" name="password" class="form-control py-2" required placeholder="Nhập mật khẩu">
+                    </div>
+                    <div class="text-end mb-3">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#ajaxForgotModal" class="text-primary text-decoration-none small fw-bold">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold" style="border-radius: 8px;">Đăng nhập ngay</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ajaxRegisterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Đăng ký</h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="registerErrorMsg" class="alert alert-danger d-none" style="border-radius: 8px;"></div>
+                <div id="registerSuccessMsg" class="alert alert-success d-none" style="border-radius: 8px;"></div>
+                <form id="ajaxRegisterForm">
+                    <input type="hidden" name="ajax" value="1">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Họ và tên</label>
+                        <input type="text" name="fullname" class="form-control" required placeholder="Nhập họ và tên">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label fw-bold">Email</label>
+                            <input type="email" name="email" class="form-control" required placeholder="Nhập email">
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label fw-bold">Số điện thoại</label>
+                            <input type="tel" name="phone" class="form-control" placeholder="Nhập số điện thoại">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-4">
+                            <label class="form-label fw-bold">Mật khẩu</label>
+                            <input type="password" name="password" class="form-control" required placeholder="Mật khẩu">
+                        </div>
+                        <div class="col-6 mb-4">
+                            <label class="form-label fw-bold">Xác nhận mật khẩu</label>
+                            <input type="password" name="repassword" class="form-control" required placeholder="Nhập lại">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-outline-primary border-2 w-100 py-3 fw-bold" style="border-radius: 8px;">Đăng ký tài khoản</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ajaxOtpModal" tabindex="-1" aria-labelledby="ajaxOtpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-5 pb-5 pt-2">
+                <h3 class="text-center fw-bold mb-3" id="ajaxOtpModalLabel">XÁC THỰC EMAIL</h3>
+                <p class="text-center text-muted mb-4" style="font-size: 14px;">
+                    Mã xác thực (6 số) đã được gửi đến email <br>
+                    <strong id="otp_email_display" class="text-primary"></strong>
+                </p>
+
+                <form id="otpForm">
+                    <input type="hidden" id="otp_user_id" name="user_id">
+                    
+                    <div class="mb-4">
+                        <input type="text" class="form-control form-control-lg text-center fw-bold" id="otp_code" name="otp_code" placeholder="Nhập mã 6 số..." maxlength="6" style="letter-spacing: 5px; font-size: 24px;" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" style="border-radius: 8px;">XÁC NHẬN BƯỚC CUỐI</button>
+                    
+                    <div id="otp-message" class="mt-3 text-center" style="font-size: 14px;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ajaxForgotModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4 text-uppercase">Khôi phục mật khẩu</h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="forgotMsg" class="text-center mb-3" style="font-size: 14px;"></div>
+                <form id="ajaxForgotForm">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email đăng ký</label>
+                        <div class="input-group">
+                            <input type="email" name="email" id="forgot_email" class="form-control" required placeholder="Nhập email...">
+                            <button class="btn btn-outline-primary" type="button" id="btnSendForgotOtp">Gửi mã OTP</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mã xác nhận OTP</label>
+                        <input type="text" name="otp_code" class="form-control" required placeholder="6 ký tự" maxlength="6">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Mật khẩu mới</label>
+                        <input type="password" name="new_password" class="form-control" required placeholder="Nhập mật khẩu mới">
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary w-100 py-2 fw-bold mb-2" style="border-radius: 8px;">XÁC NHẬN</button>
+                    <button type="button" class="btn btn-outline-danger w-100 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#ajaxLoginModal" style="border-radius: 8px;">TRỞ VỀ</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. XỬ LÝ AJAX ĐĂNG NHẬP
+    const loginForm = document.getElementById('ajaxLoginForm');
+    if(loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Chặn tải lại trang
+            let formData = new FormData(this);
+            let errorBox = document.getElementById('loginErrorMsg');
+
+            fetch('<?php echo BASE_URL; ?>auth/processLogin', {
+                method: 'POST', body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'error') {
+                    errorBox.innerText = data.message;
+                    errorBox.classList.remove('d-none');
+                } else {
+                    // Thành công thì tải lại trang (hoặc redirect về trang thanh toán nếu có)
+                    window.location.href = data.redirect;
+                }
+            });
+        });
+    }
+
+    // 2. XỬ LÝ AJAX ĐĂNG KÝ
+    const registerForm = document.getElementById('ajaxRegisterForm');
+    if(registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // THÊM HIỆU ỨNG LOADING
+            let submitBtn = this.querySelector('button[type="submit"]');
+            let originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
+            submitBtn.disabled = true;
+
+            let formData = new FormData(this);
+            let errorBox = document.getElementById('registerErrorMsg');
+            let successBox = document.getElementById('registerSuccessMsg');
+
+            fetch('<?php echo BASE_URL; ?>auth/processRegister', {
+                method: 'POST', body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                // TRẢ LẠI NÚT BẤM
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                if(data.status === 'error') {
+                    successBox.classList.add('d-none');
+                    errorBox.innerText = data.message;
+                    errorBox.classList.remove('d-none');
+                } else if (data.status === 'otp_required') {
+                    errorBox.classList.add('d-none');
+                    successBox.classList.add('d-none');
+
+                    let regModal = bootstrap.Modal.getInstance(document.getElementById('ajaxRegisterModal'));
+                    if (regModal) regModal.hide();
+
+                    document.getElementById('otp_user_id').value = data.user_id;
+                    document.getElementById('otp_email_display').innerText = data.email;
+
+                    let otpModal = new bootstrap.Modal(document.getElementById('ajaxOtpModal'));
+                    otpModal.show();
+                }
+            })
+            .catch(err => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    }
+
+    // =========================================================
+    // 3. ẨN FORM NỀN KHI MỞ POPUP (CHỈ ÁP DỤNG Ở TRANG LOGIN/REGISTER)
+    // =========================================================
+    const mainAuthWrapper = document.getElementById('mainAuthWrapper');
+    
+    // Nếu trang hiện tại có chứa khối mainAuthWrapper (tức là đang ở trang login/register)
+    if (mainAuthWrapper) {
+        
+        // --- XỬ LÝ KHI MỞ/ĐÓNG POPUP ĐĂNG NHẬP ---
+        const loginModalEl = document.getElementById('ajaxLoginModal');
+        loginModalEl.addEventListener('show.bs.modal', function () {
+            mainAuthWrapper.style.opacity = '0'; // Làm trong suốt form nền
+            mainAuthWrapper.style.pointerEvents = 'none'; // Khóa click chuột vào form nền
+        });
+        loginModalEl.addEventListener('hidden.bs.modal', function () {
+            mainAuthWrapper.style.opacity = '1'; // Hiện lại form nền
+            mainAuthWrapper.style.pointerEvents = 'auto'; // Mở lại click chuột
+        });
+
+        // --- XỬ LÝ KHI MỞ/ĐÓNG POPUP ĐĂNG KÝ ---
+        const registerModalEl = document.getElementById('ajaxRegisterModal');
+        registerModalEl.addEventListener('show.bs.modal', function () {
+            mainAuthWrapper.style.opacity = '0';
+            mainAuthWrapper.style.pointerEvents = 'none';
+        });
+        registerModalEl.addEventListener('hidden.bs.modal', function () {
+            mainAuthWrapper.style.opacity = '1';
+            mainAuthWrapper.style.pointerEvents = 'auto';
+        });
+    }
+
+    // 4. XỬ LÝ AJAX XÁC THỰC OTP
+    const otpForm = document.getElementById('otpForm');
+    if(otpForm) {
+        otpForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            let msgBox = document.getElementById('otp-message');
+
+            fetch('<?php echo BASE_URL; ?>auth/processVerifyOTP', {
+                method: 'POST', body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'error') {
+                    msgBox.innerHTML = '<div class="text-danger fw-bold">' + data.message + '</div>';
+                } else {
+                    msgBox.innerHTML = '<div class="text-success fw-bold">' + data.message + '</div>';
+                    // Thành công -> Đợi 1.5s -> Chuyển hướng thẳng sang trang Đăng nhập
+                    setTimeout(() => {
+                        window.location.href = '<?php echo BASE_URL; ?>auth/login';
+                    }, 1500);
+                }
+            });
+        });
+    }
+
+    // 5. XỬ LÝ AJAX QUÊN MẬT KHẨU
+    const forgotForm = document.getElementById('ajaxForgotForm');
+    const btnSendForgotOtp = document.getElementById('btnSendForgotOtp');
+    const forgotMsg = document.getElementById('forgotMsg');
+
+    if(forgotForm) {
+        const modalEmailInput = document.getElementById('forgot_email');
+        const modalOtpInput = forgotForm.querySelector('input[name="otp_code"]');
+        const modalPassInput = forgotForm.querySelector('input[name="new_password"]');
+        const modalBtnConfirm = forgotForm.querySelector('button[type="submit"]');
+
+        function checkModalInputs() {
+            let emailVal = modalEmailInput.value.trim();
+            let otpVal = modalOtpInput.value.trim();
+            let passVal = modalPassInput.value.trim();
+
+            if (emailVal !== '' && otpVal.length === 6 && passVal !== '') {
+                // Đủ thông tin -> Nút xanh dương
+                modalBtnConfirm.className = 'btn btn-outline-primary w-100 py-2 fw-bold mb-2';
+                modalBtnConfirm.style.backgroundColor = '';
+                modalBtnConfirm.style.color = '';
+            } else {
+                // Chưa đủ -> Trở về màu xám (btn-secondary)
+                modalBtnConfirm.className = 'btn btn-secondary w-100 py-2 fw-bold mb-2';
+            }
+        }
+
+        // Bắt sự kiện gõ phím
+        modalEmailInput.addEventListener('input', checkModalInputs);
+        modalOtpInput.addEventListener('input', checkModalInputs);
+        modalPassInput.addEventListener('input', checkModalInputs);
+        // ==========================================
+
+
+        // A. Bấm nút Gửi mã OTP
+        btnSendForgotOtp.addEventListener('click', function() {
+            let email = document.getElementById('forgot_email').value;
+            if(!email) { alert('Vui lòng nhập email trước!'); return; }
+            
+            btnSendForgotOtp.innerText = 'Đang gửi...';
+            btnSendForgotOtp.disabled = true;
+
+            let fd = new FormData();
+            fd.append('email', email);
+
+            fetch('<?php echo BASE_URL; ?>auth/processSendResetOTP', { method: 'POST', body: fd })
+            .then(res => res.json())
+            .then(data => {
+                btnSendForgotOtp.innerText = 'Gửi lại mã';
+                btnSendForgotOtp.disabled = false;
+                forgotMsg.innerHTML = `<div class="text-${data.status === 'success' ? 'success' : 'danger'} fw-bold">${data.message}</div>`;
+            });
+        });
+
+        // B. Bấm nút Xác nhận (Đổi mật khẩu)
+        forgotForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let fd = new FormData(this);
+            
+            forgotMsg.innerHTML = '<div class="text-info fw-bold">Đang xử lý...</div>';
+
+            fetch('<?php echo BASE_URL; ?>auth/processResetPassword', { method: 'POST', body: fd })
+            .then(res => res.text()) // ĐỌC DƯỚI DẠNG TEXT TRƯỚC ĐỂ BẮT LỖI
+            .then(text => {
+                console.log("Dữ liệu thô Server trả về:", text); // In ra F12 để theo dõi
+                
+                try {
+                    let data = JSON.parse(text); // Thử ép sang JSON
+                    
+                    // Nếu ép thành công, làm bình thường
+                    forgotMsg.innerHTML = `<div class="text-${data.status === 'success' ? 'success' : 'danger'} fw-bold">${data.message}</div>`;
+                    
+                    if(data.status === 'success') {
+                        setTimeout(() => {
+                            bootstrap.Modal.getInstance(document.getElementById('ajaxForgotModal')).hide();
+                            new bootstrap.Modal(document.getElementById('ajaxLoginModal')).show();
+                            forgotForm.reset();
+                            forgotMsg.innerHTML = '';
+                            checkModalInputs(); 
+                        }, 1500);
+                    }
+                } catch (error) {
+                    // Nếu PHP trả về thứ gì đó không phải JSON (chứa lỗi HTML/PHP)
+                    forgotMsg.innerHTML = '<div class="text-danger fw-bold">Thao tác thành công nhưng bị lỗi hiển thị. Xem Console (F12) để biết chi tiết.</div>';
+                    console.error("Lỗi Parse JSON:", error);
+                }
+            })
+            .catch(err => {
+                forgotMsg.innerHTML = `<div class="text-danger fw-bold">Lỗi kết nối mạng!</div>`;
+            });
+        });
+    }
+});
+</script>
 
 <main class="flex-grow-1">
