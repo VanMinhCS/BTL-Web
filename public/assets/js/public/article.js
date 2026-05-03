@@ -391,7 +391,6 @@ document.addEventListener("click", e => {
     const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
     const textP = commentDiv.querySelector("p.mb-2");
 
-    // thay nội dung bằng textarea
     const oldText = textP.textContent;
     textP.innerHTML = `
       <textarea class="form-control edit-textarea">${oldText}</textarea>
@@ -400,7 +399,6 @@ document.addEventListener("click", e => {
     `;
     textP.querySelector(".edit-textarea").focus();
   }
-
 
   if(e.target.classList.contains("save-edit")){
     const commentId = e.target.dataset.id;
@@ -416,8 +414,21 @@ document.addEventListener("click", e => {
     .then(res => res.json())
     .then(data => {
       if(data.success){
-        // cập nhật lại giao diện
-        commentDiv.querySelector("p.mb-2").textContent = data.comment.text;
+        // cập nhật dữ liệu trong mảng comments
+        const idx = comments.findIndex(c => c.id == commentId);
+        if(idx !== -1){
+          comments[idx].text = data.comment.text;
+          comments[idx].isEdited = data.comment.isEdited;
+        }
+
+        // render lại danh sách
+        renderComments();
+
+        // cuộn đến comment vừa chỉnh sửa
+        const target = document.querySelector(`#comment-${commentId}`);
+        if(target){
+          target.scrollIntoView({behavior:"smooth"});
+        }
       } else {
         alert("Không thể chỉnh sửa");
       }
@@ -428,7 +439,7 @@ document.addEventListener("click", e => {
     const commentId = e.target.dataset.id;
     const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
     const textarea = commentDiv.querySelector(".edit-textarea");
-    const oldText = textarea.value;
+    const oldText = textarea.defaultValue;
     commentDiv.querySelector("p.mb-2").textContent = oldText;
   }
 });
