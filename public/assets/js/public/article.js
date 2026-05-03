@@ -255,16 +255,18 @@ async function sendVote(commentId, voteType) {
       body: `comment_id=${commentId}&vote=${voteType}`
     });
 
-    const text = await response.text();
-    console.log("Raw response:", text);
+    const data = await response.json();
 
-    const data = JSON.parse(text);
+    if (data.redirect) {
+      window.location.href = data.redirect;
+      return;
+    }
 
     if (data.success) {
       const c = comments.find(x => x.id == commentId);
       c.likes = data.likes;
       c.dislikes = data.dislikes;
-      c.userVote = data.userVote; // lấy từ server, có thể null/like/dislike
+      c.userVote = data.userVote;
       renderComments();
     } else {
       console.error("Vote lỗi:", data.error);
@@ -273,6 +275,7 @@ async function sendVote(commentId, voteType) {
     console.error("Vote lỗi:", err);
   }
 }
+
 
 async function loadOldestNewest(){
   const res = await fetch("/article/getOldestNewest");
@@ -303,7 +306,6 @@ document.addEventListener("click", e => {
     if(targetComment){
       targetComment.scrollIntoView({behavior:"smooth"});
     } else {
-      // Nếu comment nằm ở trang khác
       window.location.href = `/article?id=${articleId}&comment=${targetId}`;
     }
   }
@@ -363,8 +365,12 @@ document.addEventListener("click", async e => {
         })
         .then(res => res.json())
         .then(data => {
+          if(data.redirect){
+            window.location.href = data.redirect;
+            return;
+          }
           if(data.success){
-            comments.push(data.comment); // thêm phản hồi vào mảng
+            comments.push(data.comment); 
             renderComments();
           } else {
             alert(data.error);
@@ -372,6 +378,7 @@ document.addEventListener("click", async e => {
         });
       }
     });
+
 
     cancelBtn.addEventListener("click", () => {
       // Xóa textarea và nút đi
@@ -473,7 +480,6 @@ document.addEventListener("DOMContentLoaded", fetchArticle);
 
 document.getElementById("commentForm").addEventListener("submit", async e => {
   e.preventDefault();
-  if (userRole === "guest") return;
 
   const textarea = e.target.querySelector("textarea");
   const text = textarea.value.trim();
@@ -485,9 +491,12 @@ document.getElementById("commentForm").addEventListener("submit", async e => {
         body: `article_id=${articleId}&text=${encodeURIComponent(text)}`
       });
 
-      const raw = await response.text();
-      console.log("Raw response:", raw);
-      const data = JSON.parse(raw);
+      const data = await response.json();
+
+      if (data.redirect) {
+        window.location.href = data.redirect;
+        return;
+      }
 
       if (data.success) {
         comments.unshift(data.comment); 
@@ -502,6 +511,7 @@ document.getElementById("commentForm").addEventListener("submit", async e => {
     }
   }
 });
+
 
 document.getElementById("sortComments").addEventListener("change", e=>{
   sortType = e.target.value;
