@@ -216,5 +216,22 @@ document.addEventListener('DOMContentLoaded', function() {
         deliveryStore.addEventListener('change', updateCheckoutState);
         updateCheckoutState();
     }
+
+    // --- CHẶN SỰ KIỆN ENTER TỰ ĐỘNG SUBMIT FORM ---
+    const checkoutForm = document.querySelector('form[action*="processOrder"]');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('keydown', function(event) {
+            // Kiểm tra xem phím nhấn có phải là Enter không
+            if (event.key === 'Enter') {
+                // Cho phép Enter hoạt động bình thường nếu đang ở trong thẻ textarea (Ghi chú)
+                if (event.target.tagName.toLowerCase() === 'textarea') {
+                    return; // Thoát khỏi hàm, không chặn
+                }
+                
+                // Nếu không phải textarea, chặn hành vi submit mặc định
+                event.preventDefault();
+            }
+        });
+    }
 });
 </script>

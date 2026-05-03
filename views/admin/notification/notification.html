@@ -1,77 +1,68 @@
-
-
-
-
-            <div class="main-content-inner" id="main-content">
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h4 class="header-title">Danh sách thông báo</h4>
-                                    <div class="d-flex align-items-center">
-                                        <button id="readAllBtn" class="btn btn-sm btn-success">Read All</button>
-                                    </div>
-                                </div>
-
-                                <!-- Form tìm kiếm -->
-                                <form id="searchForm" class="d-flex mb-3" role="search">
-                                    <input id="searchInput" class="form-control me-2" type="search" placeholder="Tìm thông báo..." aria-label="Search">
-                                    <button class="btn btn-outline-primary" type="submit">Tìm</button>
-                                </form>
-
-                                <!-- Bộ lọc -->
-                                <div class="d-flex mb-3">
-                                    <select id="filter-status" class="form-select me-2">
-                                        <option value="">Tất cả</option>
-                                        <option value="read">Đã đọc</option>
-                                        <option value="unread">Chưa đọc</option>
-                                    </select>
-
-                                    <select id="filter-type" class="form-select me-2">
-                                        <option value="">Tất cả loại</option>
-                                        <option value="comment">Bình luận</option>
-                                        <option value="reply_comment">Phản hồi</option>
-                                        <option value="edit_comment">Chỉnh sửa</option>
-                                        <option value="vote_comment">Bình chọn</option>
-                                    </select>
-
-                                    <select id="filter-sort" class="form-select">
-                                        <option value="desc">Mới nhất</option>
-                                        <option value="asc">Cũ nhất</option>
-                                    </select>
-                                </div>
-
-                                <!-- Bulk actions -->
-                                <button id="toggle-bulk" class="btn btn-sm btn-outline-dark mb-3">Select Multiple</button>
-                                <div id="bulk-actions" class="mb-3 d-none">
-                                    <button id="bulk-delete" class="btn btn-sm btn-danger me-2">Delete Selected</button>
-                                    <button id="bulk-read" class="btn btn-sm btn-success">Read Selected</button>
-                                </div>
-
-                                <!-- Panel thông báo -->
-                                <div id="notification-panel" class="alert alert-success position-fixed top-0 start-50 translate-middle-x d-none"
-                                    style="z-index:1050; width:400px;">
-                                    <span id="notification-message"></span>
-                                    <button type="button" class="btn-close float-end" aria-label="Close"></button>
-                                    <div id="notification-timer" style="height:4px;background:#28a745;margin-top:8px;"></div>
-                                </div>
-
-                                <!-- Danh sách thông báo -->
-                                <div id="notification-list"></div>
-
-                                <!-- Phân trang -->
-                                <div class="d-flex justify-content-center mt-3">
-                                    <ul id="pagination" class="pagination"></ul>
-                                </div>
-                            </div>
+<div class="main-content-inner" id="main-content">
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="header-title">Danh sách thông báo</h4>
+                        <div class="d-flex align-items-center">
+                            <button id="readAllBtn" class="btn btn-sm btn-success">Read All</button>
                         </div>
+                    </div>
+
+                    <!-- Form tìm kiếm -->
+                    <form id="searchForm" class="d-flex mb-3" role="search">
+                        <input id="searchInput" class="form-control me-2" type="search" placeholder="Tìm thông báo..." aria-label="Search">
+                        <button class="btn btn-outline-primary" type="submit">Tìm</button>
+                    </form>
+
+                    <!-- Bộ lọc -->
+                    <div class="d-flex mb-3">
+                        <select id="filter-status" class="form-select me-2">
+                            <option value="">Tất cả</option>
+                            <option value="read">Đã đọc</option>
+                            <option value="unread">Chưa đọc</option>
+                        </select>
+
+                        <select id="filter-type" class="form-select me-2">
+                            <option value="">Tất cả loại</option>
+                            <option value="comment">Bình luận</option>
+                            <option value="reply_comment">Phản hồi</option>
+                            <option value="edit_comment">Chỉnh sửa</option>
+                            <option value="vote_comment">Bình chọn</option>
+                            <option value="order">Đơn hàng</option>
+                        </select>
+
+                        <select id="filter-sort" class="form-select">
+                            <option value="desc">Mới nhất</option>
+                            <option value="asc">Cũ nhất</option>
+                        </select>
+                    </div>
+
+                    <!-- Bulk actions -->
+                    <button id="toggle-bulk" class="btn btn-sm btn-outline-dark mb-3">Select Multiple</button>
+                    <div id="bulk-actions" class="mb-3 d-none">
+                        <button id="bulk-delete" class="btn btn-sm btn-danger me-2">Delete Selected</button>
+                        <button id="bulk-read" class="btn btn-sm btn-success">Read Selected</button>
+                    </div>
+
+                    <!-- Panel thông báo -->
+                    <div id="notification-panel" class="alert alert-success position-fixed top-0 start-50 translate-middle-x d-none"
+                        style="z-index:1050; width:400px;">
+                        <span id="notification-message"></span>
+                        <button type="button" class="btn-close float-end" aria-label="Close"></button>
+                        <div id="notification-timer" style="height:4px;background:#28a745;margin-top:8px;"></div>
+                    </div>
+
+                    <!-- Danh sách thông báo -->
+                    <div id="notification-list"></div>
+
+                    <!-- Phân trang -->
+                    <div class="d-flex justify-content-center mt-3">
+                        <ul id="pagination" class="pagination"></ul>
                     </div>
                 </div>
             </div>
-
-
-                    <!-- main content area end -->
-
-
-
+        </div>
+    </div>
+</div>

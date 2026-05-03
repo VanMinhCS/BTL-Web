@@ -4,7 +4,7 @@ require_once __DIR__ . '/../core/database.php';
 
 class ProductModel extends Database {
     
-    // Lấy toàn bộ sản phẩm (Đã đổi bảng products -> items, cột id -> item_id)
+    // Lấy toàn bộ sản phẩm 
     public function getAllProducts() {
         $sql = "SELECT * FROM items ORDER BY item_id ASC";
         $stmt = $this->conn->prepare($sql);
@@ -24,10 +24,8 @@ class ProductModel extends Database {
     // Cập nhật thông tin sản phẩm
     public function updateProduct($id, $name, $stock, $description, $price, $cost_price, $image) {
         if ($image) {
-            // Nếu người dùng có chọn ảnh mới
             $sql = "UPDATE items SET item_name = :name, item_stock = :stock, description = :description, price = :price, cost_price = :cost_price, item_image = :image WHERE item_id = :id";
         } else {
-            // Nếu người dùng không chọn ảnh (giữ nguyên ảnh cũ)
             $sql = "UPDATE items SET item_name = :name, item_stock = :stock, description = :description, price = :price, cost_price = :cost_price WHERE item_id = :id";
         }
         
@@ -47,17 +45,15 @@ class ProductModel extends Database {
     }
 
     public function insertProduct($name, $stock, $description, $price, $cost_price, $image) {
-        
         $sql = "INSERT INTO items (item_name, item_stock, description, price, cost_price, item_image) 
                 VALUES (:name, :stock, :description, :price, :cost_price, :image)";
         
         $stmt = $this->conn->prepare($sql);
-        
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':stock', $stock);
         $stmt->bindParam(':description', $description);
         $stmt->bindParam(':price', $price);
-        $stmt->bindParam(':cost_price', $cost_price); // Nó sẽ lấy từ trên ngoặc tròn xuống đây
+        $stmt->bindParam(':cost_price', $cost_price); 
         $stmt->bindParam(':image', $image);
         
         return $stmt->execute();
@@ -65,22 +61,18 @@ class ProductModel extends Database {
 
     // Xóa sản phẩm và xóa luôn ảnh trong thư mục
     public function deleteProduct($id) {
-        // 1. Lấy tên file ảnh của sản phẩm trước khi xóa data
         $sqlSelect = "SELECT item_image FROM items WHERE item_id = :id";
         $stmtSelect = $this->conn->prepare($sqlSelect);
         $stmtSelect->execute([':id' => $id]);
         $product = $stmtSelect->fetch(PDO::FETCH_ASSOC);
 
-        // 2. Xóa dữ liệu trong Database
         $sql = "DELETE FROM items WHERE item_id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $isDeleted = $stmt->execute();
 
-        // 3. Nếu xóa DB thành công và sản phẩm có ảnh, thì xóa ảnh vật lý
         if ($isDeleted && $product && !empty($product['item_image'])) {
             $filePath = __DIR__ . '/../../public/assets/img/products/' . $product['item_image'];
-            // Kiểm tra xem file có thực sự tồn tại trong thư mục không rồi mới xóa (hàm unlink)
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
@@ -89,51 +81,54 @@ class ProductModel extends Database {
         return $isDeleted;
     }
 
-    // Hàm lấy các chỉ số thống kê tổng quát (ĐÃ LOẠI TRỪ ĐƠN HỦY)
+    // =================================================================
+    // CÁC HÀM THỐNG KÊ ĐÃ ĐƯỢC CẬP NHẬT LOGIC (CHỈ TÍNH ĐƠN ĐÃ THANH TOÁN)
+    // =================================================================
+
     public function getDashboardStats() {
         $stats = [];
 
-        // 1. Sản phẩm đã bán (Chỉ tính đơn không hủy)
-        $sql1 = "SELECT SUM(od.quantity) as total_sold FROM order_details od JOIN orders o ON od.order_id = o.order_id WHERE o.status != 4";
+        // 1. Sản phẩm đã bán (is_paid = 1)
+        $sql1 = "SELECT SUM(od.quantity) as total_sold FROM order_details od JOIN orders o ON od.order_id = o.order_id WHERE o.status != 4 AND o.is_paid = 1";
         $result1 = $this->conn->query($sql1)->fetch(PDO::FETCH_ASSOC);
         $stats['total_sold'] = $result1['total_sold'] ?? 0;
 
-        // 2. Tổng doanh thu (Chỉ tính đơn không hủy)
-        $sql2 = "SELECT SUM(od.price * od.quantity) as total_revenue FROM order_details od JOIN orders o ON od.order_id = o.order_id WHERE o.status != 4";
+        // 2. Tổng doanh thu (is_paid = 1)
+        $sql2 = "SELECT SUM(od.price * od.quantity) as total_revenue FROM order_details od JOIN orders o ON od.order_id = o.order_id WHERE o.status != 4 AND o.is_paid = 1";
         $result2 = $this->conn->query($sql2)->fetch(PDO::FETCH_ASSOC);
         $stats['total_revenue'] = $result2['total_revenue'] ?? 0;
 
-        // 3. Lợi nhuận gộp (Chỉ tính đơn không hủy)
+        // 3. Lợi nhuận gộp (is_paid = 1)
         $sql3 = "SELECT SUM((od.price - i.cost_price) * od.quantity) as gross_profit 
                  FROM order_details od 
                  JOIN items i ON od.item_id = i.item_id
                  JOIN orders o ON od.order_id = o.order_id
-                 WHERE o.status != 4";
+                 WHERE o.status != 4 AND o.is_paid = 1";
         $result3 = $this->conn->query($sql3)->fetch(PDO::FETCH_ASSOC);
         $stats['gross_profit'] = $result3['gross_profit'] ?? 0;
 
-        // 4. Tổng số đơn hàng (Chỉ đếm đơn hợp lệ)
-        $sql4 = "SELECT COUNT(*) as total_orders FROM orders WHERE status != 4";
+        // 4. Tổng số đơn hàng (is_paid = 1)
+        $sql4 = "SELECT COUNT(*) as total_orders FROM orders WHERE status != 4 AND is_paid = 1";
         $result4 = $this->conn->query($sql4)->fetch(PDO::FETCH_ASSOC);
         $stats['total_orders'] = $result4['total_orders'] ?? 0;
 
         return $stats;
     }
 
-    // Hàm lấy danh sách sản phẩm bán chạy nhất (ĐÃ LOẠI TRỪ ĐƠN HỦY)
+    // Hàm lấy danh sách sản phẩm bán chạy nhất (Chỉ tính đơn đã thanh toán)
     public function getTopSelling() {
         $sql = "SELECT i.item_name, SUM(od.quantity) as sold_qty, SUM(od.price * od.quantity) as revenue
                 FROM order_details od
                 JOIN items i ON od.item_id = i.item_id
                 JOIN orders o ON od.order_id = o.order_id
-                WHERE o.status != 4
+                WHERE o.status != 4 AND o.is_paid = 1
                 GROUP BY od.item_id
                 ORDER BY sold_qty DESC
                 LIMIT 5";
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Lấy 5 đơn hàng mới nhất
+    // Lấy 5 đơn hàng mới nhất (Giữ nguyên vì đây là danh sách hiển thị chung)
     public function getRecentOrders() {
         $sql = "SELECT order_id, order_date, status, is_paid 
                 FROM orders 
@@ -142,7 +137,7 @@ class ProductModel extends Database {
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Lấy dữ liệu cho biểu đồ (ĐÃ LOẠI TRỪ ĐƠN HỦY)
+    // Lấy dữ liệu cho biểu đồ (Chỉ tính đơn đã thanh toán)
     public function getDynamicChartData($type, $range) {
         $labels = [];
         $values = [];
@@ -163,23 +158,23 @@ class ProductModel extends Database {
             $aggregate = "SUM(od.price * od.quantity)";
         }
 
-        // Thêm điều kiện AND o.status != 4 vào TẤT CẢ các truy vấn biểu đồ
+        // Bổ sung AND o.is_paid = 1 vào tất cả các mốc thời gian
         if ($range == '24h') {
             $sql = "SELECT CONCAT(FLOOR(HOUR(order_date) / 3) * 3, ':00') as label, IFNULL($aggregate, 0) as total 
                     FROM orders o LEFT JOIN order_details od ON o.order_id = od.order_id $joinItems
-                    WHERE o.order_date >= NOW() - INTERVAL 1 DAY AND o.status != 4
+                    WHERE o.order_date >= NOW() - INTERVAL 1 DAY AND o.status != 4 AND o.is_paid = 1
                     GROUP BY FLOOR(HOUR(order_date) / 3) ORDER BY o.order_date ASC";
         } elseif ($range == '3d') {
             $sql = "SELECT CONCAT(DATE_FORMAT(order_date, '%d/%m'), ' ', 
                            CASE WHEN HOUR(order_date) < 6 THEN 'Sáng sớm' WHEN HOUR(order_date) < 12 THEN 'Sáng' WHEN HOUR(order_date) < 18 THEN 'Chiều' ELSE 'Tối' END) as label,
                            IFNULL($aggregate, 0) as total 
                     FROM orders o LEFT JOIN order_details od ON o.order_id = od.order_id $joinItems
-                    WHERE o.order_date >= NOW() - INTERVAL 3 DAY AND o.status != 4
+                    WHERE o.order_date >= NOW() - INTERVAL 3 DAY AND o.status != 4 AND o.is_paid = 1
                     GROUP BY DATE(order_date), FLOOR(HOUR(order_date) / 6) ORDER BY o.order_date ASC";
         } else {
             $sql = "SELECT DATE_FORMAT(order_date, '%d/%m') as label, IFNULL($aggregate, 0) as total 
                     FROM orders o LEFT JOIN order_details od ON o.order_id = od.order_id $joinItems
-                    WHERE o.order_date >= NOW() - INTERVAL 7 DAY AND o.status != 4
+                    WHERE o.order_date >= NOW() - INTERVAL 7 DAY AND o.status != 4 AND o.is_paid = 1
                     GROUP BY DATE(order_date) ORDER BY o.order_date ASC";
         }
 
@@ -192,7 +187,10 @@ class ProductModel extends Database {
         return ['labels' => $labels, 'values' => $values];
     }
 
-    // Lấy toàn bộ danh sách đơn hàng kèm thông tin người mua (Đã lấy thêm shipping_fee)
+    // =================================================================
+    // CÁC HÀM QUẢN LÝ ĐƠN HÀNG DƯỚI ĐÂY GIỮ NGUYÊN
+    // =================================================================
+
     public function getAllOrders() {
         $sql = "SELECT o.order_id, o.order_date, o.status, o.is_paid, o.shipping_fee, 
                        u.email, u.phone, 
@@ -204,7 +202,6 @@ class ProductModel extends Database {
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Chuyển đổi trạng thái đơn hàng (Có tích hợp tự động Hoàn Kho)
     public function advanceOrderStatus($order_id, $status) {
         if ($status == 3) {
             $sql = "UPDATE orders SET status = :status, is_paid = 1 WHERE order_id = :order_id";
@@ -217,15 +214,12 @@ class ProductModel extends Database {
         $stmt->bindParam(':order_id', $order_id, PDO::PARAM_INT);
         $stmt->execute();
 
-        // NẾU LÀ HỦY ĐƠN (status = 4) -> HOÀN KHO
         if ($status == 4) {
-            // Lấy danh sách sản phẩm trong đơn
             $sqlItems = "SELECT item_id, quantity FROM order_details WHERE order_id = :order_id";
             $stmtItems = $this->conn->prepare($sqlItems);
             $stmtItems->execute([':order_id' => $order_id]);
             $itemsToRestore = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 
-            // Cộng lại kho cho từng sản phẩm
             foreach ($itemsToRestore as $item) {
                 $sqlRestore = "UPDATE items SET item_stock = item_stock + :qty WHERE item_id = :item_id";
                 $stmtRestore = $this->conn->prepare($sqlRestore);
@@ -239,7 +233,6 @@ class ProductModel extends Database {
         return true;
     }
 
-    // Lấy thông tin chung của 1 đơn hàng cụ thể
     public function getOrderById($order_id) {
         $sql = "SELECT o.*, u.email, u.phone as user_phone, i.firstname, i.lastname, 
                        a.street, a.ward, a.city 
@@ -253,7 +246,6 @@ class ProductModel extends Database {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Lấy danh sách các giáo trình nằm trong đơn hàng đó
     public function getOrderItems($order_id) {
         $sql = "SELECT od.*, i.item_name, i.item_image 
                 FROM order_details od

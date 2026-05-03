@@ -176,7 +176,10 @@
                         <div class="user-profile float-end">
                             <img class="avatar user-thumb" src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/images/author/avatar.png" alt="avatar">
                             
-                            <h4 class="user-name dropdown-toggle" data-bs-toggle="dropdown">Admin BK88 <i class="fa-solid fa-angle-down"></i></h4>
+                            <h4 class="user-name dropdown-toggle" data-bs-toggle="dropdown">
+                                <?php echo isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'Admin BK88'; ?> 
+                                <i class="fa-solid fa-angle-down"></i>
+                            </h4>
                             
                             <div class="dropdown-menu user-dropdown">
                                 <a class="dropdown-item" href="<?php echo BASE_URL; ?>home?view=public"><i class="fa-solid fa-globe"></i> Trang chủ Web</a>
