@@ -1,3 +1,30 @@
+<?php 
+    $currentPage = $currentPage ?? 1; 
+    $totalPages = $totalPages ?? 1;
+?>
+
+<style>
+    /* Tùy chỉnh màu sắc cho phân trang giống trang sản phẩm */
+    .custom-pagination .page-item.active .page-link {
+        background-color: #212529; /* Nền xám đen */
+        border-color: #212529;
+        color: #ffffff;
+    }
+    .custom-pagination .page-link {
+        color: #0d6efd; /* Chữ màu xanh cho các trang chưa chọn */
+        font-weight: 600;
+        padding: 0.5rem 0.85rem;
+    }
+    .custom-pagination .page-item.disabled .page-link {
+        background-color: #e9ecef; /* Nền xám nhạt khi bị vô hiệu hóa */
+        color: #6c757d;
+    }
+    .custom-pagination {
+        border-radius: 6px;
+        overflow: hidden; /* Giữ góc bo tròn cho các nút ngoài cùng */
+    }
+</style>
+
 <div class="container py-5 mt-4 mb-5" style="min-height: 60vh;">
     <h2 class="fw-bold mb-4 text-uppercase">Đơn mua của tôi</h2>
 
@@ -98,6 +125,36 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
+
+                <?php if (isset($totalPages) && $totalPages > 1): ?>
+                    <nav aria-label="Page navigation" class="mt-5 d-flex justify-content-center">
+                        <ul class="pagination custom-pagination shadow-sm">
+                            
+                            <!-- Nút Trước (dùng icon «) -->
+                            <li class="page-item <?php echo ($currentPage <= 1) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=<?php echo $currentPage - 1; ?>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            
+                            <!-- Các số trang -->
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <li class="page-item <?php echo ($i == $currentPage) ? 'active' : ''; ?>">
+                                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                </li>
+                            <?php endfor; ?>
+                            
+                            <!-- Nút Sau (dùng icon ») -->
+                            <li class="page-item <?php echo ($currentPage >= $totalPages) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=<?php echo $currentPage + 1; ?>" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                <?php endif; ?>
+                <!-- KẾT THÚC KHỐI PHÂN TRANG -->
             </div>
         </div>
     <?php endif; ?>

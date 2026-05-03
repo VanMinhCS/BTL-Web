@@ -154,6 +154,53 @@ class Order extends Database {
         
         return $orderData;
     }
+
+    // 1. Hàm đếm tổng số đơn hàng của user
+    public function countUserOrders($user_id) {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM orders WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+        return $stmt->fetchColumn(); // Trả về con số tổng
+    }
+
+    // 2. Hàm lấy đơn hàng có phân trang
+    public function getPaginatedOrderHistory($user_id, $limit, $offset) {
+        // Dùng LIMIT và OFFSET để cắt nhỏ dữ liệu
+        $sqlOrders = "SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC LIMIT ? OFFSET ?";
+        $stmtOrders = $this->conn->prepare($sqlOrders);
+        
+        // Cần bindValue dạng INT để LIMIT và OFFSET hoạt động đúng trong PDO
+        $stmtOrders->bindValue(1, $user_id, PDO::PARAM_INT);
+        $stmtOrders->bindValue(2, $limit, PDO::PARAM_INT);
+        $stmtOrders->bindValue(3, $offset, PDO::PARAM_INT);
+        $stmtOrders->execute();
+        
+        $orders = $stmtOrders->fetchAll(PDO::FETCH_ASSOC);
+        
+        $orderData = [];
+        foreach ($orders as $o) {
+            $order_id = $o['order_id'];
+            
+            // Lấy chi tiết đơn hàng (giữ nguyên logic cũ của bạn)
+            $sqlDetails = "SELECT od.*, i.item_name, i.item_image 
+                           FROM order_details od 
+                           JOIN items i ON od.item_id = i.item_id 
+                           WHERE od.order_id = ?";
+            $stmtDetails = $this->conn->prepare($sqlDetails);
+            $stmtDetails->execute([$order_id]);
+            $details = $stmtDetails->fetchAll(PDO::FETCH_ASSOC);
+            
+            $total = 0;
+            foreach ($details as $d) {
+                $total += $d['price'] * $d['quantity'];
+            }
+            
+            $o['details'] = $details;
+            $o['total_amount'] = $total;
+            $orderData[] = $o;
+        }
+        
+        return $orderData;
+    }
 }
 
 class OrderDetail extends Database {
