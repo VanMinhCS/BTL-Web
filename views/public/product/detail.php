@@ -27,7 +27,7 @@
 
     /* Ẩn mũi tên lên xuống của thẻ input number trên Firefox */
     .qty-input {
-        -moz-appearance: textfield;
+        appearance: textfield;
     }
 
     .slick-prev:before, .slick-next:before { color: #1a1a1a; font-size: 24px; }
