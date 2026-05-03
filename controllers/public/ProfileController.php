@@ -63,4 +63,67 @@ class ProfileController extends Controller {
             exit;
         }
     }
+
+
+    // ==========================================
+    // XỬ LÝ ĐỔI MẬT KHẨU
+    // ==========================================
+    public function changePassword() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Ép kiểu dữ liệu trả về luôn là JSON để AJAX không bị lỗi
+            header('Content-Type: application/json');
+
+            $user_id = $_SESSION['user_id'] ?? null;
+            if (!$user_id) {
+                echo json_encode(['status' => 'error', 'message' => 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!']);
+                exit();
+            }
+
+            $current_password = $_POST['current_password'] ?? '';
+            $new_password = $_POST['new_password'] ?? '';
+            $confirm_password = $_POST['confirm_password'] ?? '';
+
+            // Kiểm tra rỗng
+            if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
+                echo json_encode(['status' => 'error', 'message' => 'Vui lòng nhập đầy đủ thông tin!']);
+                exit();
+            }
+
+            // Kiểm tra khớp mật khẩu
+            if ($new_password !== $confirm_password) {
+                echo json_encode(['status' => 'error', 'message' => 'Mật khẩu xác nhận không khớp!']);
+                exit();
+            }
+
+            require_once __DIR__ . '/../../models/UserModel.php';
+            $userModel = new UserModel();
+            
+            // Giả định bạn có hàm getUserById trong UserModel để lấy thông tin user hiện tại
+            $user = $userModel->getUserById($user_id); 
+
+            if ($user) {
+                // Kiểm tra mật khẩu cũ (hỗ trợ cả mật khẩu đã mã hóa và chưa mã hóa giống form Login)
+                if (password_verify($current_password, $user['password']) || $current_password === $user['password']) {
+                    
+                    // Mã hóa mật khẩu mới
+                    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                    
+                    // Cập nhật vào DB (Tận dụng hàm updatePassword đã có sẵn ở logic Quên mật khẩu)
+                    $updateStatus = $userModel->updatePassword($user_id, $hashed_password);
+
+                    if ($updateStatus) {
+                        echo json_encode(['status' => 'success', 'message' => 'Đổi mật khẩu thành công!']);
+                    } else {
+                        echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống khi cập nhật mật khẩu!']);
+                    }
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'Mật khẩu hiện tại không chính xác!']);
+                }
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy thông tin người dùng!']);
+            }
+            
+            exit();
+        }
+    }
 }

@@ -10,7 +10,7 @@
     .qty-btn:disabled { background-color: #e9ecef; color: #adb5bd; cursor: not-allowed; }
     .qty-input { width: 45px; height: 32px; text-align: center; border: 1px solid #ced4da; border-left: none; border-right: none; font-weight: bold; }
     .qty-input::-webkit-inner-spin-button, .qty-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-    .qty-input { appearance: textfield; }
+    .qty-input { -moz-appearance: textfield; }
 </style>
 
 <div class="container py-5 mt-4" style="min-height: 60vh;">
@@ -64,14 +64,12 @@
                                     <div class="d-flex justify-content-center align-items-center">
                                         <button type="button" class="qty-btn rounded-start btn-decrease" data-id="<?php echo $item['id']; ?>" <?php echo ($item['quantity'] <= 1) ? 'disabled' : ''; ?>>-</button>
                                         
-                                        <!-- Thêm data-price để tính tiền bằng JS -->
                                         <input type="number" class="qty-input item-qty" data-id="<?php echo $item['id']; ?>" data-price="<?php echo $rawPrice; ?>" value="<?php echo $item['quantity']; ?>" min="1">
                                         
                                         <button type="button" class="qty-btn rounded-end btn-increase" data-id="<?php echo $item['id']; ?>">+</button>
                                     </div>
                                 </td>
 
-                                <!-- Thêm id để thay đổi text tiền -->
                                 <td class="text-end fw-bold text-primary item-total-display" data-id="<?php echo $item['id']; ?>"><?php echo $item['item_total']; ?></td>
                                 <td class="text-center ps-4">
                                     <form action="<?php echo BASE_URL; ?>cart/remove" method="POST" class="m-0 form-remove-item">
@@ -86,8 +84,12 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-4">
+                
+                <div class="mt-4 d-flex justify-content-between align-items-center">
                     <a href="<?php echo BASE_URL; ?>product" class="text-dark text-decoration-none fw-bold">&larr; Tiếp tục mua sắm</a>
+                    <button type="button" id="btnDeleteSelected" class="btn btn-outline-danger fw-bold px-3 py-2">
+                        <i class="ti-trash me-1"></i> Xóa sản phẩm đã chọn
+                    </button>
                 </div>
             </div>
 
@@ -120,8 +122,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const itemCheckboxes = document.querySelectorAll('.item-checkbox');
     const summarySubtotal = document.getElementById('summary-subtotal');
     const summaryTotal = document.getElementById('summary-total');
+    const btnDeleteSelected = document.getElementById('btnDeleteSelected');
 
-    // HÀM 1: Tính lại Tổng tiền
+    // HÀM 1: Tính lại Tổng tiền & Kiểm soát nút Xóa nhiều
     function calculateTotal() {
         let currentTotal = 0;
         let allChecked = true;
@@ -141,7 +144,15 @@ document.addEventListener('DOMContentLoaded', function() {
         let formattedTotal = new Intl.NumberFormat('vi-VN').format(currentTotal) + ' ₫';
         if (summarySubtotal) summarySubtotal.innerText = formattedTotal;
         if (summaryTotal) summaryTotal.innerText = formattedTotal;
+
+        // Bật/tắt hiển thị của nút "Xóa sản phẩm đã chọn"
+        if (btnDeleteSelected) {
+            btnDeleteSelected.style.display = anyChecked ? 'block' : 'none';
+        }
     }
+
+    // Gọi hàm một lần khi tải trang để định hình giao diện
+    calculateTotal();
 
     if (selectAllBtn) {
         selectAllBtn.addEventListener('change', function() {
@@ -154,25 +165,22 @@ document.addEventListener('DOMContentLoaded', function() {
         cb.addEventListener('change', calculateTotal);
     });
 
-    // HÀM 2: Thay đổi số liệu TRỰC TIẾP TRÊN GIAO DIỆN (Không Reload)
+    // HÀM 2: Thay đổi số liệu TRỰC TIẾP TRÊN GIAO DIỆN
     function updateItemUI(id, newQty) {
         let input = document.querySelector(`.item-qty[data-id="${id}"]`);
         let rawPrice = parseInt(input.getAttribute('data-price'));
         let newItemTotal = rawPrice * newQty;
 
-        // Cập nhật text Tiền của hàng đó
         let displayTotal = document.querySelector(`.item-total-display[data-id="${id}"]`);
         if (displayTotal) {
             displayTotal.innerText = new Intl.NumberFormat('vi-VN').format(newItemTotal) + ' ₫';
         }
 
-        // Cập nhật data-total cho Checkbox để Tóm tắt đơn hàng tính đúng
         let checkbox = document.querySelector(`.item-checkbox[value="${id}"]`);
         if (checkbox) {
             checkbox.setAttribute('data-total', newItemTotal);
         }
 
-        // Tính lại Cột bên phải
         calculateTotal();
     }
 
@@ -230,9 +238,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ==========================================
-    // GỬI AJAX VÀ XÓA SẢN PHẨM
-    // ==========================================
     function updateCartItemAjax(productId, action, quantity) {
         let formData = new FormData();
         formData.append('product_id', productId);
@@ -243,7 +248,6 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('<?php echo BASE_URL; ?>cart/update', { method: 'POST', body: formData })
         .then(res => res.json())
         .then(data => {
-            // Cập nhật số lượng giỏ hàng trên Header nếu có
             let badge = document.getElementById('cart-badge');
             if(badge && data.status === 'success') {
                 badge.innerText = data.cartCount;
@@ -251,6 +255,74 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ==========================================
+    // LOGIC XÓA CÁC SẢN PHẨM ĐÃ CHỌN (TICK XANH)
+    // ==========================================
+    if (btnDeleteSelected) {
+        btnDeleteSelected.addEventListener('click', function() {
+            let selectedIds = [];
+            let rowsToRemove = []; // Array to store the HTML rows that need to be removed
+            
+            // Iterate through each checkbox, collect IDs of checked ones and their corresponding row elements
+            itemCheckboxes.forEach(cb => {
+                if (cb.checked === true) {
+                    selectedIds.push(cb.value);
+                    rowsToRemove.push(cb.closest('tr'));
+                }
+            });
+
+            if (selectedIds.length === 0) {
+                return; 
+            }
+
+            if (confirm('Bạn có chắc chắn muốn xóa ' + selectedIds.length + ' sản phẩm đang được tick xanh khỏi giỏ hàng?')) {
+                let formData = new FormData();
+                selectedIds.forEach(id => formData.append('product_id[]', id));
+                formData.append('ajax', 1);
+
+                fetch('<?php echo BASE_URL; ?>cart/remove', { 
+                    method: 'POST', 
+                    body: formData 
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        // 1. Apply animation to all selected rows
+                        rowsToRemove.forEach(row => {
+                            row.style.transition = "all 0.3s ease";
+                            row.style.opacity = "0";
+                            row.style.transform = "translateX(-20px)";
+                        });
+
+                        // 2. Wait for animation to finish, then remove rows and update UI
+                        setTimeout(() => {
+                            rowsToRemove.forEach(row => row.remove()); 
+                            
+                            if(data.cartCount === 0) {
+                                location.reload(); // Reload if the cart is now empty
+                            } else {
+                                // Re-query remaining checkboxes and recalculate totals
+                                itemCheckboxes = document.querySelectorAll('.item-checkbox');
+                                calculateTotal(); 
+                            }
+                        }, 300);
+
+                        // 3. Update the cart badge
+                        let badge = document.getElementById('cart-badge');
+                        if (badge) {
+                            badge.innerText = data.cartCount;
+                            if(data.cartCount === 0) badge.classList.add('d-none');
+                        }
+
+                        // 4. Show the success notification
+                        showRemoveToast();
+                    }
+                });
+            }
+        });
+    }
+
+    // Xóa từng sản phẩm lẻ (Thùng rác nhỏ)
     document.querySelectorAll('.form-remove-item').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault(); 
@@ -271,7 +343,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         if(data.cartCount === 0) {
                             location.reload(); 
                         } else {
-                            calculateTotal(); // Tự tính lại tiền sau khi dòng bị xóa
+                            // Tính lại tổng tiền sau khi dòng bị xóa hoàn toàn khỏi HTML
+                            itemCheckboxes = document.querySelectorAll('.item-checkbox');
+                            calculateTotal(); 
                         }
                     }, 300);
 
