@@ -39,11 +39,33 @@
                         </select>
                     </div>
 
-                    <!-- Bulk actions -->
-                    <button id="toggle-bulk" class="btn btn-sm btn-outline-dark mb-3">Select Multiple</button>
-                    <div id="bulk-actions" class="mb-3 d-none">
-                        <button id="bulk-delete" class="btn btn-sm btn-danger me-2">Delete Selected</button>
-                        <button id="bulk-read" class="btn btn-sm btn-success">Read Selected</button>
+                    <!-- Bộ lọc và thao tác hàng loạt kiểu Gmail -->
+                    <div class="d-flex align-items-center mb-3">
+                        
+                        <!-- KHỐI NÚT ĐÃ ĐƯỢC ÉP KÍCH THƯỚC NHỎ GỌN -->
+                        <div class="btn-group me-3 shadow-sm" style="height: 28px;">
+                            <!-- Nút Checkbox tổng -->
+                            <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" id="master-checkbox-btn" style="width: 28px; height: 28px; padding: 0; border-color: #ced4da;">
+                                <i class="ti-square" id="master-checkbox-icon" style="font-size: 1.1rem; color: #495057;"></i>
+                            </button>
+                            <!-- Nút Dropdown mũi tên -->
+                            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split d-flex align-items-center justify-content-center" data-bs-toggle="dropdown" aria-expanded="false" style="width: 28px; height: 28px; padding: 0; border-color: #ced4da;">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu shadow">
+                                <li><a class="dropdown-item" href="#" id="select-all">Tất cả</a></li>
+                                <li><a class="dropdown-item" href="#" id="deselect-all">Bỏ chọn tất cả</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="select-read">Thông báo đã đọc</a></li>
+                                <li><a class="dropdown-item" href="#" id="select-unread">Thông báo chưa đọc</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Nút hành động sẽ tự động hiện ra khi có thông báo được chọn -->
+                        <div id="bulk-actions" class="d-none">
+                            <button id="bulk-delete" class="btn btn-danger btn-sm me-2"><i class="ti-trash"></i> Xóa</button>
+                            <button id="bulk-read" class="btn btn-success btn-sm"><i class="ti-check-box"></i> Đánh dấu đã đọc</button>
+                        </div>
                     </div>
 
                     <!-- Panel thông báo -->
