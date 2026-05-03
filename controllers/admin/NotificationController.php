@@ -107,29 +107,6 @@ class NotificationController extends Controller {
         }
     }
 
-    public function getNotificationStatus() {
-        require_once __DIR__ . "/../../models/Notification.php";
-        $adminId = $_SESSION['user_id'] ?? 0;
-        if (!$adminId) {
-            echo json_encode(["success" => false, "error" => "No admin id"]);
-            return;
-        }
-
-        $setting = new NotificationSetting();
-        if ($setting->loadByAdminId($adminId)) {
-            echo json_encode([
-                "success" => true,
-                "is_enabled" => $setting->getIsEnabled()
-            ]);
-        } else {
-            // chưa có bản ghi thì mặc định tắt
-            echo json_encode([
-                "success" => true,
-                "is_enabled" => 0
-            ]);
-        }
-    }
-
     public function getNotifications() {
         require_once __DIR__ . "/../../models/Notification.php";
 
@@ -166,11 +143,12 @@ class NotificationController extends Controller {
         // Trả về JSON cho frontend
         echo json_encode([
             "success" => true,
-            "count" => $totalUnread, // tổng số chưa đọc để hiển thị trên chuông
-            "notifications" => array_map(function($n){
+            "count" => count($filtered),
+            "notifications" => array_map(function($n) use ($adminId, $notificationModel){
                 return [
                     "id"         => $n['id'],
-                    "message"    => $n['message'] ?? null,
+                    "id_user"    => $adminId,
+                    "message"    => $notificationModel->map($n),
                     "created_at" => $n['created_at'],
                     "id_article" => $n['article_id'] ?? null,
                     "id_comment" => $n['comment_id'] ?? null,

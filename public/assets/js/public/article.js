@@ -2,11 +2,11 @@
 const urlParams = new URLSearchParams(window.location.search);
 const articleId = urlParams.get("id"); // sẽ là "1" trong ví dụ
 
-let userRole = "member"; // mặc định
+let userRole = "member"; 
 const perPage = 5;
 let currentPage = 1;
 let sortType = "newest";
-let comments = [];   // thêm dòng này
+let comments = [];  
 
 function fetchUserRole() {
   fetch("/article/getRole")
@@ -276,7 +276,6 @@ async function sendVote(commentId, voteType) {
   }
 }
 
-
 async function loadOldestNewest(){
   const res = await fetch("/article/getOldestNewest");
   const data = await res.json();
@@ -387,8 +386,6 @@ document.addEventListener("click", async e => {
       cancelBtn.remove();
     });
   }
-
-
 });
 
 document.addEventListener("click", e => {
@@ -511,7 +508,6 @@ document.getElementById("commentForm").addEventListener("submit", async e => {
     }
   }
 });
-
 
 document.getElementById("sortComments").addEventListener("change", e=>{
   sortType = e.target.value;
