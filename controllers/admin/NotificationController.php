@@ -130,7 +130,7 @@ class NotificationController extends Controller {
         // Lấy tổng số chưa đọc (không giới hạn)
         $totalUnread = $notificationModel->countAllUnread();
 
-        // Lấy danh sách thông báo (giới hạn 10 cái để hiển thị dropdown)
+        // Lấy danh sách thông báo (giới hạn 3 cái để hiển thị dropdown)
         $notifications = $notificationModel->getUnread(3);
 
         // Lọc theo setting
