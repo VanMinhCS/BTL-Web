@@ -335,6 +335,64 @@ function initGmailStyleSelection() {
     document.getElementById('select-unread')?.addEventListener('click', (e) => { e.preventDefault(); selectByCondition('unread'); });
 }
 
+// Hàm gửi yêu cầu xử lý hàng loạt lên Server
+function bulkAction(action) {
+    if(selectedIds.length === 0) {
+        alert("Chưa chọn thông báo nào");
+        return;
+    }
+
+    // Đổi giao diện nút thành trạng thái đang xử lý để tăng trải nghiệm người dùng (UX)
+    const btnId = action === 'delete' ? 'bulk-delete' : 'bulk-read';
+    const btn = document.getElementById(btnId);
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
+    btn.style.pointerEvents = 'none'; // Khóa nút tránh click đúp
+
+    // Gửi dữ liệu (các ID đã chọn và hành động) lên Server
+    fetch("/admin/notification/bulkAction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedIds, action })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            let message = action === "delete" ? "Xóa thông báo thành công" : "Đánh dấu đã đọc thành công";
+            showNotification(message); // Hiện thông báo nhỏ góc màn hình
+            applyFilters(1); // Tải lại danh sách thông báo chính
+            loadNotifications(); // Cập nhật lại số lượng chuông trên Header
+            
+            // Đặt lại trạng thái mảng và Icon ô checkbox tổng
+            selectedIds = []; 
+            if (typeof updateMasterCheckboxState === "function") {
+                updateMasterCheckboxState();
+            }
+        }
+    })
+    .catch(err => {
+        console.error("Lỗi thao tác hàng loạt:", err);
+        alert("Có lỗi xảy ra khi kết nối máy chủ, vui lòng thử lại!");
+    })
+    .finally(() => {
+        // Trả lại giao diện nút như cũ dù thành công hay thất bại
+        if(btn) {
+            btn.innerHTML = originalText;
+            btn.style.pointerEvents = 'auto';
+        }
+    });
+}
+
+// Hàm áp dụng bộ lọc và làm mới danh sách
+function applyFilters(page = 1) {
+    const keyword = document.getElementById("searchInput")?.value.trim() || "";
+    const status  = document.getElementById("filter-status")?.value || "";
+    const type    = document.getElementById("filter-type")?.value || "";
+    const sort    = document.getElementById("filter-sort")?.value || "desc";
+
+    fetchNotifications(page, keyword, status, type, sort);
+}
+
 // ==========================================
 // 5. TOAST NOTIFICATION UI
 // ==========================================

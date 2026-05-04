@@ -12,7 +12,7 @@
                     
                     <div class="d-flex gap-2">
                         <div class="input-group input-group-sm" style="max-width: 250px;">
-                            <input type="text" id="adminSearchInput" class="form-control" placeholder="Tìm tên giáo trình...">
+                            <input type="text" id="adminSearchInput" class="form-control" placeholder="Tìm tên sản phẩm...">
                             <button class="btn btn-dark" type="button" id="adminSearchBtn"><i class="ti-search"></i></button>
                         </div>
                         <a href="<?php echo BASE_URL; ?>admin/product/create" class="btn btn-primary btn-sm text-nowrap">
@@ -27,7 +27,7 @@
                             <tr>
                                 <th>STT</th>
                                 <th>Hình ảnh</th>
-                                <th>Tên giáo trình</th>
+                                <th>Tên sản phẩm</th>
                                 <th>Giá bán</th>
                                 <th>Kho hàng</th>
                                 <th>Thao tác</th>
@@ -40,7 +40,7 @@
                                 <td><?php echo $stt++; ?></td>
                                 <td>
                                     <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $item['item_image']; ?>" 
-                                         alt="Hình ảnh giáo trình" 
+                                         alt="Hình ảnh sản phẩm" 
                                          style="width: 80px; height: auto; object-fit: cover;"
                                          onerror="this.src='https://placehold.co/50x60?text=No+Image'">
                                 </td>
@@ -82,7 +82,7 @@
 
 <script>
 function confirmDelete(id) {
-    if (confirm('Bạn có chắc chắn muốn xóa giáo trình này không?')) {
+    if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
         window.location.href = '<?php echo BASE_URL; ?>admin/product/delete?id=' + id;
     }
 }
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (keyword === "") {
             filteredRows = [...allRows]; // Rỗng thì trả lại toàn bộ
         } else {
-            // Lọc ra các dòng có chứa từ khóa ở cột "Tên giáo trình" (cột thứ 3, index = 2)
+            // Lọc ra các dòng có chứa từ khóa ở cột "Tên sản phẩm" (cột thứ 3, index = 2)
             filteredRows = allRows.filter(row => {
                 const nameCell = row.getElementsByTagName("td")[2]; 
                 const nameText = nameCell.textContent || nameCell.innerText;
