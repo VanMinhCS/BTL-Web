@@ -69,12 +69,6 @@
                         ?>
                         <ul class="metismenu" id="menu">
                             
-                            <li class="<?php echo ($current == 'dashboard') ? 'active' : ''; ?>">
-                                <a href="<?php echo BASE_URL; ?>admin/dashboard">
-                                    <i class="ti-dashboard"></i><span>Dashboard</span>
-                                </a>
-                            </li>
-                            
                             <?php 
                             $isProduct = in_array($current, ['product_overview', 'product_order', 'product_list', 'product_create']); 
                             ?>
@@ -96,7 +90,7 @@
                                         <a href="<?php echo BASE_URL; ?>admin/product">Danh sách giáo trình</a>
                                     </li>
                                     <li class="<?php echo ($current == 'product_create') ? 'active' : ''; ?>">
-                                        <a href="<?php echo BASE_URL; ?>admin/product/create">Thêm giáo trình mới</a>
+                                        <a href="<?php echo BASE_URL; ?>admin/product/create">Thêm sản phẩm mới</a>
                                     </li>
                                 </ul>
                             </li>

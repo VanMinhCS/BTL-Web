@@ -4,7 +4,7 @@
     <div class="col-12 mt-5">
         <div class="card">
             <div class="card-body">
-                <h4 class="header-title">Thêm Giáo Trình Mới</h4>
+                <h4 class="header-title">Thêm Sản Phẩm Mới</h4>
                 <p class="text-muted font-14 mb-4">Vui lòng điền đầy đủ thông tin bên dưới để thêm một giáo trình mới vào hệ thống.</p>
                 
                 <form action="<?php echo BASE_URL; ?>admin/product/store" method="POST" enctype="multipart/form-data">
@@ -12,29 +12,29 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="item_name" class="col-form-label">Tên giáo trình <span class="text-danger">*</span></label>
-                                <input class="form-control" type="text" name="item_name" id="item_name" placeholder="Ví dụ: Lập trình Web" required>
+                                <label for="item_name" class="col-form-label">Tên sản phẩm <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="item_name" id="item_name" placeholder="Nhập tên sản phẩm" required>
                             </div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="cost_price" class="col-form-label">Giá vốn (VNĐ) <span class="text-danger">*</span></label>
-                                <input class="form-control" type="number" name="cost_price" id="cost_price" placeholder="Giá nhập hàng" required>
+                                <input class="form-control" type="number" name="cost_price" id="cost_price" placeholder="VD: 60000" required>
                             </div>
                         </div>
                         
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="price" class="col-form-label">Giá bán (VNĐ) <span class="text-danger">*</span></label>
-                                <input class="form-control" type="number" name="price" id="price" placeholder="Ví dụ: 75000" required>
+                                <input class="form-control" type="number" name="price" id="price" placeholder="VD: 75000" required>
                             </div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="item_stock" class="col-form-label">Số lượng nhập kho <span class="text-danger">*</span></label>
-                                <input class="form-control" type="number" name="item_stock" id="item_stock" value="100" required>
+                                <input class="form-control" type="number" name="item_stock" id="item_stock" placeholder="VD: 100" required>
                             </div>
                         </div>
                     </div>
