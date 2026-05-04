@@ -380,6 +380,7 @@ class ArticleController extends Controller {
 
                 // URL lưu vào DB
                 $server_url = '/assets/img/article/' . $final_name;
+                $server_url = '/assets/img/article/' . $final_name;
 
 
                 $article->setBackground($server_url);

@@ -137,6 +137,7 @@ class Notification extends Model {
         if ($setting->getEnableReply())   $types[] = "'reply_comment'";
         if ($setting->getEnableEdit())    $types[] = "'edit_comment'";
         if ($setting->getEnableVote())    $types[] = "'vote_comment'";
+        if ($setting->getEnableOrder())   $types[] = "'order'";
 
         if (empty($types)) {
             return 0;
@@ -426,7 +427,6 @@ class NotificationSetting extends Model {
     private $enable_edit;
     private $enable_vote;
     
-    // --- BỔ SUNG: Cột cài đặt cho đơn hàng ---
     private $enable_order;
 
     public function getId() { return $this->id; }
@@ -446,8 +446,6 @@ class NotificationSetting extends Model {
     public function setEnableEdit($val) { $this->enable_edit = $val; }
     public function getEnableVote() { return $this->enable_vote; }
     public function setEnableVote($val) { $this->enable_vote = $val; }
-
-    // --- BỔ SUNG: Getter & Setter cho cài đặt đơn hàng ---
     public function getEnableOrder() { return $this->enable_order; }
     public function setEnableOrder($val) { $this->enable_order = $val; }
 
