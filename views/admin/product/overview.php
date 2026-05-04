@@ -149,7 +149,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
             <table class="dbkit-table">
                 <tbody>
                     <tr class="heading-td">
-                        <td>Tên giáo trình</td>
+                        <td>Tên sản phẩm</td>
                         <td>Số lượng đã bán</td>
                         <td>Doanh thu mang về</td>
                         <td>Hành động</td>

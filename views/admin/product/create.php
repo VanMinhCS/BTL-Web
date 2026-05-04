@@ -5,7 +5,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="header-title">Thêm Sản Phẩm Mới</h4>
-                <p class="text-muted font-14 mb-4">Vui lòng điền đầy đủ thông tin bên dưới để thêm một giáo trình mới vào hệ thống.</p>
+                <p class="text-muted font-14 mb-4">Vui lòng điền đầy đủ thông tin bên dưới để thêm một sản phẩm mới vào hệ thống.</p>
                 
                 <form action="<?php echo BASE_URL; ?>admin/product/store" method="POST" enctype="multipart/form-data">
                     
@@ -41,7 +41,7 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <label class="col-form-label">Hình ảnh giáo trình <span class="text-danger">*</span></label>
+                            <label class="col-form-label">Hình ảnh sản phẩm <span class="text-danger">*</span></label>
                             <div class="input-group mb-3">
                                 <input type="file" class="form-control" name="item_image" id="item_image" accept="image/*" required>
                                 <span class="input-group-text">Upload File</span>
@@ -54,13 +54,13 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="description" class="col-form-label">Mô tả chi tiết</label>
-                                <textarea class="form-control" name="description" id="description" rows="5" placeholder="Nhập tóm tắt nội dung giáo trình..."></textarea>
+                                <textarea class="form-control" name="description" id="description" rows="5" placeholder="Nhập tóm tắt nội dung sản phẩm..."></textarea>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-4">
-                        <button type="submit" class="btn btn-primary pe-4 ps-4"><i class="ti-save"></i> Lưu giáo trình</button>
+                        <button type="submit" class="btn btn-primary pe-4 ps-4"><i class="ti-save"></i> Lưu sản phẩm</button>
                         <a href="<?php echo BASE_URL; ?>admin/product" class="btn btn-secondary pe-4 ps-4 ms-2">Hủy bỏ</a>
                     </div>
 
