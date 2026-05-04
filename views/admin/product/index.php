@@ -27,7 +27,7 @@
                             <tr>
                                 <th>STT</th>
                                 <th>Hình ảnh</th>
-                                <th>Tên giáo trình</th>
+                                <th>Tên sản phẩm</th>
                                 <th>Giá bán</th>
                                 <th>Kho hàng</th>
                                 <th>Thao tác</th>
