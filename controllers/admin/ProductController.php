@@ -228,4 +228,57 @@ class ProductController extends Controller {
             header("Location: " . BASE_URL . "admin/product?status=deleted");
         }
     }
+
+    // ==========================================
+    // QUẢN LÝ ĐÁNH GIÁ (RATING & REVIEWS)
+    // ==========================================
+
+    // Hiển thị danh sách đánh giá của 1 sản phẩm
+    public function reviews() {
+        if (!isset($_GET['id'])) {
+            header("Location: " . BASE_URL . "admin/product");
+            exit;
+        }
+
+        $productId = (int)$_GET['id'];
+
+        // Lấy thông tin sản phẩm (để hiển thị tiêu đề)
+        require_once __DIR__ . '/../../models/ProductModel.php';
+        $productModel = new ProductModel();
+        $data['product'] = $productModel->getProductById($productId);
+
+        if (!$data['product']) {
+            header("Location: " . BASE_URL . "admin/product");
+            exit;
+        }
+
+        // Lấy danh sách đánh giá
+        require_once __DIR__ . '/../../models/ProductReview.php';
+        $reviewModel = new ProductReview();
+        $data['reviews'] = $reviewModel->getReviewsByProduct($productId);
+
+        $data['title'] = "Đánh giá sản phẩm: " . htmlspecialchars($data['product']['item_name']) . " - Admin";
+        $data['currentPage'] = 'product_list'; // Giữ sáng menu danh sách sản phẩm
+
+        $this->view('admin/product/reviews', $data);
+    }
+
+    // Xóa một bình luận (Dùng AJAX hoặc redirect)
+    public function deleteReview() {
+        if (isset($_GET['id']) && isset($_GET['product_id'])) {
+            $reviewId = (int)$_GET['id'];
+            $productId = (int)$_GET['product_id'];
+
+            require_once __DIR__ . '/../../models/ProductReview.php';
+            $reviewModel = new ProductReview();
+            
+            // Hàm delete() sẽ được thêm vào model ở bước tiếp theo
+            $reviewModel->setId($reviewId);
+            $reviewModel->delete();
+
+            header("Location: " . BASE_URL . "admin/product/reviews?id=" . $productId . "&status=deleted");
+            exit;
+        }
+        header("Location: " . BASE_URL . "admin/product");
+    }
 }
