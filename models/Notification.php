@@ -402,6 +402,9 @@ class NotificationSetting extends Model {
     private $enable_reply;
     private $enable_edit;
     private $enable_vote;
+    
+    // --- BỔ SUNG: Cột cài đặt cho đơn hàng ---
+    private $enable_order;
 
     public function getId() { return $this->id; }
     public function setId($id) { 
@@ -421,6 +424,10 @@ class NotificationSetting extends Model {
     public function getEnableVote() { return $this->enable_vote; }
     public function setEnableVote($val) { $this->enable_vote = $val; }
 
+    // --- BỔ SUNG: Getter & Setter cho cài đặt đơn hàng ---
+    public function getEnableOrder() { return $this->enable_order; }
+    public function setEnableOrder($val) { $this->enable_order = $val; }
+
     private function loadById($id) {
         $stmt = $this->getDb()->prepare("SELECT * FROM notification_setting WHERE setting_id=?");
         $stmt->execute([$id]);
@@ -433,6 +440,8 @@ class NotificationSetting extends Model {
             $this->enable_reply   = $result['enable_reply'];
             $this->enable_edit    = $result['enable_edit'];
             $this->enable_vote    = $result['enable_vote'];
+            // --- BỔ SUNG: Tải dữ liệu cài đặt đơn hàng ---
+            $this->enable_order   = $result['enable_order'] ?? 1;
         }
     }
 
@@ -448,15 +457,18 @@ class NotificationSetting extends Model {
             $this->enable_reply   = $result['enable_reply'];
             $this->enable_edit    = $result['enable_edit'];
             $this->enable_vote    = $result['enable_vote'];
+            // --- BỔ SUNG: Tải dữ liệu cài đặt đơn hàng ---
+            $this->enable_order   = $result['enable_order'] ?? 1;
             return true;
         }
         return false;
     }
 
     public function create() {
+        // --- CẬP NHẬT: Thêm enable_order vào câu lệnh INSERT ---
         $stmt = $this->getDb()->prepare(
-            "INSERT INTO notification_setting (admin_id, is_enabled, enable_comment, enable_reply, enable_edit, enable_vote) 
-             VALUES (?, ?, ?, ?, ?, ?)"
+            "INSERT INTO notification_setting (admin_id, is_enabled, enable_comment, enable_reply, enable_edit, enable_vote, enable_order) 
+             VALUES (?, ?, ?, ?, ?, ?, ?)"
         );
         $success = $stmt->execute([
             $this->admin_id,
@@ -464,7 +476,8 @@ class NotificationSetting extends Model {
             $this->enable_comment,
             $this->enable_reply,
             $this->enable_edit,
-            $this->enable_vote
+            $this->enable_vote,
+            $this->enable_order // Truyền giá trị vào DB
         ]);
         if ($success) {
             $this->id = $this->getDb()->lastInsertId();
@@ -473,9 +486,10 @@ class NotificationSetting extends Model {
     }
 
     public function update() {
+        // --- CẬP NHẬT: Thêm enable_order vào câu lệnh UPDATE ---
         $stmt = $this->getDb()->prepare(
             "UPDATE notification_setting 
-             SET admin_id=?, is_enabled=?, enable_comment=?, enable_reply=?, enable_edit=?, enable_vote=? 
+             SET admin_id=?, is_enabled=?, enable_comment=?, enable_reply=?, enable_edit=?, enable_vote=?, enable_order=? 
              WHERE setting_id=?"
         );
         return $stmt->execute([
@@ -485,6 +499,7 @@ class NotificationSetting extends Model {
             $this->enable_reply,
             $this->enable_edit,
             $this->enable_vote,
+            $this->enable_order, // Truyền giá trị cập nhật vào DB
             $this->id
         ]);
     }

@@ -463,28 +463,41 @@ document.addEventListener("DOMContentLoaded", () => {
         comment: document.getElementById("switch-comment"),
         reply: document.getElementById("switch-reply"),
         edit: document.getElementById("switch-edit"),
-        vote: document.getElementById("switch-vote")
+        vote: document.getElementById("switch-vote"),
+        // --- BỔ SUNG: Khai báo công tắc Đơn hàng ---
+        order: document.getElementById("switch-order") 
     };
 
     if (mainSwitch) {
-        fetch("/admin/news/getNotificationSettings").then(res => res.json()).then(data => {
+        // Lấy dữ liệu cài đặt khi vừa load trang
+        fetch("/admin/notification/getNotificationSettings").then(res => res.json()).then(data => {
             if(data.success){
                 mainSwitch.checked = data.is_enabled == 1;
                 subSwitches.comment.checked = data.enable_comment == 1;
                 subSwitches.reply.checked   = data.enable_reply == 1;
                 subSwitches.edit.checked    = data.enable_edit == 1;
                 subSwitches.vote.checked    = data.enable_vote == 1;
-                Object.values(subSwitches).forEach(sw => sw.disabled = !mainSwitch.checked);
+                
+                // --- BỔ SUNG: Nhận giá trị cho công tắc Đơn hàng ---
+                if(subSwitches.order) subSwitches.order.checked = data.enable_order == 1; 
+                
+                // Vô hiệu hóa các nút con nếu nút chính đang tắt
+                Object.values(subSwitches).forEach(sw => { if(sw) sw.disabled = !mainSwitch.checked });
             }
         });
 
+        // Bắt sự kiện khi bật/tắt nút chính
         mainSwitch.addEventListener("change", function(){
-            Object.values(subSwitches).forEach(sw => sw.disabled = !this.checked);
+            Object.values(subSwitches).forEach(sw => { if(sw) sw.disabled = !this.checked });
             saveSettings();
         });
 
-        Object.values(subSwitches).forEach(sw => sw.addEventListener("change", saveSettings));
+        // Bắt sự kiện khi bật/tắt các nút con
+        Object.values(subSwitches).forEach(sw => {
+            if(sw) sw.addEventListener("change", saveSettings);
+        });
 
+        // Hàm gửi dữ liệu lưu xuống Database
         function saveSettings(){
             const data = new URLSearchParams();
             data.append("enable_notifications", mainSwitch.checked ? 1 : 0);
@@ -492,8 +505,15 @@ document.addEventListener("DOMContentLoaded", () => {
             data.append("enable_reply", subSwitches.reply.checked ? 1 : 0);
             data.append("enable_edit", subSwitches.edit.checked ? 1 : 0);
             data.append("enable_vote", subSwitches.vote.checked ? 1 : 0);
-            fetch("/admin/news/updateNotificationSettings", {
+            
+            // --- BỔ SUNG: Gửi giá trị của công tắc Đơn hàng ---
+            if(subSwitches.order) data.append("enable_order", subSwitches.order.checked ? 1 : 0); 
+            
+            fetch("/admin/notification/updateNotificationSettings", {
                 method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: data.toString()
+            }).then(() => {
+                // (Tùy chọn) Reload lại chuông thông báo nếu cần
+                if (typeof loadNotifications === "function") loadNotifications();
             });
         }
     }
