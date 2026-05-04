@@ -30,6 +30,7 @@
                                 <th>Tên sản phẩm</th>
                                 <th>Giá bán</th>
                                 <th>Kho hàng</th>
+                                <th>Đánh giá</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -44,8 +45,11 @@
                                          style="width: 80px; height: auto; object-fit: cover;"
                                          onerror="this.src='https://placehold.co/50x60?text=No+Image'">
                                 </td>
+
                                 <td class="text-start fw-bold"><?php echo htmlspecialchars($item['item_name']); ?></td>
+
                                 <td class="text-danger fw-bold"><?php echo number_format($item['price'], 0, ',', '.'); ?> ₫</td>
+
                                 <td>
                                     <?php if ($item['item_stock'] > 0): ?>
                                         <span class="badge bg-success"><?php echo $item['item_stock']; ?></span>
@@ -53,6 +57,23 @@
                                         <span class="badge bg-danger">Hết hàng</span>
                                     <?php endif; ?>
                                 </td>
+
+                                <td>
+                                    <?php 
+                                    $avg = isset($item['average_rating']) ? round((float)$item['average_rating'], 1) : 0;
+                                    $total = isset($item['total_reviews']) ? (int)$item['total_reviews'] : 0;
+                                    if ($total > 0): 
+                                    ?>
+                                        <span class="fw-bold text-dark"><?= $avg ?></span>
+                                        <span style="color: gold; font-size: 1.1rem;">★</span><br>
+                                        <a href="<?php echo BASE_URL; ?>admin/product/reviews?id=<?php echo $item['item_id']; ?>" class="text-primary" style="font-size: 0.85rem; text-decoration: underline;">
+                                            (<?= $total ?> lượt)
+                                        </a>
+                                    <?php else: ?>
+                                        <span class="text-muted" style="font-size: 0.85rem;">Chưa có</span>
+                                    <?php endif; ?>
+                                </td>
+
                                 <td>
                                     <ul class="d-flex justify-content-center">
                                         <li class="me-3">

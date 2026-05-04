@@ -4,9 +4,15 @@ require_once __DIR__ . '/../core/database.php';
 
 class ProductModel extends Database {
     
-    // Lấy toàn bộ sản phẩm 
+    // Lấy toàn bộ sản phẩm (Đã cập nhật JOIN với bảng product_reviews)
     public function getAllProducts() {
-        $sql = "SELECT * FROM items ORDER BY item_id ASC";
+        $sql = "SELECT i.*, 
+                       COUNT(pr.id) as total_reviews, 
+                       IFNULL(AVG(pr.rating), 0) as average_rating 
+                FROM items i
+                LEFT JOIN product_reviews pr ON i.item_id = pr.product_id
+                GROUP BY i.item_id
+                ORDER BY i.item_id DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

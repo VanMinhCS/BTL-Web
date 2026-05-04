@@ -165,6 +165,23 @@
                     <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['item_id']; ?>" class="text-decoration-none text-dark">
                         <h5 class="card-title fw-bold text-uppercase mb-2" style="font-size: 1.1rem; height: 48px;"><?php echo $item['item_name']; ?></h5>
                     </a>
+
+                    <!-- ADDED RATING SECTION HERE -->
+                    <?php 
+                        $avgRating = isset($item['average_rating']) ? round((float)$item['average_rating'], 1) : 0;
+                        $totalReviews = isset($item['total_reviews']) ? (int)$item['total_reviews'] : 0;
+                    ?>
+                    <div class="mb-2" style="font-size: 0.9rem;">
+                        <?php if ($totalReviews > 0): ?>
+                            <span class="fw-bold text-dark"><?php echo $avgRating; ?></span>
+                            <span style="color: gold; font-size: 1.1rem;">★</span>
+                            <span class="text-muted">(<?php echo $totalReviews; ?>)</span>
+                        <?php else: ?>
+                            <span class="text-muted" style="font-size: 0.85rem;">Chưa có đánh giá</span>
+                        <?php endif; ?>
+                    </div>
+                    <!-- END RATING SECTION -->
+                     
                     <p class="card-text mb-2"><span class="fw-bold text-primary fs-5"><?php echo number_format($item['price'], 0, ',', '.') . '₫'; ?></span></p>
                     
                     <form action="<?php echo BASE_URL; ?>cart/add" method="POST">
