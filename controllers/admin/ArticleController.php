@@ -379,13 +379,13 @@ class ArticleController extends Controller {
                 $article->setIdArticle($id);
 
                 // URL lưu vào DB
-                $server_url = 'assets/img/article/' . $final_name;
+                $server_url = '/assets/img/article/' . $final_name;
+
 
                 $article->setBackground($server_url);
 
                 if($article->update()){
-                    // Thêm query string để phá cache
-                    echo json_encode(["success"=>true, "url"=>$server_url . "?t=" . time()]);
+                    echo json_encode(["success"=>true, "url"=>$server_url]);
                 } else {
                     echo json_encode(["success"=>false]);
                 }
