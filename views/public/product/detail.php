@@ -232,9 +232,10 @@
                 <div class="col-lg-8">
                     <h5 class="fw-bold mb-4">Bình luận gần đây</h5>
                     <?php if (!empty($reviewList)): ?>
-                        <div class="review-list">
+                        <div class="review-list" id="reviewContainer">
                             <?php foreach ($reviewList as $review): ?>
-                                <div class="review-item mb-4 pb-3 border-bottom">
+                                <!-- BỔ SUNG CLASS 'review-item-paginate' -->
+                                <div class="review-item review-item-paginate mb-4 pb-3 border-bottom">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <h6 class="fw-bold mb-0"><?php echo htmlspecialchars($review['firstname'] . ' ' . $review['lastname']); ?></h6>
                                         <small class="text-muted"><?php echo date('d/m/Y H:i', strtotime($review['created_at'])); ?></small>
@@ -248,6 +249,10 @@
                                 </div>
                             <?php endforeach; ?>
                         </div>
+                        
+                        <!-- KHU VỰC HIỂN THỊ NÚT PHÂN TRANG -->
+                        <div id="reviewPagination" class="d-flex justify-content-center mt-4"></div>
+                        
                     <?php else: ?>
                         <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên đánh giá!</p>
                     <?php endif; ?>
@@ -550,5 +555,88 @@
                 });
             });
         }
+    });
+
+    // ==========================================
+    // 5. PHÂN TRANG BÌNH LUẬN BẰNG JAVASCRIPT
+    // ==========================================
+    document.addEventListener("DOMContentLoaded", function() {
+        // Lấy tất cả các thẻ chứa bình luận
+        const reviewItems = Array.from(document.getElementsByClassName('review-item-paginate'));
+        const paginationContainer = document.getElementById('reviewPagination');
+        
+        // Nếu không có bình luận nào thì dừng lại
+        if (reviewItems.length === 0 || !paginationContainer) return; 
+
+        const itemsPerPage = 3;
+        let currentPage = 1;
+        const totalPages = Math.ceil(reviewItems.length / itemsPerPage);
+
+        // Hàm hiển thị bình luận theo trang
+        function showPage(page) {
+            currentPage = page;
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            // Lặp qua tất cả bình luận: Thuộc trang này thì hiện, không thì ẩn
+            reviewItems.forEach((item, index) => {
+                if (index >= start && index < end) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Vẽ lại các nút phân trang cho đúng trạng thái (active/disabled)
+            renderPagination();
+        }
+
+        // Hàm vẽ các nút bấm
+        function renderPagination() {
+            // Nếu chỉ có 1 trang hoặc ít hơn thì không cần hiện nút
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let ul = document.createElement('ul');
+            ul.className = 'pagination justify-content-center shadow-sm m-0';
+
+            // Nút Lùi (Prev)
+            let liPrev = document.createElement('li');
+            liPrev.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            liPrev.innerHTML = `<a class="page-link text-dark" href="javascript:void(0)">&laquo;</a>`;
+            liPrev.addEventListener('click', () => {
+                if (currentPage > 1) showPage(currentPage - 1);
+            });
+            ul.appendChild(liPrev);
+
+            // Các nút Số (1, 2, 3...)
+            for (let i = 1; i <= totalPages; i++) {
+                let li = document.createElement('li');
+                li.className = `page-item ${currentPage === i ? 'active' : ''}`;
+                // Đổi màu cho nút đang chọn (active)
+                let linkClass = currentPage === i ? 'bg-dark border-dark text-white fw-bold' : 'text-dark';
+                li.innerHTML = `<a class="page-link ${linkClass}" href="javascript:void(0)">${i}</a>`;
+                li.addEventListener('click', () => showPage(i));
+                ul.appendChild(li);
+            }
+
+            // Nút Tiến (Next)
+            let liNext = document.createElement('li');
+            liNext.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            liNext.innerHTML = `<a class="page-link text-dark" href="javascript:void(0)">&raquo;</a>`;
+            liNext.addEventListener('click', () => {
+                if (currentPage < totalPages) showPage(currentPage + 1);
+            });
+            ul.appendChild(liNext);
+
+            // Xóa bộ nút cũ và gắn bộ nút mới vào giao diện
+            paginationContainer.innerHTML = '';
+            paginationContainer.appendChild(ul);
+        }
+
+        // Khởi động trang web bằng cách hiển thị trang số 1
+        showPage(1);
     });
 </script>
