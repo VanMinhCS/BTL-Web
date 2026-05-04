@@ -32,34 +32,53 @@ function loadNotifications(){
                 list.innerHTML = "";
                 data.notifications.forEach(n => {
                     const item = document.createElement("a");
+                    
+                    // 1. TÙY CHỈNH ĐƯỜNG DẪN VÀ ICON DỰA VÀO LOẠI THÔNG BÁO
+                    let targetUrl = "#";
+                    let iconClass = "ti-info";
+                    let bgClass = "bg-info";
 
-                    if (n.id_article && n.id_comment) {
-                        item.href = `/article?id=${n.id_article}&comment=${n.id_comment}`;
+                    if (n.type === "order") {
+                        targetUrl = "/admin/product/order"; // Nhảy về trang Quản lý đơn hàng
+                        iconClass = "ti-shopping-cart"; // Icon giỏ hàng
+                        bgClass = "bg-warning"; // Nền màu vàng
+                    } else if (n.id_article && n.id_comment) {
+                        targetUrl = `/article?id=${n.id_article}&comment=${n.id_comment}`;
                     } else if (n.id_article) {
-                        item.href = `/article?id=${n.id_article}`;
-                    } else {
-                        item.href = "#";
+                        targetUrl = `/article?id=${n.id_article}`;
                     }
 
+                    item.href = targetUrl;
                     item.className = "notify-item";
                     item.dataset.id = n.id;
                     item.innerHTML = `
-                        <div class="notify-thumb"><i class="ti-info bg-info"></i></div>
+                        <div class="notify-thumb"><i class="${iconClass} ${bgClass}"></i></div>
                         <div class="notify-text">
                             <p>${n.message}</p>
                             <span>${n.created_at}</span>
                         </div>`;
                     
+                    // 2. BẮT SỰ KIỆN CLICK ĐỂ ĐÁNH DẤU ĐÃ ĐỌC VÀ CHUYỂN TRANG
                     item.addEventListener("click", function(e){
                         e.preventDefault();
-                        fetch("/admin/news/markRead", {   // API markRead cho từng thông báo
+                        
+                        // Lưu lại đường dẫn để chuyển hướng an toàn
+                        const redirectUrl = this.href; 
+
+                        // Đã sửa API endpoint thành /admin/notification/markRead
+                        fetch("/admin/notification/markRead", {   
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded" },
                             body: "id=" + this.dataset.id
                         }).then(() => {
-                            window.location.href = this.href;
+                            window.location.href = redirectUrl;
+                        }).catch((err) => {
+                            // Dự phòng: Vẫn chuyển trang nếu có lỗi kết nối mạng chớp nhoáng
+                            console.error("Lỗi đánh dấu đã đọc:", err);
+                            window.location.href = redirectUrl;
                         });
                     });
+                    
                     list.appendChild(item);
                 });
 

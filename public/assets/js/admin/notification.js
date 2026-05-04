@@ -51,8 +51,9 @@ function renderNotifications(notifications) {
     // Tùy chỉnh đường dẫn URL
     let viewUrl = "#";
     if (n.type === "order") {
-        let orderId = n.notify_order_id || ""; 
-        viewUrl = `/admin/product/orderDetail?id=${orderId}`;
+        // Lấy ID đơn hàng từ dữ liệu trả về và truyền vào URL chi tiết
+        let orderId = n.notify_order_id || n.order_id || ""; 
+        viewUrl = `/admin/product/orderDetail?id=${orderId}`; 
     } else {
         let artId = n.id_article || n.article_id || "";
         let cmtId = n.id_comment || n.comment_id || "";
@@ -139,13 +140,11 @@ function renderPagination(totalItems, itemsPerPage, currentPage, keyword = "", s
 // 2. XỬ LÝ ĐÁNH DẤU ĐÃ ĐỌC & CHUYỂN TRANG
 // ==========================================
 function markAndRedirect(event, id, url) {
-    // Ngăn chặn việc bấm 2 lần
     const btn = event.currentTarget;
     btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
     btn.style.pointerEvents = 'none';
 
-    // CẬP NHẬT: Sử dụng đúng API gốc của hệ thống
-    fetch("/admin/news/markRead", { 
+    fetch("/admin/notification/markRead", { 
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "id=" + id
@@ -172,17 +171,8 @@ function loadNotifications(){
             const notifyTitle = document.querySelector(".notify-title");
             if (notifyTitle) {
                 notifyTitle.innerHTML = data.count > 0
-                    ? `Bạn có ${data.count} thông báo mới <a href="#">xem tất cả</a>`
-                    : `Bạn không có thông báo mới <a href="#">xem tất cả</a>`;
-
-                const markAllLink = notifyTitle.querySelector("a");
-                if (markAllLink) {
-                    markAllLink.addEventListener("click", function(e){
-                        e.preventDefault();
-                        fetch("/admin/notification/markAllRead", { method: "POST" })
-                            .then(() => { loadNotifications(); applyFilters(1); });
-                    });
-                }
+                    ? `Bạn có ${data.count} thông báo mới <a href="/admin/notification">xem tất cả</a>`
+                    : `Bạn không có thông báo mới <a href="/admin/notification">xem tất cả</a>`;
             }
 
             const list = document.querySelector(".notify-list");
@@ -194,9 +184,11 @@ function loadNotifications(){
                     item.dataset.id = n.id;
                     
                     let iconClass = "ti-info bg-info";
+                    
+                    // --- ĐIỀU CHỈNH CHUYỂN HƯỚNG TẠI ĐÂY ---
                     if (n.type === "order") {
-                        let orderId = n.notify_order_id || "";
-                        item.href = `/admin/product/orderDetail?id=${orderId}`;
+                        // Trỏ thẳng về trang Quản lý đơn hàng thay vì chi tiết
+                        item.href = `/admin/product/order`;
                         iconClass = "ti-shopping-cart bg-warning";
                     } else {
                         let artId = n.id_article || n.article_id || "";
@@ -219,30 +211,26 @@ function loadNotifications(){
                         
                     item.addEventListener("click", function(e){
                         e.preventDefault();
-                        // CẬP NHẬT: Sử dụng đúng API gốc của hệ thống
-                        fetch("/admin/news/markRead", { 
+                        
+                        // 1. Lấy và lưu trữ đường dẫn URL (href) ngay lập tức để không bị mất ngữ cảnh
+                        const targetUrl = this.href; 
+                        
+                        // 2. Gọi API đánh dấu đã đọc
+                        fetch("/admin/notification/markRead", { 
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded" },
                             body: "id=" + this.dataset.id
                         }).then(() => {
-                            window.location.href = this.href;
+                            // 3. Chuyển hướng sang trang Quản lý đơn hàng
+                            window.location.href = targetUrl;
+                        }).catch((error) => {
+                            // 4. Dự phòng: Nếu API báo lỗi hoặc mạng lag, VẪN ép trình duyệt chuyển trang
+                            console.error("Lỗi cập nhật trạng thái đã đọc:", error);
+                            window.location.href = targetUrl;
                         });
                     });
                     list.appendChild(item);
                 });
-
-                if (data.count > 3) {
-                    const more = document.createElement("a");
-                    more.className = "notify-item text-center fw-bold";
-                    more.textContent = "Xem tất cả thông báo";
-                    more.href = "#"; 
-                    more.addEventListener("click", function(e){
-                        e.preventDefault();
-                        fetch("/admin/notification/markAllRead", { method: "POST" })
-                            .then(() => { loadNotifications(); applyFilters(1); }); 
-                    });
-                    list.appendChild(more);
-                }
             }
         }
     });
