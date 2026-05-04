@@ -116,10 +116,11 @@ li[data-list="bullet"] {
 }
 
 .ql-video {
-  width: 100%;          
-  height: 400px;        
-  max-width: 800px;     
+  width: 100% ;          
+  height: 400px ;        
+  max-width: 800px !important;     
   display: block;
   margin: 0 auto;       
 }
+
 
