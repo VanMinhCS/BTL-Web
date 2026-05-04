@@ -143,7 +143,7 @@ class NotificationController extends Controller {
         // Trả về JSON cho frontend
         echo json_encode([
             "success" => true,
-            "count" => count($filtered),
+            "count" => $totalUnread,
             "notifications" => array_map(function($n) use ($adminId, $notificationModel){
                 return [
                     "id"         => $n['id'],

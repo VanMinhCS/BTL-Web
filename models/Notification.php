@@ -123,7 +123,30 @@ class Notification extends Model {
     }
 
     public function countAllUnread() {
-        $sql = "SELECT COUNT(*) FROM notifications WHERE is_read = 0";
+        $adminId = $_SESSION['user_id'] ?? 0;
+
+        $setting = new NotificationSetting();
+        $setting->loadByAdminId($adminId);
+
+        if ($setting->getIsEnabled() == 0) {
+            return 0;
+        }
+
+        $types = [];
+        if ($setting->getEnableComment()) $types[] = "'comment'";
+        if ($setting->getEnableReply())   $types[] = "'reply_comment'";
+        if ($setting->getEnableEdit())    $types[] = "'edit_comment'";
+        if ($setting->getEnableVote())    $types[] = "'vote_comment'";
+
+        if (empty($types)) {
+            return 0;
+        }
+
+        // Ghép vào SQL
+        $sql = "SELECT COUNT(*) 
+                FROM notifications 
+                WHERE is_read = 0 
+                AND type IN (" . implode(",", $types) . ")";
         $stmt = $this->getDb()->query($sql);
         return (int)$stmt->fetchColumn();
     }
