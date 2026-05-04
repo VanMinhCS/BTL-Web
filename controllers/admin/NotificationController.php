@@ -70,6 +70,8 @@ class NotificationController extends Controller {
             $model->setEnableReply($_POST['enable_reply'] ?? 0);
             $model->setEnableEdit($_POST['enable_edit'] ?? 0);
             $model->setEnableVote($_POST['enable_vote'] ?? 0);
+            // --- BỔ SUNG: Nhận dữ liệu cài đặt đơn hàng ---
+            $model->setEnableOrder($_POST['enable_order'] ?? 0);
             $success = $model->create();
         } else {
             // có rồi thì update
@@ -78,6 +80,8 @@ class NotificationController extends Controller {
             $model->setEnableReply($_POST['enable_reply'] ?? 0);
             $model->setEnableEdit($_POST['enable_edit'] ?? 0);
             $model->setEnableVote($_POST['enable_vote'] ?? 0);
+            // --- BỔ SUNG: Nhận dữ liệu cài đặt đơn hàng ---
+            $model->setEnableOrder($_POST['enable_order'] ?? 0);
             $success = $model->update();
         }
 
@@ -100,7 +104,8 @@ class NotificationController extends Controller {
                 "enable_comment"  => $model->getEnableComment(),
                 "enable_reply"    => $model->getEnableReply(),
                 "enable_edit"     => $model->getEnableEdit(),
-                "enable_vote"     => $model->getEnableVote()
+                "enable_vote"     => $model->getEnableVote(),
+                "enable_order"    => $model->getEnableOrder() 
             ]);
         } else {
             echo json_encode(["success" => false]);
@@ -125,7 +130,7 @@ class NotificationController extends Controller {
         // Lấy tổng số chưa đọc (không giới hạn)
         $totalUnread = $notificationModel->countAllUnread();
 
-        // Lấy danh sách thông báo (giới hạn 10 cái để hiển thị dropdown)
+        // Lấy danh sách thông báo (giới hạn 3 cái để hiển thị dropdown)
         $notifications = $notificationModel->getUnread(3);
 
         // Lọc theo setting
@@ -136,6 +141,7 @@ class NotificationController extends Controller {
                 case 'reply_comment': return $setting->getEnableReply() == 1;
                 case 'edit_comment':  return $setting->getEnableEdit() == 1;
                 case 'vote_comment':  return $setting->getEnableVote() == 1;
+                case 'order':         return $setting->getEnableOrder() == 1; 
                 default:              return true;
             }
         });
@@ -143,16 +149,16 @@ class NotificationController extends Controller {
         // Trả về JSON cho frontend
         echo json_encode([
             "success" => true,
-            "count" =>  $totalUnread,
-            "notifications" => array_map(function($n) use ($adminId, $notificationModel){
+            "count" => $totalUnread, 
+            "notifications" => array_map(function($n) use ($notificationModel){
                 return [
-                    "id"         => $n['id'],
-                    "id_user"    => $adminId,
-                    "message"    => $notificationModel->map($n),
-                    "created_at" => $n['created_at'],
-                    "id_article" => $n['article_id'] ?? null,
-                    "id_comment" => $n['comment_id'] ?? null,
-                    "type"       => $n['type']
+                    "id"              => $n['id'],
+                    "message"         => $notificationModel->map($n), 
+                    "created_at"      => $n['created_at'],
+                    "id_article"      => $n['article_id'] ?? null,
+                    "id_comment"      => $n['comment_id'] ?? null,
+                    "notify_order_id" => $n['order_id'] ?? $n['notify_order_id'] ?? null, 
+                    "type"            => $n['type']
                 ];
             }, array_values($filtered))
         ]);

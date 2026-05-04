@@ -64,6 +64,17 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="s-settings">
+                                <div class="s-sw-title">
+                                    <h5>Đơn hàng</h5>
+                                    <div class="s-swtich">
+                                        <input type="checkbox" id="switch-order" disabled>
+                                        <label for="switch-order">Nhận thông báo đơn hàng</label>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
