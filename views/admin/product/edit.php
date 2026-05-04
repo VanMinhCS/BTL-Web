@@ -8,7 +8,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
     <div class="col-12 mt-5">
         <div class="card">
             <div class="card-body">
-                <h4 class="header-title">Sửa Thông Tin Giáo Trình</h4>
+                <h4 class="header-title">Sửa Thông Tin Sản phẩm</h4>
                 <p class="text-muted font-14 mb-4">Cập nhật các trường thông tin cần thiết bên dưới.</p>
                 
                 <form action="<?php echo BASE_URL; ?>admin/product/update?id=<?php echo $product['item_id']; ?>" method="POST" enctype="multipart/form-data">
@@ -16,7 +16,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="item_name" class="col-form-label">Tên giáo trình <span class="text-danger">*</span></label>
+                                <label for="item_name" class="col-form-label">Tên sản phẩm <span class="text-danger">*</span></label>
                                 <input class="form-control" type="text" name="item_name" id="item_name" value="<?php echo htmlspecialchars($product['item_name']); ?>" required>
                             </div>
                         </div>
@@ -45,7 +45,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                         </div>
 
                         <div class="col-md-8">
-                            <label class="col-form-label">Hình ảnh giáo trình (Bỏ trống nếu không muốn đổi)</label>
+                            <label class="col-form-label">Hình ảnh sản phẩm (Bỏ trống nếu không muốn đổi)</label>
                             <div class="input-group mb-3">
                                 <input type="file" class="form-control" name="item_image" id="item_image" accept="image/*">
                                 <span class="input-group-text">Upload File</span>

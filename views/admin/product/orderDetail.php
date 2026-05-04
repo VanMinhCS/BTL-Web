@@ -88,13 +88,13 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                 <?php endif; ?>
                 <!-- KẾT THÚC KHỐI GHI CHÚ -->
 
-                <h6 class="fw-bold mb-3 text-uppercase">Danh sách Giáo trình</h6>
+                <h6 class="fw-bold mb-3 text-uppercase">Danh sách sản phẩm</h6>
                 <div class="table-responsive mb-4">
                     <table class="table table-bordered text-center align-middle">
                         <thead class="bg-light">
                             <tr>
                                 <th style="width: 80px;">Hình ảnh</th>
-                                <th class="text-start">Tên giáo trình</th>
+                                <th class="text-start">Tên sản phẩm</th>
                                 <th>Đơn giá</th>
                                 <th>Số lượng</th>
                                 <th class="text-end">Thành tiền</th>
