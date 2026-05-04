@@ -747,21 +747,34 @@ document.getElementById("saveImageBtn").addEventListener("click", async function
     formData.append("image", file);
     formData.append("id", articleId);
 
-    const res = await fetch("/admin/article/uploadBackground", {
-      method: "POST",
-      body: formData
-    });
-    const data = await res.json();
+    try {
+      const res = await fetch("/admin/article/uploadBackground", {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
 
-  if(data.success){
-    const newUrl = `${data.url}?t=${new Date().getTime()}`;
-    document.querySelector(".background_image").style.backgroundImage = `url(${newUrl})`;
-    showNotification("Ảnh nền đã được cập nhật");
-  } else {
-    showNotification("Upload ảnh thất bại");
-  }
+      if(data.success){
+        const newUrl = data.url;
+
+        const bgElement = document.querySelector(".background_image");
+        if(bgElement){
+          bgElement.style.backgroundImage = `url(${newUrl})`;
+        }
+
+        console.log("Ảnh nền mới:", newUrl);
+        showNotification("Ảnh nền đã được cập nhật");
+      } else {
+        showNotification("Upload ảnh thất bại");
+      }
+    } catch (err) {
+      console.error("Lỗi upload:", err);
+      showNotification("Có lỗi xảy ra khi upload ảnh");
+    }
   }
 });
+
+
 
 uploadInput.addEventListener("change", function(){
   const file = this.files[0];
