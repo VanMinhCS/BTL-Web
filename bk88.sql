@@ -22,9 +22,9 @@ USE `bk88`;
 -- Dumping structure for table bk88.addresses
 CREATE TABLE IF NOT EXISTS `addresses` (
   `address_id` int NOT NULL AUTO_INCREMENT,
-  `street` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `ward` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `city` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `street` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `ward` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `city` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`address_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
@@ -42,16 +42,16 @@ INSERT INTO `addresses` (`address_id`, `street`, `ward`, `city`) VALUES
 -- Dumping structure for table bk88.articles
 CREATE TABLE IF NOT EXISTS `articles` (
   `id_article` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `time_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `status` tinyint(1) NOT NULL DEFAULT '0',
-  `content` text COLLATE utf8mb3_unicode_ci NOT NULL,
-  `background` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `content` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `background` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id_article`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table bk88.articles: ~0 rows (approximately)
+-- Dumping data for table bk88.articles: ~1 rows (approximately)
 INSERT INTO `articles` (`id_article`, `title`, `description`, `time_modified`, `status`, `content`, `background`) VALUES
 	(1, 'Bài viết mẫu BK88', 'Giới thiệu', '2026-05-03 11:35:38', 1, 'Nội dung thử nghiệm...', '../../assets/img/mountain.jpg');
 
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `id_comment` int NOT NULL AUTO_INCREMENT,
   `id_article` int NOT NULL,
   `id_user` int NOT NULL,
-  `text` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `text` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `is_edited` tinyint(1) DEFAULT '0',
   `replied` int DEFAULT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `comment_votes` (
   `id` int NOT NULL AUTO_INCREMENT,
   `comment_id` int NOT NULL,
   `user_id` int NOT NULL,
-  `vote` enum('like','dislike') COLLATE utf8mb3_unicode_ci NOT NULL,
+  `vote` enum('like','dislike') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_vote` (`comment_id`,`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=123 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -135,16 +135,16 @@ INSERT INTO `comment_votes` (`id`, `comment_id`, `user_id`, `vote`) VALUES
 -- Dumping structure for table bk88.contacts
 CREATE TABLE IF NOT EXISTS `contacts` (
   `contact_id` int NOT NULL AUTO_INCREMENT,
-  `customer_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `customer_email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `subject` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `subject` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` tinyint(1) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`contact_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table bk88.contacts: ~28 rows (approximately)
+-- Dumping data for table bk88.contacts: ~27 rows (approximately)
 INSERT INTO `contacts` (`contact_id`, `customer_name`, `customer_email`, `subject`, `message`, `status`, `created_at`) VALUES
 	(1, 'Nguyễn Văn Minh', 'd@l.m', 'Quá xuất sắc', 'Quá mạnh', 0, '2026-05-03 10:11:11'),
 	(2, 'Pablo Jenkins PhD', 'Kadin46@hotmail.com', 'Dynamic Infrastructure Orchestrator', 'Adipisci vitae non vacuus comparo. Admitto abundans sit conforto stultus colligo. Aliqua suspendo addo cura volup acsi.', 1, '2026-05-03 10:18:01'),
@@ -177,18 +177,21 @@ INSERT INTO `contacts` (`contact_id`, `customer_name`, `customer_email`, `subjec
 -- Dumping structure for table bk88.contact_info_fields
 CREATE TABLE IF NOT EXISTS `contact_info_fields` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `sort_order` int DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table bk88.contact_info_fields: ~3 rows (approximately)
+-- Dumping data for table bk88.contact_info_fields: ~4 rows (approximately)
 INSERT INTO `contact_info_fields` (`id`, `label`, `value`, `icon`, `sort_order`, `is_active`, `updated_at`) VALUES
-	(5, 'Bruh', 'Wait for me', '', 1, 1, '2026-05-04 10:45:09');
+	(5, 'Bruh', 'Wait for me', '', 1, 0, '2026-05-04 16:58:26'),
+	(8, 'Địa chỉ', '123 Ngô Quyền', '', 0, 1, '2026-05-04 16:57:28'),
+	(9, 'Số điện thoại', '19008198', '', 1, 1, '2026-05-04 16:57:46'),
+	(10, 'Giờ làm việc', 'Thứ 2 - thứ 6, 7h - 16h50', '', 3, 1, '2026-05-04 16:58:22');
 
 -- Dumping structure for table bk88.home_featured_products
 CREATE TABLE IF NOT EXISTS `home_featured_products` (
@@ -212,9 +215,9 @@ INSERT INTO `home_featured_products` (`id`, `item_id`, `sort_order`, `is_active`
 -- Dumping structure for table bk88.home_info_fields
 CREATE TABLE IF NOT EXISTS `home_info_fields` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `sort_order` int DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -226,9 +229,9 @@ CREATE TABLE IF NOT EXISTS `home_info_fields` (
 -- Dumping structure for table bk88.home_quotes
 CREATE TABLE IF NOT EXISTS `home_quotes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `quote_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `author` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `quote_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `sort_order` int DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -245,15 +248,15 @@ INSERT INTO `home_quotes` (`id`, `quote_text`, `author`, `image`, `sort_order`, 
 -- Dumping structure for table bk88.home_reasons
 CREATE TABLE IF NOT EXISTS `home_reasons` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `sort_order` int DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table bk88.home_reasons: ~4 rows (approximately)
+-- Dumping data for table bk88.home_reasons: ~3 rows (approximately)
 INSERT INTO `home_reasons` (`id`, `title`, `description`, `sort_order`, `is_active`, `updated_at`) VALUES
 	(1, 'Giáo trình chất lượng', 'Cung cấp các bộ giáo trình được biên soạn và kiểm duyệt kỹ lưỡng bởi các chuyên gia hàng đầu trong ngành.', 1, 1, '2026-05-04 15:11:56'),
 	(3, 'Hỗ trợ 24/7', 'Đội ngũ hỗ trợ chuyên nghiệp luôn sẵn sàng giải đáp mọi thắc mắc của bạn mọi lúc, mọi nơi.', 2, 1, '2026-05-04 16:45:13'),
@@ -262,16 +265,16 @@ INSERT INTO `home_reasons` (`id`, `title`, `description`, `sort_order`, `is_acti
 -- Dumping structure for table bk88.home_sections
 CREATE TABLE IF NOT EXISTS `home_sections` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `section_key` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `subtitle` text COLLATE utf8mb4_unicode_ci,
+  `section_key` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subtitle` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `is_active` tinyint(1) DEFAULT '1',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `section_key` (`section_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table bk88.home_sections: ~2 rows (approximately)
+-- Dumping data for table bk88.home_sections: ~3 rows (approximately)
 INSERT INTO `home_sections` (`id`, `section_key`, `title`, `subtitle`, `is_active`, `updated_at`) VALUES
 	(1, 'quote', 'Quote', NULL, 1, '2026-05-04 15:11:56'),
 	(2, 'reason', 'Tại sao lại chọn chúng tôi?', 'Những giá trị cốt lõi mà BK88 mang lại cho bạn.', 1, '2026-05-04 16:02:51'),
@@ -282,8 +285,8 @@ CREATE TABLE IF NOT EXISTS `information` (
   `info_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `address_id` int NOT NULL,
-  `firstname` varchar(50) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `lastname` varchar(50) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `firstname` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `lastname` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`info_id`),
   KEY `user_id` (`user_id`),
   KEY `address_id` (`address_id`),
@@ -305,12 +308,12 @@ INSERT INTO `information` (`info_id`, `user_id`, `address_id`, `firstname`, `las
 -- Dumping structure for table bk88.items
 CREATE TABLE IF NOT EXISTS `items` (
   `item_id` int NOT NULL AUTO_INCREMENT,
-  `item_name` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `item_name` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `item_stock` int DEFAULT '0',
-  `description` text COLLATE utf8mb3_unicode_ci,
+  `description` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
   `price` decimal(10,2) NOT NULL,
   `cost_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `item_image` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `item_image` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`item_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
@@ -331,7 +334,7 @@ INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `description`, `price
 -- Dumping structure for table bk88.notifications
 CREATE TABLE IF NOT EXISTS `notifications` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `type` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `type` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `user_id` int NOT NULL,
   `notification_comment_id` int DEFAULT NULL,
   `is_read` tinyint(1) DEFAULT '0',
@@ -346,7 +349,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`notification_comment_id`) REFERENCES `notification_comment` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table bk88.notifications: ~60 rows (approximately)
+-- Dumping data for table bk88.notifications: ~58 rows (approximately)
 INSERT INTO `notifications` (`id`, `type`, `user_id`, `notification_comment_id`, `is_read`, `created_at`, `notification_vote_comment_id`) VALUES
 	(1, 'vote_comment', 1, NULL, 0, '2026-04-17 10:27:50', 1),
 	(2, 'vote_comment', 1, NULL, 0, '2026-04-17 10:28:19', 2),
@@ -412,7 +415,7 @@ CREATE TABLE IF NOT EXISTS `notification_comment` (
   `id` int NOT NULL AUTO_INCREMENT,
   `article_id` int NOT NULL,
   `comment_id` int NOT NULL,
-  `content` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `content` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `replied` int DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -445,7 +448,7 @@ CREATE TABLE IF NOT EXISTS `notification_vote_comment` (
   `id` int NOT NULL AUTO_INCREMENT,
   `comment_id` int NOT NULL,
   `article_id` int NOT NULL,
-  `vote_type` enum('like','dislike') COLLATE utf8mb3_unicode_ci NOT NULL,
+  `vote_type` enum('like','dislike') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `article_id` (`article_id`),
@@ -559,7 +562,7 @@ INSERT INTO `order_details` (`detail_id`, `order_id`, `item_id`, `quantity`, `pr
 CREATE TABLE IF NOT EXISTS `otp` (
   `otp_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `code` char(6) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `code` char(6) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `time_expire` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `is_active` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`otp_id`),
@@ -598,7 +601,7 @@ CREATE TABLE IF NOT EXISTS `review_admin_replies` (
   `id` int NOT NULL AUTO_INCREMENT,
   `detail_id` int NOT NULL,
   `admin_id` int NOT NULL,
-  `reply_content` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `reply_content` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `fk_reply_detail` (`detail_id`),
@@ -614,7 +617,7 @@ CREATE TABLE IF NOT EXISTS `review_details` (
   `id` int NOT NULL AUTO_INCREMENT,
   `review_id` int NOT NULL,
   `user_id` int NOT NULL,
-  `content` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `content` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `rating` tinyint NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -630,10 +633,10 @@ CREATE TABLE IF NOT EXISTS `review_details` (
 -- Dumping structure for table bk88.users
 CREATE TABLE IF NOT EXISTS `users` (
   `user_id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `role` tinyint(1) DEFAULT '0',
-  `phone` varchar(20) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `is_verified` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
