@@ -5,14 +5,11 @@ class HomeController extends Controller {
             session_start();
         }
 
-        require_once __DIR__ . '/../../models/ProductModel.php';
-        $productModel = new ProductModel();
-        
-        // Lấy tất cả sản phẩm
-        $allProducts = $productModel->getAllProducts();
-        
-        // Lấy riêng 5 sản phẩm đầu tiên để đẩy sang view
-        $data['featuredProducts'] = array_slice($allProducts, 0, 5);
+        $homeInfoModel = $this->model('HomeInfoModel');
+        $data['homeSections'] = $homeInfoModel->getSections();
+        $data['homeQuotes'] = $homeInfoModel->getQuotes(true);
+        $data['homeReasons'] = $homeInfoModel->getReasons(true);
+        $data['homeFeaturedProducts'] = $homeInfoModel->getFeaturedProducts(true);
 
         $data['title'] = "Trang chủ - BK88";
         $data['pageCss'] = ['assets/css/public/home.css', 'assets/slick/slick.css', 'assets/slick/slick-theme.css'];

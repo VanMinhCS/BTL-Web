@@ -3,6 +3,8 @@ class ContactController extends Controller {
     public function index() {
         $data['title'] = "Liên hệ với BK88";
         $data['currentPage'] = 'contact';
+        $infoModel = $this->model('ContactInfoModel');
+        $data['contactFields'] = $infoModel->getActive();
         $this->view('public/contact/index', $data);
     }
 

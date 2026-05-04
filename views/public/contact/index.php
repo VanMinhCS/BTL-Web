@@ -8,20 +8,27 @@
         <div class="col-lg-5">
             <div class="card bg-primary text-white border-0 shadow h-100 p-4">
                 <h4 class="fw-bold mb-4">Thông tin liên lạc</h4>
-                <p class="mb-3">
-                    <strong>📍 Trụ sở chính:</strong><br>
-                    268 Lý Thường Kiệt, Phường Diên Hồng, TP.Hồ Chí Minh
-                </p>
-                <p class="mb-3">
-                    <strong>📞 Đường dây nóng:</strong><br>
-                    1900 8198
-                </p>
-                <p class="mb-4">
-                    <strong>✉️ Hỗ trợ khách hàng:</strong><br>
-                    bk88@hcmut.edu.vn
-                </p>
-                <hr class="border-light">
-                <p class="small mt-3">Giờ làm việc: Thứ 2 - Thứ 6 (8:00 - 17:30)</p>
+                <?php
+                $contactFields = $contactFields ?? ($data['contactFields'] ?? []);
+                ?>
+                <?php if (!empty($contactFields) && is_array($contactFields)): ?>
+                    <?php foreach ($contactFields as $field): ?>
+                        <?php
+                        $icon = trim($field['icon'] ?? '');
+                        $label = $field['label'] ?? '';
+                        $labelText = $icon !== '' ? $icon . ' ' . $label : $label;
+                        ?>
+                        <p class="mb-3">
+                            <strong><?= htmlspecialchars($labelText) ?>:</strong><br>
+                            <?= nl2br(htmlspecialchars($field['value'] ?? '')) ?>
+                        </p>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="mb-3">
+                        <strong>Thông tin:</strong><br>
+                        Đang cập nhật.
+                    </p>
+                <?php endif; ?>
             </div>
         </div>
 
