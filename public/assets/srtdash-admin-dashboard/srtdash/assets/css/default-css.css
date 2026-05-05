@@ -488,3 +488,6 @@ img {
     }
 }
 
+.offset-settings h4 {
+  margin-top: 40px !important; 
+}
