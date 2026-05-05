@@ -1,10 +1,16 @@
 <?php
 class Controller {
     public function view($view, $data = []) {
+        $isAdminView = strpos($view, 'admin/') === 0;
+        if (!$isAdminView && !array_key_exists('siteLogo', $data)) {
+            $homeInfoModel = $this->model('HomeInfoModel');
+            $data['siteLogo'] = $homeInfoModel->getSetting('site_logo');
+        }
+
         extract($data);
-        
+
         // Kiểm tra xem View đang gọi có nằm trong thư mục admin không
-        if (strpos($view, 'admin/') === 0) {
+        if ($isAdminView) {
             // Lắp ráp giao diện ADMIN
             require_once '../views/admin/layouts/header.php';
             require_once '../views/' . $view . '.php'; // Đây chính là phần ruột

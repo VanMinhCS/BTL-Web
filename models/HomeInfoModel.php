@@ -43,6 +43,13 @@ class HomeInfoModel extends Model {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             UNIQUE KEY uniq_home_featured_item (item_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        $this->db->exec("CREATE TABLE IF NOT EXISTS home_settings (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            setting_key VARCHAR(100) NOT NULL UNIQUE,
+            setting_value TEXT DEFAULT NULL,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
     }
 
     private function seedDefaults() {
@@ -80,6 +87,28 @@ class HomeInfoModel extends Model {
                 $stmt->execute([(int)$itemId, $index + 1]);
             }
         }
+
+        $logoValue = $this->getSetting('site_logo');
+        if ($logoValue === null) {
+            $this->setSetting('site_logo', 'logo88.png');
+        }
+    }
+
+    public function getSetting($key) {
+        $stmt = $this->db->prepare("SELECT setting_value FROM home_settings WHERE setting_key = ?");
+        $stmt->execute([$key]);
+        $value = $stmt->fetchColumn();
+        return $value !== false ? $value : null;
+    }
+
+    public function setSetting($key, $value) {
+        $stmt = $this->db->prepare("INSERT INTO home_settings (setting_key, setting_value)
+            VALUES (:setting_key, :setting_value)
+            ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
+        return $stmt->execute([
+            ':setting_key' => $key,
+            ':setting_value' => $value,
+        ]);
     }
 
     public function getSections() {

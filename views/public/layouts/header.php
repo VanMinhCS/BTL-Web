@@ -64,13 +64,20 @@
 
 <body class="d-flex flex-column min-vh-100">
 
+<?php
+$siteLogo = $siteLogo ?? ($data['siteLogo'] ?? '');
+$logoSrc = !empty($siteLogo)
+    ? (BASE_URL . 'assets/img/' . $siteLogo)
+    : (BASE_URL . 'assets/img/logo88.png');
+?>
+
 <!-- ===== NAVBAR CHÍNH ===== -->
 <nav class="navbar navbar-expand-lg shadow-sm main-navbar">
     <div class="container">
 
         <!-- LOGO -->
         <a class="navbar-brand d-flex align-items-center gap-2" href="<?php echo BASE_URL; ?>home">
-            <img src="<?php echo BASE_URL; ?>assets/img/logo88.png"
+            <img src="<?php echo $logoSrc; ?>"
                  alt="Logo"
                  height="40"
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">

@@ -1,5 +1,12 @@
 </main>
 
+<?php
+$siteLogo = $siteLogo ?? ($data['siteLogo'] ?? '');
+$logoSrc = !empty($siteLogo)
+    ? (BASE_URL . 'assets/img/' . $siteLogo)
+    : (BASE_URL . 'assets/img/logo88.png');
+?>
+
 <footer class="main-footer pt-5 pb-3 mt-5">
     <div class="container">
         <div class="row g-4">
@@ -8,7 +15,7 @@
             <div class="col-12 col-md-3 mb-4">
                 <div class="d-flex align-items-center gap-2">
                     <!-- Logo ảnh -->
-                    <img src="<?php echo BASE_URL; ?>assets/img/logo88.png"
+                    <img src="<?php echo $logoSrc; ?>"
                          alt="Logo" height="50"
                          onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                     <!-- Fallback text nếu không có logo -->

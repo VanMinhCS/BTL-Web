@@ -611,11 +611,46 @@
         }
     }
 
+    function initLogoSection() {
+        var form = document.querySelector('[data-logo-form]');
+        if (!form) {
+            return;
+        }
+
+        var input = form.querySelector('[data-logo-input]');
+        var preview = form.querySelector('[data-logo-preview]');
+        var nameLabel = form.querySelector('[data-logo-name]');
+        var basePath = preview ? (preview.dataset.logoBase || '') : '';
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            if (input && input.files && input.files.length === 0) {
+                showAlert('Vui lòng chọn ảnh logo.', 'warning');
+                return;
+            }
+            var formData = new FormData(form);
+            handleResponse(requestJson(form.action, { method: 'POST', body: formData }), function (data) {
+                if (data.siteLogo) {
+                    if (preview) {
+                        preview.src = basePath + data.siteLogo + '?t=' + Date.now();
+                    }
+                    if (nameLabel) {
+                        nameLabel.textContent = 'Ảnh hiện tại: ' + data.siteLogo;
+                    }
+                }
+                if (input) {
+                    input.value = '';
+                }
+            });
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         initSectionForms();
         initQuoteSection();
         initReasonSection();
         initProductSection();
         initContactSection();
+        initLogoSection();
     });
 })();

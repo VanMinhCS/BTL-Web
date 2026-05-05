@@ -17,6 +17,7 @@ class InfoController extends Controller {
         $data['editQuote'] = $editQuoteId > 0 ? $model->getQuoteById($editQuoteId) : null;
         $data['editReason'] = $editReasonId > 0 ? $model->getReasonById($editReasonId) : null;
         $data['editProduct'] = $editProductId > 0 ? $model->getFeaturedProductById($editProductId) : null;
+        $data['siteLogo'] = $model->getSetting('site_logo');
 
         $data['title'] = 'Quản lý thông tin Trang chủ';
         $data['pageTitle'] = 'Thiết lập thông tin trang Home';
@@ -164,6 +165,76 @@ class InfoController extends Controller {
                 'message' => 'Đã lưu trích dẫn.'
             ]);
         }
+        header('Location: ' . BASE_URL . 'admin/info');
+        exit;
+    }
+
+    public function saveLogo() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . 'admin/info');
+            exit;
+        }
+
+        if (!isset($_FILES['logo']) || $_FILES['logo']['error'] === UPLOAD_ERR_NO_FILE) {
+            if ($this->isAjax()) {
+                $this->jsonResponse(['success' => false, 'message' => 'Vui lòng chọn ảnh logo.'], 400);
+            }
+            header('Location: ' . BASE_URL . 'admin/info?error=missing');
+            exit;
+        }
+
+        if ($_FILES['logo']['error'] !== UPLOAD_ERR_OK) {
+            if ($this->isAjax()) {
+                $this->jsonResponse(['success' => false, 'message' => 'Tải ảnh lên thất bại.'], 400);
+            }
+            header('Location: ' . BASE_URL . 'admin/info?error=upload');
+            exit;
+        }
+
+        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $originalName = $_FILES['logo']['name'] ?? '';
+        $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        if (!in_array($extension, $allowed, true)) {
+            if ($this->isAjax()) {
+                $this->jsonResponse(['success' => false, 'message' => 'Ảnh không hợp lệ.'], 400);
+            }
+            header('Location: ' . BASE_URL . 'admin/info?error=invalid_image');
+            exit;
+        }
+
+        $baseName = pathinfo($originalName, PATHINFO_FILENAME);
+        $baseName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $baseName);
+        if ($baseName === '') {
+            $baseName = 'logo';
+        }
+
+        $imageName = time() . '_' . $baseName . '.' . $extension;
+        $targetDir = __DIR__ . '/../../public/assets/img/logo/';
+        if (!file_exists($targetDir)) {
+            mkdir($targetDir, 0777, true);
+        }
+        $targetFile = $targetDir . $imageName;
+
+        if (!move_uploaded_file($_FILES['logo']['tmp_name'], $targetFile)) {
+            if ($this->isAjax()) {
+                $this->jsonResponse(['success' => false, 'message' => 'Tải ảnh lên thất bại.'], 400);
+            }
+            header('Location: ' . BASE_URL . 'admin/info?error=upload');
+            exit;
+        }
+
+        $relativePath = 'logo/' . $imageName;
+        $model = $this->model('HomeInfoModel');
+        $model->setSetting('site_logo', $relativePath);
+
+        if ($this->isAjax()) {
+            $this->jsonResponse([
+                'success' => true,
+                'data' => ['siteLogo' => $relativePath],
+                'message' => 'Đã cập nhật logo.'
+            ]);
+        }
+
         header('Location: ' . BASE_URL . 'admin/info');
         exit;
     }

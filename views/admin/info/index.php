@@ -20,10 +20,14 @@ $reasonAction = BASE_URL . 'admin/info/saveReason';
 $reasonDeleteBase = BASE_URL . 'admin/info/deleteReason';
 $productAction = BASE_URL . 'admin/info/saveProduct';
 $productDeleteBase = BASE_URL . 'admin/info/deleteProduct';
+$logoAction = BASE_URL . 'admin/info/saveLogo';
 
 $quoteSection = $sections['quote'] ?? ['is_active' => 1, 'title' => '', 'subtitle' => ''];
 $reasonSection = $sections['reason'] ?? ['is_active' => 1, 'title' => '', 'subtitle' => ''];
 $productSection = $sections['product'] ?? ['is_active' => 1, 'title' => '', 'subtitle' => ''];
+$siteLogo = $data['siteLogo'] ?? '';
+$logoBaseUrl = BASE_URL . 'assets/img/';
+$logoUrl = !empty($siteLogo) ? $logoBaseUrl . $siteLogo : ($logoBaseUrl . 'logo88.png');
 ?>
 
 <style>
@@ -54,6 +58,44 @@ $productSection = $sections['product'] ?? ['is_active' => 1, 'title' => '', 'sub
 <?php endif; ?>
 
 <div class="alert d-none" role="alert" data-info-alert></div>
+
+<div class="card shadow mb-4">
+	<div class="card-header py-3">
+		<button class="home-section-toggle d-flex align-items-center justify-content-between w-100" type="button"
+				data-bs-toggle="collapse" data-bs-target="#homeLogoSection" aria-expanded="true" aria-controls="homeLogoSection">
+			<div class="text-start">
+				<h6 class="m-0 font-weight-bold text-primary">Thiết lập Logo</h6>
+				<span class="text-muted home-section-subtitle">Cập nhật logo hiển thị trên toàn website</span>
+			</div>
+			<i class="fa-solid fa-chevron-down collapse-icon"></i>
+		</button>
+	</div>
+	<div id="homeLogoSection" class="collapse show">
+		<div class="card-body">
+			<form method="POST" action="<?= $logoAction ?>" enctype="multipart/form-data" data-logo-form>
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label class="form-label fw-semibold">Logo hiện tại</label>
+						<div class="d-flex align-items-center gap-3">
+							<img src="<?= htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8'); ?>" alt="Logo" height="60" data-logo-preview data-logo-base="<?= htmlspecialchars($logoBaseUrl, ENT_QUOTES, 'UTF-8'); ?>">
+							<div class="text-muted" data-logo-name>
+								<?= !empty($siteLogo) ? ('Ảnh hiện tại: ' . htmlspecialchars($siteLogo, ENT_QUOTES, 'UTF-8')) : 'Đang dùng logo mặc định.' ?>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label class="form-label fw-semibold">Chọn logo mới</label>
+						<input type="file" name="logo" class="form-control" data-logo-input accept="image/*" required>
+						<div class="text-muted mt-1">Khuyến nghị sử dụng ảnh đã tách nền.</div>
+					</div>
+				</div>
+				<div class="d-flex justify-content-end">
+					<button type="submit" class="btn btn-primary">Cập nhật logo</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 
 <div class="card shadow mb-4">
 	<div class="card-header py-3">
