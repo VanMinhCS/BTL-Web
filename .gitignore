@@ -1,0 +1,15 @@
+# Bỏ qua các file log
+*.log
+
+# Bỏ qua cache
+/cache/
+/tmp/
+
+# Bỏ qua thư viện tải về
+/node_modules/
+/vendor/
+/srtdash-admin-dashboard/
+/imagehover/
+
+# Bỏ qua file cấu hình cục bộ
+.env
