@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 04, 2026 at 10:23 AM
+-- Generation Time: May 05, 2026 at 04:19 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -207,7 +207,7 @@ CREATE TABLE `items` (
 
 INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `description`, `price`, `cost_price`, `item_image`) VALUES
 (1, 'Giải tích 1', 87, 'Giáo trình Giải tích 1', 75000.00, 61000.00, '1777112063_gt1.png'),
-(2, 'Giải tích 2', 99, 'Giáo trình Giải tích 2', 75000.00, 60000.00, '1777212188_gt2.png'),
+(2, 'Giải tích 2', 98, 'Giáo trình Giải tích 2', 75000.00, 60000.00, '1777212188_gt2.png'),
 (3, 'Đại số tuyến tính', 97, 'Giáo trình Đại số tuyến tính', 85000.00, 70000.00, '1777212218_dstt.png'),
 (4, 'Hóa đại cương', 100, 'Giáo trình Hóa đại cương', 100000.00, 85000.00, '1777212252_hdc.png'),
 (5, 'Kỹ thuật Lập trình', 98, 'Giáo trình Kỹ thuật Lập trình', 150000.00, 135000.00, '1777212284_ktlt.png'),
@@ -304,7 +304,8 @@ INSERT INTO `notifications` (`id`, `type`, `user_id`, `notification_comment_id`,
 (67, 'order', 10, NULL, 1, '2026-05-04 06:49:24', NULL, 2),
 (68, 'comment', 5, 18, 1, '2026-05-04 08:00:28', NULL, NULL),
 (69, 'order', 10, NULL, 1, '2026-05-04 08:06:51', NULL, 3),
-(70, 'order', 10, NULL, 1, '2026-05-04 08:07:23', NULL, 4);
+(70, 'order', 10, NULL, 1, '2026-05-04 08:07:23', NULL, 4),
+(71, 'order', 10, NULL, 1, '2026-05-04 12:53:32', NULL, 5);
 
 -- --------------------------------------------------------
 
@@ -362,7 +363,8 @@ INSERT INTO `notification_order` (`id`, `order_id`, `order_status`, `created_at`
 (1, 18, 'chờ xác nhận', '2026-05-04 03:39:53'),
 (2, 19, 'chờ xác nhận', '2026-05-04 06:49:24'),
 (3, 20, 'chờ xác nhận', '2026-05-04 08:06:51'),
-(4, 21, 'chờ xác nhận', '2026-05-04 08:07:23');
+(4, 21, 'chờ xác nhận', '2026-05-04 08:07:23'),
+(5, 22, 'chờ xác nhận', '2026-05-04 12:53:32');
 
 -- --------------------------------------------------------
 
@@ -512,7 +514,8 @@ INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `status`, `is_paid`, 
 (18, 10, '2026-05-04 03:39:53', 3, 1, 22000.00, ''),
 (19, 10, '2026-05-04 06:49:24', 0, 0, 22000.00, ''),
 (20, 10, '2026-05-04 08:06:51', 0, 0, 22000.00, ''),
-(21, 10, '2026-05-04 08:07:23', 0, 0, 22000.00, '');
+(21, 10, '2026-05-04 08:07:23', 1, 0, 22000.00, ''),
+(22, 10, '2026-05-04 12:53:32', 0, 0, 22000.00, '');
 
 -- --------------------------------------------------------
 
@@ -555,7 +558,8 @@ INSERT INTO `order_details` (`detail_id`, `order_id`, `item_id`, `quantity`, `pr
 (20, 19, 1, 1, 75000.00),
 (21, 19, 3, 1, 85000.00),
 (22, 20, 6, 1, 100000.00),
-(23, 21, 5, 1, 150000.00);
+(23, 21, 5, 1, 150000.00),
+(24, 22, 2, 1, 75000.00);
 
 -- --------------------------------------------------------
 
@@ -594,12 +598,21 @@ INSERT INTO `otp` (`otp_id`, `user_id`, `code`, `time_expire`, `is_active`) VALU
 
 CREATE TABLE `product_reviews` (
   `id` int(11) NOT NULL,
-  `item_id` int(11) NOT NULL,
-  `average_rating` decimal(2,1) DEFAULT 0.0,
-  `total_reviews` int(11) DEFAULT 0,
+  `product_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `rating` tinyint(1) NOT NULL DEFAULT 5 COMMENT 'Từ 1 đến 5 sao',
+  `comment` text DEFAULT NULL COMMENT 'Nội dung bình luận, có thể để trống',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `product_reviews`
+--
+
+INSERT INTO `product_reviews` (`id`, `product_id`, `user_id`, `rating`, `comment`, `created_at`, `updated_at`) VALUES
+(1, 9, 10, 5, 'Sách tốt sách tốt', '2026-05-04 13:55:57', '2026-05-04 13:55:57'),
+(2, 9, 8, 4, 'Sách tạm ổn', '2026-05-04 13:57:44', '2026-05-04 13:57:44');
 
 -- --------------------------------------------------------
 
@@ -773,7 +786,7 @@ ALTER TABLE `otp`
 --
 ALTER TABLE `product_reviews`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_review_item` (`item_id`);
+  ADD KEY `fk_review_item` (`product_id`);
 
 --
 -- Indexes for table `review_admin_replies`
@@ -841,7 +854,7 @@ ALTER TABLE `items`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `notification_comment`
@@ -853,7 +866,7 @@ ALTER TABLE `notification_comment`
 -- AUTO_INCREMENT for table `notification_order`
 --
 ALTER TABLE `notification_order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `notification_setting`
@@ -871,13 +884,13 @@ ALTER TABLE `notification_vote_comment`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `order_details`
 --
 ALTER TABLE `order_details`
-  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `otp`
@@ -889,7 +902,7 @@ ALTER TABLE `otp`
 -- AUTO_INCREMENT for table `product_reviews`
 --
 ALTER TABLE `product_reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `review_admin_replies`
@@ -980,7 +993,7 @@ ALTER TABLE `otp`
 -- Constraints for table `product_reviews`
 --
 ALTER TABLE `product_reviews`
-  ADD CONSTRAINT `fk_review_item` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`);
+  ADD CONSTRAINT `fk_review_item` FOREIGN KEY (`product_id`) REFERENCES `items` (`item_id`);
 
 --
 -- Constraints for table `review_admin_replies`
