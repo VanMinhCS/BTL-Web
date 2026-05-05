@@ -13,3 +13,4 @@
 
 # Bỏ qua file cấu hình cục bộ
 .env
+public/assets/srtdash-admin-dashboard
