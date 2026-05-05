@@ -47,12 +47,15 @@ $logoSrc = !empty($siteLogo)
                 <p class="footer-muted small">Đăng ký nhận ưu đãi và tin tức mới nhất từ chúng tôi.</p>
 
                 <!-- Form email -->
-                <div class="newsletter-form d-flex align-items-center mb-4">
-                    <input type="email"
-                           class="newsletter-input flex-grow-1"
-                           placeholder="Nhập email của bạn">
-                    <button class="newsletter-btn">→</button>
-                </div>
+                <form action="<?php echo BASE_URL; ?>contact" method="GET">
+                    <div class="newsletter-form d-flex align-items-center mb-4">
+                        <input type="email"
+                            name="email"
+                            class="newsletter-input flex-grow-1"
+                            placeholder="Nhập email của bạn">
+                        <button class="newsletter-btn" type="submit">→</button>
+                    </div>
+                </form>
 
                 <!-- MẠNG XÃ HỘI (bí quá thì bỏ :)) -->
                 <div class="social-icons d-flex gap-3">

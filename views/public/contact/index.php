@@ -50,8 +50,9 @@
                             <input type="text" class="form-control" name="customer_name" placeholder="VD: Nguyễn Văn A" required>
                         </div>
                         <div class="col-md-6 mt-3 mt-md-0">
+                            <?php $prefillEmail = htmlspecialchars($_GET['email'] ?? ''); ?>
                             <label class="form-label fw-semibold">Địa chỉ Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" name="customer_email" placeholder="email@domain.com" required>
+                            <input type="email" class="form-control" name="customer_email" placeholder="email@domain.com" value="<?= $prefillEmail ?>" required>
                         </div>
                     </div>
 
