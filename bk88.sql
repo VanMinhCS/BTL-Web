@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `articles` (
   PRIMARY KEY (`id_article`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table bk88.articles: ~1 rows (approximately)
+-- Dumping data for table bk88.articles: ~0 rows (approximately)
 INSERT INTO `articles` (`id_article`, `title`, `description`, `time_modified`, `status`, `content`, `background`) VALUES
 	(1, 'Bài viết mẫu BK88', 'Giới thiệu', '2026-05-03 11:35:38', 1, 'Nội dung thử nghiệm...', '../../assets/img/mountain.jpg');
 
@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS `contact_info_fields` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table bk88.contact_info_fields: ~4 rows (approximately)
+-- Dumping data for table bk88.contact_info_fields: ~0 rows (approximately)
 INSERT INTO `contact_info_fields` (`id`, `label`, `value`, `icon`, `sort_order`, `is_active`, `updated_at`) VALUES
 	(5, 'Bruh', 'Wait for me', '', 1, 0, '2026-05-04 16:58:26'),
 	(8, 'Địa chỉ', '123 Ngô Quyền', '', 0, 1, '2026-05-04 16:57:28'),
@@ -279,6 +279,20 @@ INSERT INTO `home_sections` (`id`, `section_key`, `title`, `subtitle`, `is_activ
 	(1, 'quote', 'Quote', NULL, 1, '2026-05-04 15:11:56'),
 	(2, 'reason', 'Tại sao lại chọn chúng tôi?', 'Những giá trị cốt lõi mà BK88 mang lại cho bạn.', 1, '2026-05-04 16:02:51'),
 	(3, 'product', 'Một số sản phẩm tiêu biểu', 'Tham khảo một số giáo trình tiêu biểu của chúng tôi', 1, '2026-05-04 15:11:56');
+
+-- Dumping structure for table bk88.home_settings
+CREATE TABLE IF NOT EXISTS `home_settings` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `setting_key` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `setting_value` text COLLATE utf8mb4_unicode_ci,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `setting_key` (`setting_key`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table bk88.home_settings: ~1 rows (approximately)
+INSERT INTO `home_settings` (`id`, `setting_key`, `setting_value`, `updated_at`) VALUES
+	(1, 'site_logo', 'logo88.png', '2026-05-05 09:34:15');
 
 -- Dumping structure for table bk88.information
 CREATE TABLE IF NOT EXISTS `information` (
@@ -457,7 +471,7 @@ CREATE TABLE IF NOT EXISTS `notification_vote_comment` (
   CONSTRAINT `notification_vote_comment_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id_article`)
 ) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table bk88.notification_vote_comment: ~47 rows (approximately)
+-- Dumping data for table bk88.notification_vote_comment: ~0 rows (approximately)
 INSERT INTO `notification_vote_comment` (`id`, `comment_id`, `article_id`, `vote_type`, `created_at`) VALUES
 	(1, 68, 1, 'like', '2026-04-17 10:27:50'),
 	(2, 68, 1, 'dislike', '2026-04-17 10:28:19'),
@@ -520,7 +534,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table bk88.orders: ~9 rows (approximately)
+-- Dumping data for table bk88.orders: ~0 rows (approximately)
 INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `status`, `is_paid`, `shipping_fee`) VALUES
 	(1, 8, '2026-04-26 04:46:43', 4, 0, 22000.00),
 	(2, 8, '2026-04-26 04:47:18', 3, 1, 0.00),
@@ -546,7 +560,7 @@ CREATE TABLE IF NOT EXISTS `order_details` (
   CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table bk88.order_details: ~9 rows (approximately)
+-- Dumping data for table bk88.order_details: ~0 rows (approximately)
 INSERT INTO `order_details` (`detail_id`, `order_id`, `item_id`, `quantity`, `price`) VALUES
 	(1, 1, 1, 1, 75000.00),
 	(2, 2, 1, 1, 75000.00),
@@ -570,7 +584,7 @@ CREATE TABLE IF NOT EXISTS `otp` (
   CONSTRAINT `otp_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table bk88.otp: ~8 rows (approximately)
+-- Dumping data for table bk88.otp: ~0 rows (approximately)
 INSERT INTO `otp` (`otp_id`, `user_id`, `code`, `time_expire`, `is_active`) VALUES
 	(1, 1, '123456', '2026-04-13 10:00:00', 0),
 	(2, 2, '654321', '2026-04-13 10:00:00', 0),
