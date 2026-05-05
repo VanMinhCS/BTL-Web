@@ -39,7 +39,9 @@ class Router {
             $controller = new $controllerName();
             $controller->$method();
         } else {
-            die("Trang không tồn tại: " . $controllerFile);
+            http_response_code(404);  // set HTTP status code đúng chuẩn
+            require_once __DIR__ . '/../views/public/error/404.php';
+            exit;
         }
     }
 }
