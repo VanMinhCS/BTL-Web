@@ -134,9 +134,7 @@
 
       <!-- Cấu trúc nội dung -->
       <span class="ql-formats">
-        <button class="ql-list" value="ordered"></button>
         <button class="ql-list" value="bullet"></button>
-        <button class="ql-list" value="check"></button>
       </span>
       <span class="ql-formats">
         <button class="ql-link"></button>
@@ -146,9 +144,6 @@
       <span class="ql-formats">
         <button class="ql-script" value="sub"></button>
         <button class="ql-script" value="super"></button>
-      </span>
-      <span class="ql-formats">
-        <button class="ql-clean"></button>
       </span>
     </div>
 

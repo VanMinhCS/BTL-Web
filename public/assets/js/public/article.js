@@ -2,11 +2,11 @@
 const urlParams = new URLSearchParams(window.location.search);
 const articleId = urlParams.get("id"); // sẽ là "1" trong ví dụ
 
-let userRole = "member"; // mặc định
+let userRole = "member"; 
 const perPage = 5;
 let currentPage = 1;
 let sortType = "newest";
-let comments = [];   // thêm dòng này
+let comments = [];  
 
 function fetchUserRole() {
   fetch("/article/getRole")
@@ -143,21 +143,48 @@ function renderComments() {
 function renderPagination(total) {
   const ul = document.getElementById("commentPagination");
   ul.innerHTML = "";
-  const pages = Math.ceil(total/perPage);
-  for(let i=1;i<=pages;i++){
+  const pages = Math.ceil(total / perPage);
+
+  // Hàm tạo item trang
+  function appendPageItem(i) {
     const li = document.createElement("li");
-    li.className = "page-item"+(i===currentPage?" active":"");
+    li.className = "page-item" + (i === currentPage ? " active" : "");
     li.innerHTML = `<a class="page-link" href="javascript:void(0)">${i}</a>`;
-    li.addEventListener("click", ()=>{
+    li.addEventListener("click", () => {
       currentPage = i;
       const url = new URL(window.location);
       url.searchParams.delete("comment");
       url.searchParams.set("page", i);
       window.history.pushState({}, "", url);
-
-      loadComments(i); // gọi lại API để lấy dữ liệu mới
+      loadComments(i);
     });
     ul.appendChild(li);
+  }
+
+  // Hàm tạo dấu ...
+  function appendDots() {
+    const li = document.createElement("li");
+    li.className = "page-item disabled";
+    li.innerHTML = `<span class="page-link">...</span>`;
+    ul.appendChild(li);
+  }
+
+  if (pages <= 3) {
+    // Nếu tổng số trang <= 3 thì hiện hết
+    for (let i = 1; i <= pages; i++) appendPageItem(i);
+  } else {
+    appendPageItem(1); // trang đầu
+
+    if (currentPage > 2) appendDots();
+
+    // hiện trang hiện tại và lân cận
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(pages - 1, currentPage + 1);
+    for (let i = start; i <= end; i++) appendPageItem(i);
+
+    if (currentPage < pages - 1) appendDots();
+
+    appendPageItem(pages); // trang cuối
   }
 }
 
@@ -228,16 +255,18 @@ async function sendVote(commentId, voteType) {
       body: `comment_id=${commentId}&vote=${voteType}`
     });
 
-    const text = await response.text();
-    console.log("Raw response:", text);
+    const data = await response.json();
 
-    const data = JSON.parse(text);
+    if (data.redirect) {
+      window.location.href = data.redirect;
+      return;
+    }
 
     if (data.success) {
       const c = comments.find(x => x.id == commentId);
       c.likes = data.likes;
       c.dislikes = data.dislikes;
-      c.userVote = data.userVote; // lấy từ server, có thể null/like/dislike
+      c.userVote = data.userVote;
       renderComments();
     } else {
       console.error("Vote lỗi:", data.error);
@@ -276,7 +305,6 @@ document.addEventListener("click", e => {
     if(targetComment){
       targetComment.scrollIntoView({behavior:"smooth"});
     } else {
-      // Nếu comment nằm ở trang khác
       window.location.href = `/article?id=${articleId}&comment=${targetId}`;
     }
   }
@@ -336,8 +364,12 @@ document.addEventListener("click", async e => {
         })
         .then(res => res.json())
         .then(data => {
+          if(data.redirect){
+            window.location.href = data.redirect;
+            return;
+          }
           if(data.success){
-            comments.push(data.comment); // thêm phản hồi vào mảng
+            comments.push(data.comment); 
             renderComments();
           } else {
             alert(data.error);
@@ -346,6 +378,7 @@ document.addEventListener("click", async e => {
       }
     });
 
+
     cancelBtn.addEventListener("click", () => {
       // Xóa textarea và nút đi
       textarea.remove();
@@ -353,8 +386,6 @@ document.addEventListener("click", async e => {
       cancelBtn.remove();
     });
   }
-
-
 });
 
 document.addEventListener("click", e => {
@@ -364,7 +395,6 @@ document.addEventListener("click", e => {
     const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
     const textP = commentDiv.querySelector("p.mb-2");
 
-    // thay nội dung bằng textarea
     const oldText = textP.textContent;
     textP.innerHTML = `
       <textarea class="form-control edit-textarea">${oldText}</textarea>
@@ -373,7 +403,6 @@ document.addEventListener("click", e => {
     `;
     textP.querySelector(".edit-textarea").focus();
   }
-
 
   if(e.target.classList.contains("save-edit")){
     const commentId = e.target.dataset.id;
@@ -389,8 +418,21 @@ document.addEventListener("click", e => {
     .then(res => res.json())
     .then(data => {
       if(data.success){
-        // cập nhật lại giao diện
-        commentDiv.querySelector("p.mb-2").textContent = data.comment.text;
+        // cập nhật dữ liệu trong mảng comments
+        const idx = comments.findIndex(c => c.id == commentId);
+        if(idx !== -1){
+          comments[idx].text = data.comment.text;
+          comments[idx].isEdited = data.comment.isEdited;
+        }
+
+        // render lại danh sách
+        renderComments();
+
+        // cuộn đến comment vừa chỉnh sửa
+        const target = document.querySelector(`#comment-${commentId}`);
+        if(target){
+          target.scrollIntoView({behavior:"smooth"});
+        }
       } else {
         alert("Không thể chỉnh sửa");
       }
@@ -401,7 +443,7 @@ document.addEventListener("click", e => {
     const commentId = e.target.dataset.id;
     const commentDiv = document.querySelector(`[data-comment-id="${commentId}"]`);
     const textarea = commentDiv.querySelector(".edit-textarea");
-    const oldText = textarea.value;
+    const oldText = textarea.defaultValue;
     commentDiv.querySelector("p.mb-2").textContent = oldText;
   }
 });
@@ -435,21 +477,23 @@ document.addEventListener("DOMContentLoaded", fetchArticle);
 
 document.getElementById("commentForm").addEventListener("submit", async e => {
   e.preventDefault();
-  if (userRole === "guest") return;
 
   const textarea = e.target.querySelector("textarea");
   const text = textarea.value.trim();
   if (text) {
     try {
-      const response = await fetch("http://localhost:8080/article/addComment", {
+      const response = await fetch("/article/addComment", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `article_id=${articleId}&text=${encodeURIComponent(text)}`
       });
 
-      const raw = await response.text();
-      console.log("Raw response:", raw);
-      const data = JSON.parse(raw);
+      const data = await response.json();
+
+      if (data.redirect) {
+        window.location.href = data.redirect;
+        return;
+      }
 
       if (data.success) {
         comments.unshift(data.comment); 

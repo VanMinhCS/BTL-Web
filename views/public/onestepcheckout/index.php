@@ -188,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCheckoutState() {
         if (deliveryStore.checked) {
-            // Nhận tại cửa hàng -> Phí ship = 0
             if (shippingMethodCard) shippingMethodCard.style.display = 'none'; 
             if (shippingFeeRow) {
                 shippingFeeRow.classList.remove('d-flex');
@@ -196,8 +195,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             totalPriceDisplay.innerText = formatCurrency(subTotal);
             totalAmountInput.value = subTotal;
+            
+            document.getElementById('shippingStandard').value = 0; 
+            
         } else {
-            // Giao tận nơi -> Phí ship = 22.000
             if (shippingMethodCard) shippingMethodCard.style.display = 'block'; 
             if (shippingFeeRow) {
                 shippingFeeRow.classList.remove('d-none');
@@ -205,6 +206,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             totalPriceDisplay.innerText = formatCurrency(subTotal + shippingFee);
             totalAmountInput.value = subTotal + shippingFee;
+
+            document.getElementById('shippingStandard').value = 22000; 
         }
     }
 
@@ -212,6 +215,23 @@ document.addEventListener('DOMContentLoaded', function() {
         deliveryHome.addEventListener('change', updateCheckoutState);
         deliveryStore.addEventListener('change', updateCheckoutState);
         updateCheckoutState();
+    }
+
+    // --- CHẶN SỰ KIỆN ENTER TỰ ĐỘNG SUBMIT FORM ---
+    const checkoutForm = document.querySelector('form[action*="processOrder"]');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('keydown', function(event) {
+            // Kiểm tra xem phím nhấn có phải là Enter không
+            if (event.key === 'Enter') {
+                // Cho phép Enter hoạt động bình thường nếu đang ở trong thẻ textarea (Ghi chú)
+                if (event.target.tagName.toLowerCase() === 'textarea') {
+                    return; // Thoát khỏi hàm, không chặn
+                }
+                
+                // Nếu không phải textarea, chặn hành vi submit mặc định
+                event.preventDefault();
+            }
+        });
     }
 });
 </script>

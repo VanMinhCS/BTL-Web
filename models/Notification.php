@@ -7,6 +7,7 @@ class Notification extends Model {
     private $user_id;
     private $notification_comment_id;
     private $notification_vote_comment_id;
+    private $notification_order_id; // BỔ SUNG CỘT CHO ĐƠN HÀNG
     private $is_read;
     private $created_at;
 
@@ -25,6 +26,10 @@ class Notification extends Model {
     public function getNotificationVoteCommentId() { return $this->notification_vote_comment_id; }
     public function setNotificationVoteCommentId($id) { $this->notification_vote_comment_id = $id; }
 
+    // GETTER & SETTER CHO ĐƠN HÀNG
+    public function getNotificationOrderId() { return $this->notification_order_id; }
+    public function setNotificationOrderId($id) { $this->notification_order_id = $id; }
+
     public function getIsRead() { return $this->is_read; }
     public function setIsRead($isRead) { $this->is_read = $isRead; }
 
@@ -41,6 +46,7 @@ class Notification extends Model {
             $this->user_id                     = $result['user_id'];
             $this->notification_comment_id     = $result['notification_comment_id'];
             $this->notification_vote_comment_id= $result['notification_vote_comment_id'];
+            $this->notification_order_id       = $result['notification_order_id']; // CẬP NHẬT
             $this->is_read                     = $result['is_read'];
             $this->created_at                  = $result['created_at'];
         }
@@ -48,14 +54,15 @@ class Notification extends Model {
 
     public function create() {
         $stmt = $this->getDb()->prepare(
-            "INSERT INTO notifications (type, user_id, notification_comment_id, notification_vote_comment_id, is_read) 
-             VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO notifications (type, user_id, notification_comment_id, notification_vote_comment_id, notification_order_id, is_read) 
+             VALUES (?, ?, ?, ?, ?, ?)"
         );
         $success = $stmt->execute([
             $this->type,
             $this->user_id,
             $this->notification_comment_id,
             $this->notification_vote_comment_id,
+            $this->notification_order_id, // CẬP NHẬT
             $this->is_read
         ]);
         if ($success) {
@@ -67,7 +74,7 @@ class Notification extends Model {
     public function update() {
         $stmt = $this->getDb()->prepare(
             "UPDATE notifications 
-             SET type=?, user_id=?, notification_comment_id=?, notification_vote_comment_id=?, is_read=? 
+             SET type=?, user_id=?, notification_comment_id=?, notification_vote_comment_id=?, notification_order_id=?, is_read=? 
              WHERE id=?"
         );
         return $stmt->execute([
@@ -75,6 +82,7 @@ class Notification extends Model {
             $this->user_id,
             $this->notification_comment_id,
             $this->notification_vote_comment_id,
+            $this->notification_order_id, // CẬP NHẬT
             $this->is_read,
             $this->id
         ]);
@@ -84,8 +92,218 @@ class Notification extends Model {
         $stmt = $this->getDb()->prepare("DELETE FROM notifications WHERE id=?");
         return $stmt->execute([$this->id]);
     }
+
+    public function getUnread($limit = 3) {
+        // Đã cập nhật LEFT JOIN với bảng notification_order
+        $sql = "
+            SELECT n.id, n.type, n.created_at,
+                n.notification_comment_id,
+                n.notification_vote_comment_id,
+                n.notification_order_id,
+                nc.article_id, nc.comment_id, nc.content AS message,
+                vc.article_id AS vote_article_id, vc.comment_id AS vote_comment_id, vc.vote_type,
+                no.order_id AS notify_order_id, no.order_status,
+                i.user_id AS id_user, i.firstname, i.lastname
+            FROM notifications n
+            LEFT JOIN notification_comment nc 
+                ON n.notification_comment_id = nc.id
+            LEFT JOIN notification_vote_comment vc 
+                ON n.notification_vote_comment_id = vc.id
+            LEFT JOIN notification_order no 
+                ON n.notification_order_id = no.id
+            LEFT JOIN information i 
+                ON n.user_id = i.user_id
+            WHERE n.is_read = 0
+            ORDER BY n.created_at DESC
+            LIMIT ?
+        ";
+        $stmt = $this->getDb()->prepare($sql);
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAllUnread() {
+        $adminId = $_SESSION['user_id'] ?? 0;
+
+        $setting = new NotificationSetting();
+        $setting->loadByAdminId($adminId);
+
+        if ($setting->getIsEnabled() == 0) {
+            return 0;
+        }
+
+        $types = [];
+        if ($setting->getEnableComment()) $types[] = "'comment'";
+        if ($setting->getEnableReply())   $types[] = "'reply_comment'";
+        if ($setting->getEnableEdit())    $types[] = "'edit_comment'";
+        if ($setting->getEnableVote())    $types[] = "'vote_comment'";
+        if ($setting->getEnableOrder())   $types[] = "'order'";
+
+        if (empty($types)) {
+            return 0;
+        }
+
+        // Ghép vào SQL
+        $sql = "SELECT COUNT(*) 
+                FROM notifications 
+                WHERE is_read = 0 
+                AND type IN (" . implode(",", $types) . ")";
+        $stmt = $this->getDb()->query($sql);
+        return (int)$stmt->fetchColumn();
+    }
+
+    public function getAll($page = 1, $itemsPerPage = 5, $keyword = "", $status = "", $type = "", $sort = "desc") {
+        $offset = ($page - 1) * $itemsPerPage;
+        // Đã cập nhật LEFT JOIN với bảng notification_order
+        $sql = "
+            SELECT n.id, n.type, n.created_at, n.is_read,
+                nc.article_id, nc.comment_id,
+                vc.article_id AS vote_article_id, vc.comment_id AS vote_comment_id,
+                no.order_id AS notify_order_id, no.order_status,
+                i.user_id AS id_user, i.firstname, i.lastname
+            FROM notifications n
+            LEFT JOIN notification_comment nc ON n.notification_comment_id = nc.id
+            LEFT JOIN notification_vote_comment vc ON n.notification_vote_comment_id = vc.id
+            LEFT JOIN notification_order no ON n.notification_order_id = no.id
+            LEFT JOIN information i ON n.user_id = i.user_id
+            WHERE 1=1
+        ";
+
+        $params = [];
+
+        if ($status === "read") {
+            $sql .= " AND n.is_read = 1";
+        } elseif ($status === "unread") {
+            $sql .= " AND n.is_read = 0";
+        }
+
+        if ($type !== "") {
+            $sql .= " AND n.type = ?";
+            $params[] = $type;
+        }
+
+        // Cập nhật tính năng tìm kiếm cho phép gõ mã đơn hàng (Ví dụ: gõ "105" sẽ ra mã đơn 105)
+        if ($keyword !== "") {
+            $sql .= " AND (
+                i.firstname LIKE ? 
+                OR i.lastname LIKE ? 
+                OR n.type LIKE ? 
+                OR nc.article_id LIKE ? 
+                OR nc.comment_id LIKE ?
+                OR no.order_id LIKE ?
+            )";
+            $kw = "%$keyword%";
+            $params[] = $kw;
+            $params[] = $kw;
+            $params[] = $kw;
+            $params[] = $kw;
+            $params[] = $kw;
+            $params[] = $kw;
+        }
+
+        $sql .= " ORDER BY n.created_at " . ($sort === "asc" ? "ASC" : "DESC");
+        $sql .= " LIMIT ? OFFSET ?";
+        $params[] = $itemsPerPage;
+        $params[] = $offset;
+
+        $stmt = $this->getDb()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAll($keyword = "") {
+        $sql = "SELECT COUNT(*) FROM notifications";
+        $stmt = $this->getDb()->query($sql);
+        $count = (int)$stmt->fetchColumn();
+
+        if ($keyword !== "") {
+            $all = $this->getAll(1, $count, $keyword);
+            return count($all);
+        }
+        return $count;
+    }
+
+    public function markAsRead($id) {
+        $stmt = $this->getDb()->prepare("UPDATE notifications SET is_read = 1 WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public function markAllAsRead() {
+        $stmt = $this->getDb()->prepare("UPDATE notifications SET is_read = 1");
+        return $stmt->execute();
+    }
+
+    private function getUserFullName($userId) {
+        $stmt = $this->getDb()->prepare("SELECT firstname, lastname FROM information WHERE user_id=?");
+        $stmt->execute([$userId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            return trim($row['lastname'] . ' ' . $row['firstname']);
+        }
+        return "Khách hàng #$userId";
+    }
+    
+    private function getArticleIdFromComment($commentId) {
+        $stmt = $this->getDb()->prepare("SELECT article_id FROM notification_comment WHERE id=?");
+        $stmt->execute([$commentId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $row['article_id'] : null;
+    }
+
+    private function getArticleIdFromVote($voteId) {
+        $stmt = $this->getDb()->prepare("SELECT article_id FROM notification_vote_comment WHERE id=?");
+        $stmt->execute([$voteId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $row['article_id'] : null;
+    }
+
+    public function map($notification) {
+        $userName = $this->getUserFullName($notification['id_user']);
+        $articleId = null;
+
+        if (!empty($notification['notification_comment_id'])) {
+            $articleId = $this->getArticleIdFromComment($notification['notification_comment_id']);
+        }
+        if (!empty($notification['notification_vote_comment_id'])) {
+            $articleId = $this->getArticleIdFromVote($notification['notification_vote_comment_id']);
+        }
+
+        switch ($notification['type']) {
+            case 'comment':
+                return "$userName đã bình luận bài viết $articleId";
+            case 'reply_comment':
+                return "$userName đã phản hồi bình luận trong bài viết $articleId";
+            case 'edit_comment':
+                return "$userName đã chỉnh sửa bình luận trong bài viết $articleId";
+            case 'vote_comment':
+                return "$userName đã bình chọn bình luận trong bài viết $articleId";
+            case 'order':
+                // Xử lý chuỗi thông báo dựa trên trạng thái của đơn hàng
+                $statusText = $notification['order_status'] ?? 'mới';
+                return "<strong>$userName</strong> vừa tạo một đơn hàng $statusText (Mã: #{$notification['notify_order_id']})";
+            default:
+                return "$userName có hoạt động mới trong hệ thống.";
+        }
+    }
+
+    public function deleteNotifications($ids) {
+        if (empty($ids)) return false;
+        $in  = str_repeat('?,', count($ids) - 1) . '?';
+        $sql = "DELETE FROM notifications WHERE id IN ($in)";
+        $stmt = $this->getDb()->prepare($sql);
+        return $stmt->execute($ids);
+    }
+
+    public function markAsReadMultiple($ids) {
+        if (empty($ids)) return false;
+        $in  = str_repeat('?,', count($ids) - 1) . '?';
+        $sql = "UPDATE notifications SET is_read = 1 WHERE id IN ($in)";
+        $stmt = $this->getDb()->prepare($sql);
+        return $stmt->execute($ids);
+    }
 }
 
+// BỘ CÁC CLASS LIÊN QUAN TỚI THÔNG BÁO COMMENT GIỮ NGUYÊN (Không đổi)
 class NotificationComment extends Model {
     private $id;
     private $article_id;
@@ -96,19 +314,14 @@ class NotificationComment extends Model {
 
     public function getId() { return $this->id; }
     public function setId($id) { $this->id = $id; $this->loadById($id); }
-
     public function getArticleId() { return $this->article_id; }
     public function setArticleId($id) { $this->article_id = $id; }
-
     public function getCommentId() { return $this->comment_id; }
     public function setCommentId($id) { $this->comment_id = $id; }
-
     public function getContent() { return $this->content; }
     public function setContent($content) { $this->content = $content; }
-
     public function getReplied() { return $this->replied; }
     public function setReplied($reply) { $this->replied = $reply; }
-
     public function getCreatedAt() { return $this->created_at; }
     public function setCreatedAt($date) { $this->created_at = $date; }
 
@@ -159,16 +372,12 @@ class NotificationVoteComment extends Model {
 
     public function getId() { return $this->id; }
     public function setId($id) { $this->id = $id; $this->loadById($id); }
-
     public function getCommentId() { return $this->comment_id; }
     public function setCommentId($id) { $this->comment_id = $id; }
-
     public function getArticleId() { return $this->article_id; }
     public function setArticleId($id) { $this->article_id = $id; }
-
     public function getVoteType() { return $this->vote_type; }
     public function setVoteType($type) { $this->vote_type = $type; }
-
     public function getCreatedAt() { return $this->created_at; }
     public function setCreatedAt($date) { $this->created_at = $date; }
 
@@ -208,3 +417,174 @@ class NotificationVoteComment extends Model {
         return $stmt->execute([$this->id]);
     }
 }
+
+class NotificationSetting extends Model {
+    private $id;          
+    private $admin_id;    
+    private $is_enabled;  
+    private $enable_comment;
+    private $enable_reply;
+    private $enable_edit;
+    private $enable_vote;
+    
+    private $enable_order;
+
+    public function getId() { return $this->id; }
+    public function setId($id) { 
+        $this->id = $id; 
+        $this->loadById($id); 
+    }
+    public function getAdminId() { return $this->admin_id; }
+    public function setAdminId($adminId) { $this->admin_id = $adminId; }
+    public function getIsEnabled() { return $this->is_enabled; }
+    public function setIsEnabled($enabled) { $this->is_enabled = $enabled; }
+    public function getEnableComment() { return $this->enable_comment; }
+    public function setEnableComment($val) { $this->enable_comment = $val; }
+    public function getEnableReply() { return $this->enable_reply; }
+    public function setEnableReply($val) { $this->enable_reply = $val; }
+    public function getEnableEdit() { return $this->enable_edit; }
+    public function setEnableEdit($val) { $this->enable_edit = $val; }
+    public function getEnableVote() { return $this->enable_vote; }
+    public function setEnableVote($val) { $this->enable_vote = $val; }
+    public function getEnableOrder() { return $this->enable_order; }
+    public function setEnableOrder($val) { $this->enable_order = $val; }
+
+    private function loadById($id) {
+        $stmt = $this->getDb()->prepare("SELECT * FROM notification_setting WHERE setting_id=?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $this->id             = $result['setting_id'];
+            $this->admin_id       = $result['admin_id'];
+            $this->is_enabled     = $result['is_enabled'];
+            $this->enable_comment = $result['enable_comment'];
+            $this->enable_reply   = $result['enable_reply'];
+            $this->enable_edit    = $result['enable_edit'];
+            $this->enable_vote    = $result['enable_vote'];
+            // --- BỔ SUNG: Tải dữ liệu cài đặt đơn hàng ---
+            $this->enable_order   = $result['enable_order'] ?? 1;
+        }
+    }
+
+    public function loadByAdminId($adminId) {
+        $stmt = $this->getDb()->prepare("SELECT * FROM notification_setting WHERE admin_id=?");
+        $stmt->execute([$adminId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $this->id             = $result['setting_id'];
+            $this->admin_id       = $result['admin_id'];
+            $this->is_enabled     = $result['is_enabled'];
+            $this->enable_comment = $result['enable_comment'];
+            $this->enable_reply   = $result['enable_reply'];
+            $this->enable_edit    = $result['enable_edit'];
+            $this->enable_vote    = $result['enable_vote'];
+            // --- BỔ SUNG: Tải dữ liệu cài đặt đơn hàng ---
+            $this->enable_order   = $result['enable_order'] ?? 1;
+            return true;
+        }
+        return false;
+    }
+
+    public function create() {
+        // --- CẬP NHẬT: Thêm enable_order vào câu lệnh INSERT ---
+        $stmt = $this->getDb()->prepare(
+            "INSERT INTO notification_setting (admin_id, is_enabled, enable_comment, enable_reply, enable_edit, enable_vote, enable_order) 
+             VALUES (?, ?, ?, ?, ?, ?, ?)"
+        );
+        $success = $stmt->execute([
+            $this->admin_id,
+            $this->is_enabled,
+            $this->enable_comment,
+            $this->enable_reply,
+            $this->enable_edit,
+            $this->enable_vote,
+            $this->enable_order // Truyền giá trị vào DB
+        ]);
+        if ($success) {
+            $this->id = $this->getDb()->lastInsertId();
+        }
+        return $success;
+    }
+
+    public function update() {
+        // --- CẬP NHẬT: Thêm enable_order vào câu lệnh UPDATE ---
+        $stmt = $this->getDb()->prepare(
+            "UPDATE notification_setting 
+             SET admin_id=?, is_enabled=?, enable_comment=?, enable_reply=?, enable_edit=?, enable_vote=?, enable_order=? 
+             WHERE setting_id=?"
+        );
+        return $stmt->execute([
+            $this->admin_id,
+            $this->is_enabled,
+            $this->enable_comment,
+            $this->enable_reply,
+            $this->enable_edit,
+            $this->enable_vote,
+            $this->enable_order, // Truyền giá trị cập nhật vào DB
+            $this->id
+        ]);
+    }
+
+    public function delete() {
+        $stmt = $this->getDb()->prepare("DELETE FROM notification_setting WHERE setting_id=?");
+        return $stmt->execute([$this->id]);
+    }
+}
+
+// =========================================================
+// BỔ SUNG CLASS MỚI: DÀNH CHO CHI TIẾT THÔNG BÁO ĐƠN HÀNG
+// =========================================================
+class NotificationOrder extends Model {
+    private $id;
+    private $order_id;
+    private $order_status;
+    private $created_at;
+
+    public function getId() { return $this->id; }
+    public function setId($id) { $this->id = $id; $this->loadById($id); }
+
+    public function getOrderId() { return $this->order_id; }
+    public function setOrderId($id) { $this->order_id = $id; }
+
+    public function getOrderStatus() { return $this->order_status; }
+    public function setOrderStatus($status) { $this->order_status = $status; }
+
+    public function getCreatedAt() { return $this->created_at; }
+    public function setCreatedAt($date) { $this->created_at = $date; }
+
+    private function loadById($id) {
+        $stmt = $this->getDb()->prepare("SELECT * FROM notification_order WHERE id=?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $this->id           = $result['id'];
+            $this->order_id     = $result['order_id'];
+            $this->order_status = $result['order_status'];
+            $this->created_at   = $result['created_at'];
+        }
+    }
+
+    public function create() {
+        $stmt = $this->getDb()->prepare(
+            "INSERT INTO notification_order (order_id, order_status) VALUES (?, ?)"
+        );
+        $success = $stmt->execute([$this->order_id, $this->order_status]);
+        if ($success) {
+            $this->id = $this->getDb()->lastInsertId();
+        }
+        return $success;
+    }
+
+    public function update() {
+        $stmt = $this->getDb()->prepare(
+            "UPDATE notification_order SET order_id=?, order_status=? WHERE id=?"
+        );
+        return $stmt->execute([$this->order_id, $this->order_status, $this->id]);
+    }
+
+    public function delete() {
+        $stmt = $this->getDb()->prepare("DELETE FROM notification_order WHERE id=?");
+        return $stmt->execute([$this->id]);
+    }
+}
+?>

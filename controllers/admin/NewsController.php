@@ -32,31 +32,7 @@ class NewsController extends Controller {
             die("View không tồn tại: " . $fullPath);
         }
     }
-
-    public function getArticles() {
-        require_once __DIR__ . "/../../models/Article.php";
-        $articleModel = new Article();
-
-        $rows = $articleModel->getAllArticles();
-
-        header('Content-Type: application/json; charset=utf-8');
-        if ($rows) {
-            $articles = [];
-            foreach ($rows as $row) {
-                $articles[] = [
-                    "id"          => $row['id_article'],
-                    "title"       => $row['title'],
-                    "description" => $row['description'],
-                    "time_modified" => $row['time_modified'],
-                    "status"      => (int)$row['status']
-                ];
-            }
-            echo json_encode($articles);
-        } else {
-            echo json_encode([]);
-        }
-    }
-
+    
     public function getNews() {
         require_once __DIR__ . "/../../models/Article.php";
         $articleModel = new Article();
@@ -161,4 +137,128 @@ class NewsController extends Controller {
             ]);
         }
     }
+
+    public function toggleNotification() {
+        require_once __DIR__ . "/../../models/Notification.php";
+        $adminId = $_SESSION['user_id'] ?? 0;
+        $enabled = intval($_POST['is_enabled']); // 1 hoặc 0
+
+        $setting = new NotificationSetting();
+        // kiểm tra xem đã có bản ghi chưa
+        if ($setting->loadByAdminId($adminId)) {
+            // đã có -> update
+            $setting->setIsEnabled($enabled);
+            $success = $setting->update();
+        } else {
+            // chưa có -> create
+            $setting->setAdminId($adminId);
+            $setting->setIsEnabled($enabled);
+            $success = $setting->create();
+        }
+
+        echo json_encode(["success" => $success, "is_enabled" => $enabled]);
+    }
+
+    public function updateNotificationSettings() {
+        require_once __DIR__ . "/../../models/Notification.php";        
+        $adminId = $_SESSION['user_id'] ?? 0;
+        if (!$adminId) {
+            echo json_encode(["success" => false]);
+            return;
+        }
+        $model = new NotificationSetting();
+        if (!$model->loadByAdminId($adminId)) {
+            // chưa có thì tạo mới
+            $model->setAdminId($adminId);
+            $model->setIsEnabled($_POST['enable_notifications'] ?? 0);
+            $model->setEnableComment($_POST['enable_comment'] ?? 0);
+            $model->setEnableReply($_POST['enable_reply'] ?? 0);
+            $model->setEnableEdit($_POST['enable_edit'] ?? 0);
+            $model->setEnableVote($_POST['enable_vote'] ?? 0);
+            $success = $model->create();
+        } else {
+            // có rồi thì update
+            $model->setIsEnabled($_POST['enable_notifications'] ?? 0);
+            $model->setEnableComment($_POST['enable_comment'] ?? 0);
+            $model->setEnableReply($_POST['enable_reply'] ?? 0);
+            $model->setEnableEdit($_POST['enable_edit'] ?? 0);
+            $model->setEnableVote($_POST['enable_vote'] ?? 0);
+            $success = $model->update();
+        }
+
+        echo json_encode(["success" => $success]);
+    }
+
+    public function getNotificationSettings() {
+        require_once __DIR__ . "/../../models/Notification.php";
+        $adminId = $_SESSION['user_id'] ?? 0;
+        if (!$adminId) {
+            echo json_encode(["success" => false]);
+            return;
+        }
+
+        $model = new NotificationSetting();
+        if ($model->loadByAdminId($adminId)) {
+            echo json_encode([
+                "success" => true,
+                "is_enabled"      => $model->getIsEnabled(),
+                "enable_comment"  => $model->getEnableComment(),
+                "enable_reply"    => $model->getEnableReply(),
+                "enable_edit"     => $model->getEnableEdit(),
+                "enable_vote"     => $model->getEnableVote()
+            ]);
+        } else {
+            echo json_encode(["success" => false]);
+        }
+    }
+
+    public function getNotificationStatus() {
+        require_once __DIR__ . "/../../models/Notification.php";
+        $adminId = $_SESSION['user_id'] ?? 0;
+        if (!$adminId) {
+            echo json_encode(["success" => false, "error" => "No admin id"]);
+            return;
+        }
+
+        $setting = new NotificationSetting();
+        if ($setting->loadByAdminId($adminId)) {
+            echo json_encode([
+                "success" => true,
+                "is_enabled" => $setting->getIsEnabled()
+            ]);
+        } else {
+            // chưa có bản ghi thì mặc định tắt
+            echo json_encode([
+                "success" => true,
+                "is_enabled" => 0
+            ]);
+        }
+    }
+
+    public function markRead() {
+        require_once __DIR__ . "/../../models/Notification.php";
+        $model = new Notification();
+
+        $adminId = $_SESSION['user_id'] ?? 0;
+        $id = $_POST['id'] ?? 0;   // lấy id từ POST
+
+        if ($adminId && $id && $model->markAsRead($id)) {
+            echo json_encode(["success" => true]);
+        } else {
+            echo json_encode(["success" => false]);
+        }
+    }
+
+    public function markAllRead() {
+        require_once __DIR__ . "/../../models/Notification.php";
+        $model = new Notification();
+        $adminId = $_SESSION['user_id'] ?? 0;   
+        if ($adminId && $model->markAllAsRead()) {
+            echo json_encode(["success" => true]);
+        } else {
+            echo json_encode(["success" => false]);
+        }
+    }
+
+
 }

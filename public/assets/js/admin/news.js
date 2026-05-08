@@ -3,7 +3,6 @@ let bulkMode = false;
 let selectedIds = [];
 let newsData = { totalItems: 0, items: [] };
 
-
 async function fetchNews(page = 1, keyword = "") {
   try {
     const response = await fetch(`/admin/news/getNews?page=${page}&keyword=${encodeURIComponent(keyword)}`);
@@ -23,7 +22,36 @@ function renderPagination(totalItems, itemsPerPage, currentPage, keyword = "") {
   const pagination = document.getElementById("pagination");
   pagination.innerHTML = "";
 
-  for (let i = 1; i <= totalPages; i++) {
+  const maxVisible = 3; // số trang hiển thị quanh currentPage
+  let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  let end = start + maxVisible - 1;
+
+  if (end > totalPages) {
+    end = totalPages;
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  // Trang đầu
+  if (start > 1) {
+    const first = document.createElement("li");
+    first.className = "page-item";
+    first.innerHTML = `<a class="page-link" href="#">1</a>`;
+    first.addEventListener("click", (e) => {
+      e.preventDefault();
+      fetchNews(1, keyword);
+    });
+    pagination.appendChild(first);
+
+    if (start > 2) {
+      const dots = document.createElement("li");
+      dots.className = "page-item disabled";
+      dots.innerHTML = `<span class="page-link">...</span>`;
+      pagination.appendChild(dots);
+    }
+  }
+
+  // Các trang quanh currentPage
+  for (let i = start; i <= end; i++) {
     const pageItem = document.createElement("li");
     pageItem.className = "page-item" + (i === currentPage ? " active" : "");
     pageItem.innerHTML = `<a class="page-link" href="#">${i}</a>`;
@@ -32,6 +60,25 @@ function renderPagination(totalItems, itemsPerPage, currentPage, keyword = "") {
       fetchNews(i, keyword);
     });
     pagination.appendChild(pageItem);
+  }
+
+  // Trang cuối
+  if (end < totalPages) {
+    if (end < totalPages - 1) {
+      const dots = document.createElement("li");
+      dots.className = "page-item disabled";
+      dots.innerHTML = `<span class="page-link">...</span>`;
+      pagination.appendChild(dots);
+    }
+
+    const last = document.createElement("li");
+    last.className = "page-item";
+    last.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
+    last.addEventListener("click", (e) => {
+      e.preventDefault();
+      fetchNews(totalPages, keyword);
+    });
+    pagination.appendChild(last);
   }
 }
 
@@ -164,6 +211,36 @@ document.addEventListener("click", function(e) {
   }
 });
 
+document.getElementById("searchForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const keyword = document.getElementById("searchInput").value.trim();
+
+  // Luôn gọi fetchNews với keyword, nếu rỗng thì load toàn bộ
+  fetchNews(1, keyword);
+});
+
+document.getElementById("addArticleBtn").addEventListener("click", function(e){
+  e.preventDefault(); // chặn chuyển trang ngay lập tức
+
+  // gọi API tạo bài viết mới (ví dụ)
+  fetch("/admin/news/create", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "title=Bài viết mới" // tuỳ theo backend
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success){
+      showNotification("Thêm bài viết thành công");
+      // reload danh sách
+      fetchNews();
+    } else {
+      showNotification("Thêm bài viết thất bại");
+    }
+  });
+});
+
+
 document.addEventListener("DOMContentLoaded", async function() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
@@ -192,16 +269,9 @@ document.addEventListener("DOMContentLoaded", async function() {
   }
 });
 
-document.getElementById("searchForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const keyword = document.getElementById("searchInput").value.trim();
-
-  // Luôn gọi fetchNews với keyword, nếu rỗng thì load toàn bộ
-  fetchNews(1, keyword);
-});
-
 document.addEventListener("DOMContentLoaded", function() {
   fetchNews();
+
   document.getElementById("toggle-bulk").addEventListener("click", function(){
     bulkMode = !bulkMode;
     document.getElementById("bulk-actions").classList.toggle("d-none", !bulkMode);
@@ -219,42 +289,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
   document.querySelector("#notification-panel .btn-close").addEventListener("click", hideNotification);
 
-  document.getElementById("optionArticles").addEventListener("change", function(){
-    if(this.checked){
-      document.getElementById("pagination").innerHTML = "";
-      document.getElementById("article-list").innerHTML = "";
-      fetchNews(1);
-    }
-  });
-
-  document.getElementById("optionReviews").addEventListener("change", function(){
-    if(this.checked){
-      // tạm thời cũng gọi loadArticles để test
-       document.getElementById("article-list").innerHTML = "";
-       document.getElementById("pagination").innerHTML = "";
-      // sau này thay bằng loadReviews()
-    }
-  });
+  // Đã bỏ phần optionArticles / optionReviews
 });
 
 
-document.getElementById("addArticleBtn").addEventListener("click", function(e){
-  e.preventDefault(); // chặn chuyển trang ngay lập tức
 
-  // gọi API tạo bài viết mới (ví dụ)
-  fetch("/admin/news/create", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "title=Bài viết mới" // tuỳ theo backend
-  })
-  .then(res => res.json())
-  .then(data => {
-    if(data.success){
-      showNotification("Thêm bài viết thành công");
-      // reload danh sách
-      fetchNews();
-    } else {
-      showNotification("Thêm bài viết thất bại");
-    }
-  });
-});
+
+

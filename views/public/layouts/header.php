@@ -184,8 +184,8 @@
                 <form id="ajaxLoginForm">
                     <input type="hidden" name="ajax" value="1">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Số điện thoại/Email</label>
-                        <input type="text" name="login_id" class="form-control py-2" required placeholder="Nhập SĐT hoặc Email">
+                        <label class="form-label fw-bold">Email</label>
+                        <input type="email" name="login_id" class="form-control py-2" required placeholder="Nhập địa chỉ email của bạn">
                     </div>
                     <div class="mb-4">
                         <label class="form-label fw-bold">Mật khẩu</label>
@@ -345,6 +345,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if(registerForm) {
         registerForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // THÊM HIỆU ỨNG LOADING
+            let submitBtn = this.querySelector('button[type="submit"]');
+            let originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
+            submitBtn.disabled = true;
+
             let formData = new FormData(this);
             let errorBox = document.getElementById('registerErrorMsg');
             let successBox = document.getElementById('registerSuccessMsg');
@@ -354,27 +361,31 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(res => res.json())
             .then(data => {
+                // TRẢ LẠI NÚT BẤM
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
                 if(data.status === 'error') {
                     successBox.classList.add('d-none');
                     errorBox.innerText = data.message;
                     errorBox.classList.remove('d-none');
                 } else if (data.status === 'otp_required') {
-                    // Ẩn thông báo lỗi/thành công cũ
                     errorBox.classList.add('d-none');
                     successBox.classList.add('d-none');
 
-                    // 1. Tắt Modal Đăng ký
                     let regModal = bootstrap.Modal.getInstance(document.getElementById('ajaxRegisterModal'));
                     if (regModal) regModal.hide();
 
-                    // 2. Điền thông tin vào Modal OTP
                     document.getElementById('otp_user_id').value = data.user_id;
                     document.getElementById('otp_email_display').innerText = data.email;
 
-                    // 3. Mở Modal OTP lên
                     let otpModal = new bootstrap.Modal(document.getElementById('ajaxOtpModal'));
                     otpModal.show();
                 }
+            })
+            .catch(err => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
             });
         });
     }

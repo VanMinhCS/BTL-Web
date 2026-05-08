@@ -1,0 +1,90 @@
+<div class="main-content-inner" id="main-content">
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="header-title">Danh sách thông báo</h4>
+                        <div class="d-flex align-items-center">
+                            <button id="readAllBtn" class="btn btn-sm btn-success">Read All</button>
+                        </div>
+                    </div>
+
+                    <!-- Form tìm kiếm -->
+                    <form id="searchForm" class="d-flex mb-3" role="search">
+                        <input id="searchInput" class="form-control me-2" type="search" placeholder="Tìm thông báo..." aria-label="Search">
+                        <button class="btn btn-outline-primary" type="submit">Tìm</button>
+                    </form>
+
+                    <!-- Bộ lọc -->
+                    <div class="d-flex mb-3">
+                        <select id="filter-status" class="form-select me-2">
+                            <option value="">Tất cả</option>
+                            <option value="read">Đã đọc</option>
+                            <option value="unread">Chưa đọc</option>
+                        </select>
+
+                        <select id="filter-type" class="form-select me-2">
+                            <option value="">Tất cả loại</option>
+                            <option value="comment">Bình luận</option>
+                            <option value="reply_comment">Phản hồi</option>
+                            <option value="edit_comment">Chỉnh sửa</option>
+                            <option value="vote_comment">Bình chọn</option>
+                            <option value="order">Đơn hàng</option>
+                        </select>
+
+                        <select id="filter-sort" class="form-select">
+                            <option value="desc">Mới nhất</option>
+                            <option value="asc">Cũ nhất</option>
+                        </select>
+                    </div>
+
+                    <!-- Bộ lọc và thao tác hàng loạt kiểu Gmail -->
+                    <div class="d-flex align-items-center mb-3">
+                        
+                        <!-- KHỐI NÚT ĐÃ ĐƯỢC ÉP KÍCH THƯỚC NHỎ GỌN -->
+                        <div class="btn-group me-3 shadow-sm" style="height: 28px;">
+                            <!-- Nút Checkbox tổng -->
+                            <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" id="master-checkbox-btn" style="width: 28px; height: 28px; padding: 0; border-color: #ced4da;">
+                                <i class="ti-square" id="master-checkbox-icon" style="font-size: 1.1rem; color: #495057;"></i>
+                            </button>
+                            <!-- Nút Dropdown mũi tên -->
+                            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split d-flex align-items-center justify-content-center" data-bs-toggle="dropdown" aria-expanded="false" style="width: 28px; height: 28px; padding: 0; border-color: #ced4da;">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu shadow">
+                                <li><a class="dropdown-item" href="#" id="select-all">Tất cả</a></li>
+                                <li><a class="dropdown-item" href="#" id="deselect-all">Bỏ chọn tất cả</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="select-read">Thông báo đã đọc</a></li>
+                                <li><a class="dropdown-item" href="#" id="select-unread">Thông báo chưa đọc</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Nút hành động sẽ tự động hiện ra khi có thông báo được chọn -->
+                        <div id="bulk-actions" class="d-none">
+                            <button id="bulk-delete" class="btn btn-danger btn-sm me-2"><i class="ti-trash"></i> Xóa</button>
+                            <button id="bulk-read" class="btn btn-success btn-sm"><i class="ti-check-box"></i> Đánh dấu đã đọc</button>
+                        </div>
+                    </div>
+
+                    <!-- Panel thông báo -->
+                    <div id="notification-panel" class="alert alert-success position-fixed top-0 start-50 translate-middle-x d-none"
+                        style="z-index:1050; width:400px;">
+                        <span id="notification-message"></span>
+                        <button type="button" class="btn-close float-end" aria-label="Close"></button>
+                        <div id="notification-timer" style="height:4px;background:#28a745;margin-top:8px;"></div>
+                    </div>
+
+                    <!-- Danh sách thông báo -->
+                    <div id="notification-list"></div>
+
+                    <!-- Phân trang -->
+                    <div class="d-flex justify-content-center mt-3">
+                        <ul id="pagination" class="pagination"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

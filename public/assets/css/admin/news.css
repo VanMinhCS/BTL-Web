@@ -11,3 +11,9 @@
 #notification-timer {
   height: 8px;        /* thanh timer dày hơn */
 }
+
+.btn-group{
+  z-index: 0;
+}
+
+

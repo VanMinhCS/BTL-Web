@@ -74,8 +74,8 @@ class OnestepcheckoutController extends Controller {
             $city = trim($_POST['city'] ?? '');
             $ward = trim($_POST['ward'] ?? '');
             $street = trim($_POST['street'] ?? ''); 
-            
             $payment_method_raw = $_POST['payment_method'] ?? 'cod';
+            $note = isset($_POST['note']) ? trim($_POST['note']) : '';
 
             try {
                 // --- BƯỚC 1: XỬ LÝ ĐỊA CHỈ (CẬP NHẬT ĐỊA CHỈ CÓ SẴN CỦA USER) ---
@@ -112,8 +112,8 @@ class OnestepcheckoutController extends Controller {
                 $orderObj->setOrderDate(date("Y-m-d H:i:s"));
                 $orderObj->setStatus(0); 
                 $orderObj->setIsPaid(0); 
-                $orderObj->setPaymentMethod($payment_method_raw == 'cod' ? 0 : 1);
                 $orderObj->setShippingFee($shipping_fee);
+                $orderObj->setNote($note);
                 
                 $order_id = $orderObj->create();
 
@@ -135,6 +135,29 @@ class OnestepcheckoutController extends Controller {
                         $detailObj->create();
                     }
                 }
+
+                // =========================================================
+                // BƯỚC 3.5: GỬI THÔNG BÁO CHO ADMIN (ĐÃ CHÈN)
+                // =========================================================
+                require_once __DIR__ . '/../../models/Notification.php';
+
+                // 1. Tạo chi tiết đơn hàng cho bảng notification_order
+                $notifyOrder = new NotificationOrder();
+                $notifyOrder->setOrderId($order_id); // Dùng biến $order_id có sẵn của hàm
+                $notifyOrder->setOrderStatus('chờ xác nhận');
+                $notifyOrder->create();
+
+                // Lấy ID vừa được sinh ra
+                $notifyOrderId = $notifyOrder->getId();
+
+                // 2. Tạo thông báo tổng quát cho bảng notifications
+                $notification = new Notification();
+                $notification->setType('order');
+                $notification->setUserId($user_id); // Dùng biến $user_id có sẵn của hàm
+                $notification->setNotificationOrderId($notifyOrderId);
+                $notification->setIsRead(0);
+                $notification->create();
+                // =========================================================
 
                 // --- BƯỚC 4: HOÀN TẤT VÀ CHUYỂN HƯỚNG TRANG ---
                 unset($_SESSION['cart']);

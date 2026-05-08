@@ -59,7 +59,6 @@ class Information extends Database {
     private $address_id;
     private $firstname;
     private $lastname;
-    // Đã xóa hoàn toàn payment_method cho khớp với Database mới
 
     public function getInfoId() { return $this->info_id; }
     public function setInfoId($id) { 

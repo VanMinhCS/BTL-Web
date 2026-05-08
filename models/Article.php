@@ -120,8 +120,6 @@ class Article extends Model {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-
-
     public function getAllArticles() {
         $stmt = $this->getDb()->query(
             "SELECT id_article, title, description, time_modified, status 
