@@ -1,0 +1,122 @@
+/* --- BIẾN MÀU SẮC ĐỒNG BỘ VỚI FAQ --- */
+:root {
+    --bg-body: #f8fafc;
+    --bg-card: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --primary: #4f46e5;
+    --border-light: #e2e8f0;
+}
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    margin: 0;
+}
+
+/* KHUNG 750PX CỐ ĐỊNH CHUẨN KÍCH THƯỚC */
+.about-wrapper {
+    width: 750px; 
+    margin: 60px auto;
+}
+
+/* --- PHẦN HERO TỔNG QUAN --- */
+.hero-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+}
+
+.hero-card h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0 0 15px 0;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+}
+
+.hero-card p {
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* --- LƯỚI CHIA CỘT CÁC TÍNH NĂNG --- */
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 25px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+}
+
+.feature-icon {
+    width: 40px;
+    height: 40px;
+    background: #e0e7ff;
+    color: var(--primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.feature-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.4;
+}
+
+/* --- NÚT BẤM (CTA) --- */
+.cta-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+}
+
+.btn-primary {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #4338ca;
+}
