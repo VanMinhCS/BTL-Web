@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 05, 2026 at 04:19 AM
+-- Generation Time: May 09, 2026 at 10:20 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,28 @@ SET time_zone = "+00:00";
 --
 -- Database: `bk88`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `about_content`
+--
+
+CREATE TABLE `about_content` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL DEFAULT 'Giới Thiệu BK88',
+  `description` text NOT NULL COMMENT 'Nội dung mô tả chi tiết',
+  `features` text DEFAULT NULL COMMENT 'Các ưu điểm nổi bật, ngăn cách bằng dấu phẩy',
+  `featured_items` varchar(255) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `about_content`
+--
+
+INSERT INTO `about_content` (`id`, `title`, `description`, `features`, `featured_items`, `updated_at`) VALUES
+(1, 'Chào mừng đến với BK88', 'Chúng tôi là nền tảng tiên phong trong việc cung cấp các giải pháp công nghệ và giải trí đỉnh cao. Với đội ngũ từ Bách Khoa, chúng tôi cam kết mang lại trải nghiệm tốt nhất.', 'Giao diện Kính mờ (Glassmorphism), Hệ thống bảo mật 2 lớp, Tốc độ xử lý vượt trội, 6, 8', '15,9,8,7,6', '2026-05-09 08:19:20');
 
 -- --------------------------------------------------------
 
@@ -156,6 +178,43 @@ INSERT INTO `comment_votes` (`id`, `comment_id`, `user_id`, `vote`) VALUES
 (86, 98, 1, 'dislike'),
 (110, 102, 6, 'dislike'),
 (122, 106, 5, 'like');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `faq`
+--
+
+CREATE TABLE `faq` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL COMMENT 'ID của người dùng từ user_table',
+  `category` varchar(100) NOT NULL,
+  `question` text NOT NULL,
+  `answer` text DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 0 COMMENT '0: Chờ duyệt, 1: Đã trả lời (Hiện Public)',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `faq`
+--
+
+INSERT INTO `faq` (`id`, `user_id`, `category`, `question`, `answer`, `status`, `created_at`) VALUES
+(1, 2, 'Kỹ thuật', 'hello', 'chao em nhe', 0, '2026-04-26 08:44:40'),
+(2, 2, 'Kỹ thuật', 'dung hoi nua', NULL, 0, '2026-04-26 08:46:52'),
+(3, 2, 'Kỹ thuật', 'chao ae', NULL, 0, '2026-04-26 09:41:00'),
+(4, 2, 'Kỹ thuật', 'chao ae', 'chao ban', 0, '2026-04-26 09:42:05'),
+(5, 2, 'Tài khoản', 'Làm thế nào để kích hoạt bảo mật 2 lớp (2FA) cho tài khoản?', 'Bạn vào phần Cài đặt tài khoản, chọn mục Bảo mật và quét mã QR bằng ứng dụng Google Authenticator.', 1, '2026-04-26 09:44:19'),
+(6, 2, 'Tài khoản', 'Tôi bị mất mật khẩu và không còn truy cập được Email đăng ký?', 'Vui lòng gửi yêu cầu hỗ trợ kèm theo ảnh chụp giấy tờ định danh chính chủ. Admin sẽ hỗ trợ xử lý trong 24h.', 1, '2026-04-26 09:44:19'),
+(7, 2, 'Lỗi kỹ thuật', 'Tại sao tôi không thể upload được ảnh minh họa?', 'Kiểm tra lại định dạng ảnh (.jpg, .png) và dung lượng phải dưới 5MB. Thử xóa cache trình duyệt nếu vẫn lỗi.', 1, '2026-04-26 09:44:19'),
+(8, 2, 'Lỗi kỹ thuật', 'Tôi gặp lỗi 403 Forbidden khi truy cập khu vực thành viên?', 'Lỗi này do hết hạn phiên đăng nhập. Bạn hãy đăng xuất và thực hiện đăng nhập lại để làm mới Session.', 1, '2026-04-26 09:44:19'),
+(9, 2, 'Hệ thống', 'BK88 có hỗ trợ nạp tiền qua thẻ cào không?', 'Hiện tại hệ thống hỗ trợ nạp qua tất cả các nhà mạng phổ biến. Thời gian xử lý giao dịch thường từ 1-3 phút.', 1, '2026-04-26 09:44:19'),
+(10, 2, 'Hệ thống', 'Tôi có thể đổi tên hiển thị (Username) được không?', 'Mỗi tài khoản chỉ được đổi tên hiển thị một lần duy nhất trong vòng 1 ngày tại mục Thông tin cá nhân.', 1, '2026-04-26 09:44:19'),
+(11, 2, 'Kỹ thuật', 'chao ae', 'chao ku', 0, '2026-04-27 09:43:27'),
+(12, 1, 'Kỹ thuật', 'chao eim', 'chào anh ạ', 0, '2026-04-27 14:25:32'),
+(13, 2, 'Kỹ thuật', 'chào e', 'chao ban nhe', 0, '2026-04-27 14:34:02'),
+(14, 2, 'Kỹ thuật', '1', NULL, 0, '2026-05-09 06:56:42'),
+(15, 2, 'Kỹ thuật', '1', NULL, 0, '2026-05-09 07:33:53');
 
 -- --------------------------------------------------------
 
@@ -655,28 +714,35 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `role` tinyint(1) DEFAULT 0,
   `phone` varchar(20) DEFAULT NULL,
-  `is_verified` tinyint(1) DEFAULT 0
+  `is_verified` tinyint(1) DEFAULT 0,
+  `is_banned` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `email`, `password`, `role`, `phone`, `is_verified`) VALUES
-(1, 'newmail@example.com', '1', 1, '0909123456', 1),
-(2, 'user@example.com', '1', 0, '0912345678', 1),
-(3, 'test@example.com', '$2y$10$bCcrrIMwvAzNm9CPBd7QF.mvlC53Z1rv5V5JS.17CROJwA1CMU1o.', 0, '0909123456', 1),
-(4, 'test@example.com', '$2y$10$4kPsaF0qN6uyNwsQ9lGVr.5vdG0nW0JLKOA/EajQEHy9QJaP/AXSy', 0, '0909123456', 1),
-(5, '1@gmail.com', '$2y$10$ATPBYZkLnUraXPXIYs5nVeU8ZBqfn3srgpCe77Y7PrO8DOjL/T4QW', 1, '1234567891', 1),
-(6, 'trung.nong7z@gmail.com', '$2y$10$RQfT1Ad7HJSR/xs1DKcex.7rIsHIDoJQtJ3hzU0Vv2eCo17eldJ3W', 0, '1234567890', 1),
-(7, 'theinspirer2004@gmail.com', '$2y$10$u8SKpul00xAo80c27bY/1Om9gVCeRc8YBZFEToupbbf4o8jAegTcS', 0, '12345678', 1),
-(8, 'honatuan2004@gmail.com', '$2y$10$CuGdMneVmEOo8fbx31ppj.NU/3mbTTnjm8qDdoy.A6HWuAplxDoly', 0, '0937980725', 1),
-(9, 'hongocanhtuannoob@gmail.com', '$2y$10$Pssp/..WT6YhbeSadGSEsOPF5gg5Hxs3pvaxz6JSA56yHlV7cuadG', 0, '0937980725', 0),
-(10, 'hongocanhtuan1301@gmail.com', '$2y$10$srN7DyUX5JvRs6ZTUadtGenOq9oXw4VRCR5wRUgs5h7V98peLphO6', 0, '0937980725', 1);
+INSERT INTO `users` (`user_id`, `email`, `password`, `role`, `phone`, `is_verified`, `is_banned`) VALUES
+(1, 'newmail@example.com', '1', 1, '0909123456', 1, 0),
+(2, 'user@example.com', '1', 0, '0912345678', 1, 1),
+(3, 'test@example.com', '$2y$10$bCcrrIMwvAzNm9CPBd7QF.mvlC53Z1rv5V5JS.17CROJwA1CMU1o.', 0, '0909123456', 1, 0),
+(4, 'test@example.com', '$2y$10$4kPsaF0qN6uyNwsQ9lGVr.5vdG0nW0JLKOA/EajQEHy9QJaP/AXSy', 0, '0909123456', 1, 0),
+(5, '1@gmail.com', '$2y$10$ATPBYZkLnUraXPXIYs5nVeU8ZBqfn3srgpCe77Y7PrO8DOjL/T4QW', 1, '1234567891', 1, 0),
+(6, 'trung.nong7z@gmail.com', '$2y$10$RQfT1Ad7HJSR/xs1DKcex.7rIsHIDoJQtJ3hzU0Vv2eCo17eldJ3W', 0, '1234567890', 1, 0),
+(7, 'theinspirer2004@gmail.com', '$2y$10$u8SKpul00xAo80c27bY/1Om9gVCeRc8YBZFEToupbbf4o8jAegTcS', 0, '12345678', 1, 0),
+(8, 'honatuan2004@gmail.com', '$2y$10$CuGdMneVmEOo8fbx31ppj.NU/3mbTTnjm8qDdoy.A6HWuAplxDoly', 0, '0937980725', 1, 0),
+(9, 'hongocanhtuannoob@gmail.com', '$2y$10$Pssp/..WT6YhbeSadGSEsOPF5gg5Hxs3pvaxz6JSA56yHlV7cuadG', 0, '0937980725', 0, 0),
+(10, 'hongocanhtuan1301@gmail.com', '$2y$10$srN7DyUX5JvRs6ZTUadtGenOq9oXw4VRCR5wRUgs5h7V98peLphO6', 0, '0937980725', 1, 0);
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `about_content`
+--
+ALTER TABLE `about_content`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `addresses`
@@ -705,6 +771,12 @@ ALTER TABLE `comments`
 ALTER TABLE `comment_votes`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_vote` (`comment_id`,`user_id`);
+
+--
+-- Indexes for table `faq`
+--
+ALTER TABLE `faq`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `information`
@@ -815,6 +887,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `about_content`
+--
+ALTER TABLE `about_content`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `addresses`
 --
 ALTER TABLE `addresses`
@@ -837,6 +915,12 @@ ALTER TABLE `comments`
 --
 ALTER TABLE `comment_votes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+
+--
+-- AUTO_INCREMENT for table `faq`
+--
+ALTER TABLE `faq`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `information`
