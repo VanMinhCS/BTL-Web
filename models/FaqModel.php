@@ -19,9 +19,9 @@ class FaqModel {
     }
 
 
-    public function insertFaq($userId, $category, $question, $image) {
-        $stmt = $this->db->prepare("INSERT INTO faq (user_id, category, question, image) VALUES (?, ?, ?, ?)");
-        return $stmt->execute([$userId, $category, $question, $image]);
+    public function insertFaq($userId, $category, $question) {
+        $stmt = $this->db->prepare("INSERT INTO faq (user_id, category, question) VALUES (?, ?, ?)");
+        return $stmt->execute([$userId, $category, $question]);
     }
 
     public function getAllFaqsForAdmin() {

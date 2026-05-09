@@ -216,6 +216,20 @@ class AuthController extends Controller {
 
             // Chấp nhận cả mật khẩu đã hash VÀ mật khẩu thô
             if ($user && (password_verify($password, $user['password']) || $password === $user['password'])) {
+
+                if (isset($user['is_banned']) && $user['is_banned'] == 1) {
+                    $banMessage = "Tài khoản của bạn đã bị khóa do vi phạm chính sách của hệ thống.";
+                    
+                    if ($isAjax) {
+                        echo json_encode(['status' => 'error', 'message' => $banMessage]);
+                        exit;
+                    }
+                    
+                    $_SESSION['error'] = $banMessage;
+                    $_SESSION['old_login_id'] = $login_id; 
+                    header("Location: " . BASE_URL . "auth/login");
+                    exit;
+                }
                 
                 // Lưu thông tin vào session
                 $_SESSION['user_id']   = $user['user_id'];

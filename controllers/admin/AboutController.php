@@ -10,7 +10,6 @@ class AboutController extends Controller {
         }
     }
 
-    // Router đang đi tìm hàm này đây!
     public function index() {
         require_once '../models/AboutModel.php';
         $aboutModel = new AboutModel();

@@ -81,7 +81,7 @@
                                     <li class="<?php echo ($current == 'product_overview') ? 'active' : ''; ?>">
                                         <a href="<?php echo BASE_URL; ?>admin/product/overview">Tổng quan</a>
                                     </li>
-
+                                    
                                     <li class="<?php echo ($current == 'product_order') ? 'active' : ''; ?>">
                                         <a href="<?php echo BASE_URL; ?>admin/product/order">Quản lý đơn hàng</a>
                                     </li>
@@ -100,7 +100,11 @@
                                     <i class="ti-book"></i><span>Quản lý tin tức</span>
                                 </a>
                             </li>
-
+                            <li class="<?php echo ($current == 'news') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/about">
+                                    <i class="ti-book"></i><span>Quản lý giới thiệu</span>
+                                </a>
+                            </li>
                             <li class="<?php echo ($current == 'notification') ? 'active' : ''; ?>">
                                 <a href="<?php echo BASE_URL; ?>admin/notification">
                                     <i class="ti-bell"></i><span>Quản lý thông báo</span>
@@ -112,7 +116,12 @@
                                     <i class="ti-user"></i><span>Quản lý người dùng</span>
                                 </a>
                             </li>
-                            
+
+                            <li class="<?php echo ($current == 'user') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/faq">
+                                    <i class="ti-user"></i><span>Trả lời câu hỏi</span>
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                 </div>

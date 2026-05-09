@@ -22,15 +22,6 @@
                                     <td><?php echo $faq['full_name']; ?></td>
                                     <td>
                                         <?php echo htmlspecialchars($faq['question']); ?>
-                                        
-                                        <?php if (!empty($faq['image'])): ?>
-                                            <br>
-                                            <img src="<?php echo BASE_URL . $faq['image']; ?>" 
-                                                alt="Ảnh đính kèm" 
-                                                style="max-width: 150px; max-height: 150px; margin-top: 10px; border-radius: 5px;">
-                                            <br>
-                                            <a href="<?php echo BASE_URL . $faq['image']; ?>" target="_blank" class="btn btn-xs btn-outline-info mt-1">Xem ảnh lớn</a>
-                                        <?php endif; ?>
                                     </td>
                                     <td>
                                         <?php if (empty($faq['answer'])): ?>

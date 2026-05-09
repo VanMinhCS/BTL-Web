@@ -12,13 +12,14 @@
                 <div class="history-item">
                     <div class="history-q"><?php echo $myQ['question']; ?></div>
                     <div>
-                        <?php if($myQ['status'] == 0): ?>
+                        <?php if (empty($myQ['answer'])): ?>
                             <span class="badge badge-pending">Đang chờ xử lý</span>
                         <?php else: ?>
                             <span class="badge badge-answered">Đã có phản hồi</span>
                         <?php endif; ?>
                     </div>
-                    <?php if($myQ['status'] == 1): ?>
+                    
+                    <?php if (!empty($myQ['answer'])): ?>
                         <div class="history-a">
                             <strong>Admin:</strong> <?php echo $myQ['answer']; ?>
                         </div>
@@ -42,10 +43,6 @@
                 <div class="form-group">
                     <label>Chi tiết vấn đề:</label>
                     <textarea name="question" class="form-input" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Đính kèm ảnh:</label>
-                    <input type="file" name="image" class="form-input" accept="image/*">
                 </div>
                 <button type="submit" class="btn-action">Gửi Yêu Cầu</button>
             </form>
