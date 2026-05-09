@@ -261,5 +261,23 @@ class ProductModel extends Database {
         $stmt->execute([':order_id' => $order_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getAllItems() {
+        $sql = "SELECT item_id, item_name, price, item_stock FROM items ORDER BY item_id DESC";
+        $stmt = $this->conn->query($sql); 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getFeaturedItemsByIds($ids_string) {
+        if (empty(trim($ids_string))) return [];
+        
+        $clean_ids = preg_replace('/[^0-9,]/', '', $ids_string);
+        
+        if (empty($clean_ids)) return [];
+
+        $sql = "SELECT * FROM items WHERE item_id IN ($clean_ids)";
+        $stmt = $this->conn->query($sql); 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>

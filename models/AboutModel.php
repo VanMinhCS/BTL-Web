@@ -18,20 +18,19 @@ class AboutModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateAbout($title, $description, $features) {
-        // Kiểm tra xem trong bảng đã có dữ liệu chưa
+    public function updateAbout($title, $description, $features, $featured_items) {
         $check = $this->db->query("SELECT id FROM about_content LIMIT 1")->fetch();
         
         if ($check) {
-            // Nếu đã có dữ liệu -> Chạy lệnh UPDATE
-            $sql = "UPDATE about_content SET title = ?, description = ?, features = ? WHERE id = ?";
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$title, $description, $features, $check['id']]);
+            $sql = "UPDATE about_content SET title = ?, description = ?, features = ?, featured_items = ? WHERE id = ?";
+            $stmt = $this->db->prepare($sql);   
+            return $stmt->execute([$title, $description, $features, $featured_items, $check['id']]);
         } else {
-            // Nếu chưa có (lần đầu tiên) -> Chạy lệnh INSERT
-            $sql = "INSERT INTO about_content (title, description, features) VALUES (?, ?, ?)";
+            $sql = "INSERT INTO about_content (title, description, features, featured_items) VALUES (?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$title, $description, $features]);
+            
+            // Thêm biến $featured_items vào mảng execute
+            return $stmt->execute([$title, $description, $features, $featured_items]);
         }
     }
 }
