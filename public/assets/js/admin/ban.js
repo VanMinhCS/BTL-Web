@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const actionText = currentStatus == 1 ? "KHÓA" : "MỞ KHÓA";
             const confirmBtn = document.getElementById('btn-confirm-action');
-
+            
             document.getElementById('confirmBanMessage').innerHTML = `Bạn có chắc chắn muốn <strong class="${currentStatus == 1 ? 'text-danger' : 'text-success'}">${actionText}</strong> tài khoản ID: ${currentUserId} này không?`;
             
             if (currentStatus == 1) {

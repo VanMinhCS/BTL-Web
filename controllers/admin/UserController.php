@@ -33,7 +33,11 @@ class UserController extends Controller {
                 }
                 require_once '../models/UserModel.php';
                 $userModel = new UserModel();
-                
+                $targetUser = $userModel->getUserById($user_id); 
+                if ($targetUser && $targetUser['role'] == 1 && $targetUser['is_banned'] == 0) {
+                    echo json_encode(['success' => false, 'message' => 'Lỗi bảo mật: Không thể khóa tài khoản Quản trị viên!']);
+                    exit;
+                }
                 if ($userModel->toggleBanStatus($user_id, $status)) {
                     echo json_encode(['success' => true]);
                 } else {
