@@ -2,6 +2,7 @@
 :root {
     --navbar-bg: #0d6efd;      
     --navbar-text: #ffffff;    
+    --navbar-active: #ffffff;
     --navbar-height: 70px;
 }
 
@@ -23,18 +24,24 @@
     position: relative;
 }
 
-/* Gạch chân khi active */
-.main-navbar .nav-link.active::after,
-.main-navbar .nav-link:hover::after {
+/* Gạch chân khi active và hover (kèm hiệu ứng) */
+.main-navbar .nav-link::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: 5px;
     left: 1rem;
     right: 1rem;
     height: 2px;
     background-color: var(--navbar-active);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s ease;
 }
 
+.main-navbar .nav-link.active::after,
+.main-navbar .nav-link:hover::after {
+    transform: scaleX(1);
+}
 
 .brand-text {
     color: var(--navbar-text);

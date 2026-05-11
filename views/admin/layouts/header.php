@@ -20,6 +20,11 @@
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/styles.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/css/responsive.css">
 
+    <?php if (!empty($data['pageCss']) && is_array($data['pageCss'])): ?>
+        <?php foreach ($data['pageCss'] as $cssPath): ?>
+            <link rel="stylesheet" href="<?= BASE_URL . $cssPath ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
     
     <style>
         /* 1. Ẩn hoàn toàn mũi tên ở những menu KHÔNG có mục con */
@@ -38,6 +43,22 @@
         /* 3. Khi menu xổ xuống (mở), xoay ngược mũi tên hướng LÊN */
         .metismenu > li > a[aria-expanded="true"]::after {
             transform: translateY(-10%) rotate(180deg) !important;
+        }
+
+        .icon {
+            transition: filter 0.2s;
+            width: 16px;
+            height: 16px;
+        }
+
+        /* .info-icon {
+            transition: filter 0.2s;
+            width: 16px;
+            height: 16px;
+        } */
+
+        a:hover .icon {
+            filter: brightness(0) invert(1);
         }
     </style>
 </head>
@@ -111,6 +132,34 @@
                                 <a href="<?php echo BASE_URL; ?>admin/user">
                                     <i class="ti-user"></i><span>Quản lý người dùng</span>
                                 </a>
+                            </li>
+
+                            <li class="<?php echo ($current == 'contact') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/contact">
+                                    <img src="<?php echo BASE_URL ?>assets/img/contact-icon.svg" alt="contact-icon" class="icon">
+                                    <span>Quản lý liên hệ</span>
+                                </a>
+                            </li>
+
+                            <?php 
+                            $info = in_array($current, ['home_info', 'contact_info',]); 
+                            ?>
+                            <li class="<?php echo $info ? 'active mm-active' : ''; ?>">
+                                <a href="javascript:void(0)" aria-expanded="<?php echo $info ? 'true' : 'false'; ?>">
+                                    <img src="<?php echo BASE_URL ?>assets/img/info-icon.svg" alt="info-icon" class="icon">
+                                    <span>Thông tin công khai</span>
+                                </a>
+                                
+                                <ul class="collapse <?php echo $info ? 'show mm-collapse mm-show' : ''; ?>">
+                                    <li class="<?php echo ($current == 'home_info') ? 'active' : ''; ?>">
+                                        <a href="<?php echo BASE_URL; ?>admin/info">Trang chủ</a>
+                                    </li>
+
+                                    <li class="<?php echo ($current == 'contact_info') ? 'active' : ''; ?>">
+                                        <a href="<?php echo BASE_URL; ?>admin/info/contact">Liên hệ</a>
+                                    </li>
+
+                                </ul>
                             </li>
                             
                         </ul>
