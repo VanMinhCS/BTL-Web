@@ -203,7 +203,8 @@ CREATE TABLE IF NOT EXISTS `home_featured_products` (
   `is_active` tinyint(1) DEFAULT '1',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_home_featured_item` (`item_id`)
+  UNIQUE KEY `uniq_home_featured_item` (`item_id`),
+  CONSTRAINT `fk_featured_item` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table bk88.home_featured_products: ~5 rows (approximately)
