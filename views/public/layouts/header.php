@@ -97,7 +97,7 @@ $logoSrc = !empty($siteLogo)
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($currentPage ?? '') === 'home' ? 'active' : ''; ?>"
-                       href="<?php echo BASE_URL; ?>home">HOME</a>
+                       href="<?php echo BASE_URL; ?>home">TRANG CHỦ</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($currentPage ?? '') === 'product' ? 'active' : ''; ?>"
