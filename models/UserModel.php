@@ -197,5 +197,29 @@ class UserModel extends Database {
         $stmt = $this->conn->prepare("UPDATE otp SET is_active = 0 WHERE user_id = ?");
         return $stmt->execute([$user_id]);
     }
+    // 15. Cấm người dùng
+    public function toggleBanStatus($user_id, $status) {
+    $sql = "UPDATE users SET is_banned = ? WHERE user_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    return $stmt->execute([$status, $user_id]);
+    }
+    // 16. Lấy dữ liệu tất cả User
+    public function getAllUsers() {
+        $sql = "SELECT u.user_id, u.email, u.is_banned, CONCAT(ui.firstname, ' ', ui.lastname) AS full_name 
+                FROM users u
+                LEFT JOIN information ui ON u.user_id = ui.user_id
+                ORDER BY u.user_id DESC";
+        $stmt = $this->conn->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // 7. Kiếm tra người dùng có bị banned
+    public function checkIsBanned($user_id) {
+        $sql = "SELECT is_banned FROM users WHERE user_id = ?";
+        $stmt = $this->conn->prepare($sql); 
+        $stmt->execute([$user_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return ($result && $result['is_banned'] == 1);
+    }
 }
 ?>

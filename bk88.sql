@@ -4,6 +4,19 @@
 -- Server OS:                    Win64
 -- HeidiSQL Version:             12.1.0.6537
 -- --------------------------------------------------------
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: May 09, 2026 at 10:20 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
@@ -27,6 +40,42 @@ CREATE TABLE IF NOT EXISTS `addresses` (
   `city` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`address_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+--
+-- Table structure for table `about_content`
+--
+
+CREATE TABLE `about_content` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL DEFAULT 'Giới Thiệu BK88',
+  `description` text NOT NULL COMMENT 'Nội dung mô tả chi tiết',
+  `features` text DEFAULT NULL COMMENT 'Các ưu điểm nổi bật, ngăn cách bằng dấu phẩy',
+  `featured_items` varchar(255) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `about_content`
+--
+
+INSERT INTO `about_content` (`id`, `title`, `description`, `features`, `featured_items`, `updated_at`) VALUES
+(1, 'Chào mừng đến với BK88', 'Chúng tôi là nền tảng tiên phong trong việc cung cấp các giải pháp công nghệ và giải trí đỉnh cao. Với đội ngũ từ Bách Khoa, chúng tôi cam kết mang lại trải nghiệm tốt nhất.', 'Giao diện Kính mờ (Glassmorphism), Hệ thống bảo mật 2 lớp, Tốc độ xử lý vượt trội, 6, 8', '15,9,8,7,6', '2026-05-09 08:19:20');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `addresses`
+--
+
+CREATE TABLE `addresses` (
+  `address_id` int(11) NOT NULL,
+  `street` varchar(100) DEFAULT NULL,
+  `ward` varchar(100) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `addresses`
+--
 
 -- Dumping data for table bk88.addresses: ~8 rows (approximately)
 INSERT INTO `addresses` (`address_id`, `street`, `ward`, `city`) VALUES
@@ -175,6 +224,46 @@ INSERT INTO `contacts` (`contact_id`, `customer_name`, `customer_email`, `subjec
 	(29, 'Velma Quigley', 'Lazaro_Barton@yahoo.com', 'Direct Group Agent', 'Ultra subvenio talio triumphus appositus cogo tutis rerum. Supellex quasi tripudio vinitor totidem coaegresco. Crur considero una denuo via adiuvo.', 0, '2026-05-03 13:41:43'),
 	(30, 'Ollie Steuber', 'Minerva_Gleichner87@hotmail.com', 'Future Brand Officer', 'Contego accusantium comis acies doloremque toties tubineus deleniti. Vero alius itaque celo vulariter blandior turba thermae subseco. Balbus desparatus adulescens volup utrum adimpleo caput vis decerno clibanus.', 0, '2026-05-03 13:41:43'),
 	(31, 'Donald Moore', 'Dawn_Cremin@gmail.com', 'Regional Assurance Representative', 'Vel utor aperio pecto repellat cimentarius balbus voluptatum terra usque. Speculum abbas trucido videlicet condico allatus magni. Solum bellicus defleo confero.', 1, '2026-05-03 13:41:43');
+--
+-- Table structure for table `faq`
+--
+
+CREATE TABLE `faq` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL COMMENT 'ID của người dùng từ user_table',
+  `category` varchar(100) NOT NULL,
+  `question` text NOT NULL,
+  `answer` text DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 0 COMMENT '0: Chờ duyệt, 1: Đã trả lời (Hiện Public)',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `faq`
+--
+
+INSERT INTO `faq` (`id`, `user_id`, `category`, `question`, `answer`, `status`, `created_at`) VALUES
+(1, 2, 'Kỹ thuật', 'hello', 'chao em nhe', 0, '2026-04-26 08:44:40'),
+(2, 2, 'Kỹ thuật', 'dung hoi nua', NULL, 0, '2026-04-26 08:46:52'),
+(3, 2, 'Kỹ thuật', 'chao ae', NULL, 0, '2026-04-26 09:41:00'),
+(4, 2, 'Kỹ thuật', 'chao ae', 'chao ban', 0, '2026-04-26 09:42:05'),
+(5, 2, 'Tài khoản', 'Làm thế nào để kích hoạt bảo mật 2 lớp (2FA) cho tài khoản?', 'Bạn vào phần Cài đặt tài khoản, chọn mục Bảo mật và quét mã QR bằng ứng dụng Google Authenticator.', 1, '2026-04-26 09:44:19'),
+(6, 2, 'Tài khoản', 'Tôi bị mất mật khẩu và không còn truy cập được Email đăng ký?', 'Vui lòng gửi yêu cầu hỗ trợ kèm theo ảnh chụp giấy tờ định danh chính chủ. Admin sẽ hỗ trợ xử lý trong 24h.', 1, '2026-04-26 09:44:19'),
+(7, 2, 'Lỗi kỹ thuật', 'Tại sao tôi không thể upload được ảnh minh họa?', 'Kiểm tra lại định dạng ảnh (.jpg, .png) và dung lượng phải dưới 5MB. Thử xóa cache trình duyệt nếu vẫn lỗi.', 1, '2026-04-26 09:44:19'),
+(8, 2, 'Lỗi kỹ thuật', 'Tôi gặp lỗi 403 Forbidden khi truy cập khu vực thành viên?', 'Lỗi này do hết hạn phiên đăng nhập. Bạn hãy đăng xuất và thực hiện đăng nhập lại để làm mới Session.', 1, '2026-04-26 09:44:19'),
+(9, 2, 'Hệ thống', 'BK88 có hỗ trợ nạp tiền qua thẻ cào không?', 'Hiện tại hệ thống hỗ trợ nạp qua tất cả các nhà mạng phổ biến. Thời gian xử lý giao dịch thường từ 1-3 phút.', 1, '2026-04-26 09:44:19'),
+(10, 2, 'Hệ thống', 'Tôi có thể đổi tên hiển thị (Username) được không?', 'Mỗi tài khoản chỉ được đổi tên hiển thị một lần duy nhất trong vòng 1 ngày tại mục Thông tin cá nhân.', 1, '2026-04-26 09:44:19'),
+(11, 2, 'Kỹ thuật', 'chao ae', 'chao ku', 0, '2026-04-27 09:43:27'),
+(12, 1, 'Kỹ thuật', 'chao eim', 'chào anh ạ', 0, '2026-04-27 14:25:32'),
+(13, 2, 'Kỹ thuật', 'chào e', 'chao ban nhe', 0, '2026-04-27 14:34:02'),
+(14, 2, 'Kỹ thuật', '1', NULL, 0, '2026-05-09 06:56:42'),
+(15, 2, 'Kỹ thuật', '1', NULL, 0, '2026-05-09 07:33:53');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `information`
+--
 
 -- Dumping structure for table bk88.contact_info_fields
 CREATE TABLE IF NOT EXISTS `contact_info_fields` (
@@ -752,8 +841,634 @@ END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
-/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
-/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
-/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_vote_comment`
+--
+
+CREATE TABLE `notification_vote_comment` (
+  `id` int(11) NOT NULL,
+  `comment_id` int(11) NOT NULL,
+  `article_id` int(11) NOT NULL,
+  `vote_type` enum('like','dislike') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `notification_vote_comment`
+--
+
+INSERT INTO `notification_vote_comment` (`id`, `comment_id`, `article_id`, `vote_type`, `created_at`) VALUES
+(1, 68, 1, 'like', '2026-04-17 10:27:50'),
+(2, 68, 1, 'dislike', '2026-04-17 10:28:19'),
+(3, 68, 1, 'dislike', '2026-04-17 10:28:30'),
+(4, 68, 1, 'like', '2026-04-17 10:31:44'),
+(5, 98, 1, 'like', '2026-04-23 07:35:15'),
+(6, 98, 1, 'dislike', '2026-04-23 07:35:16'),
+(7, 99, 1, 'dislike', '2026-04-23 07:35:19'),
+(8, 99, 1, 'like', '2026-04-23 07:35:24'),
+(9, 98, 1, 'dislike', '2026-04-23 07:37:24'),
+(10, 99, 1, 'dislike', '2026-04-23 07:37:28'),
+(11, 99, 1, 'dislike', '2026-04-23 07:37:29'),
+(12, 99, 1, 'dislike', '2026-04-23 07:37:29'),
+(13, 99, 1, 'like', '2026-04-23 07:39:33'),
+(14, 99, 1, 'dislike', '2026-04-23 07:39:34'),
+(15, 99, 1, 'like', '2026-04-23 07:41:36'),
+(16, 99, 1, 'dislike', '2026-04-23 07:41:44'),
+(17, 99, 1, 'like', '2026-04-23 07:41:46'),
+(18, 99, 1, 'like', '2026-04-23 07:41:47'),
+(19, 99, 1, 'dislike', '2026-04-23 07:41:56'),
+(20, 98, 1, 'like', '2026-04-23 07:41:58'),
+(21, 99, 1, 'like', '2026-04-23 07:42:08'),
+(22, 99, 1, 'like', '2026-04-23 07:42:53'),
+(23, 99, 1, 'dislike', '2026-04-23 07:42:57'),
+(24, 99, 1, 'like', '2026-04-23 07:43:20'),
+(25, 99, 1, 'dislike', '2026-04-23 07:43:21'),
+(26, 99, 1, 'like', '2026-04-23 07:44:39'),
+(27, 99, 1, 'dislike', '2026-04-23 07:44:40'),
+(28, 99, 1, 'dislike', '2026-04-23 07:44:42'),
+(29, 99, 1, 'like', '2026-04-23 07:44:43'),
+(30, 99, 1, 'like', '2026-04-23 07:44:44'),
+(31, 99, 1, 'dislike', '2026-04-23 07:44:47'),
+(32, 99, 1, 'like', '2026-04-23 07:44:48'),
+(33, 99, 1, 'like', '2026-04-23 07:44:52'),
+(34, 100, 1, 'like', '2026-04-23 07:46:18'),
+(35, 100, 1, 'dislike', '2026-04-23 07:46:19'),
+(36, 100, 1, 'like', '2026-04-23 07:46:21'),
+(37, 100, 1, 'dislike', '2026-04-23 07:46:22'),
+(38, 100, 1, 'dislike', '2026-04-23 07:46:25'),
+(40, 100, 1, 'like', '2026-04-23 09:38:46'),
+(41, 100, 1, 'like', '2026-04-23 09:38:47'),
+(42, 100, 1, 'dislike', '2026-04-23 09:38:47'),
+(43, 100, 1, 'like', '2026-04-23 09:39:10'),
+(44, 100, 1, 'dislike', '2026-04-23 09:40:49'),
+(45, 100, 1, 'like', '2026-04-23 09:40:51'),
+(46, 100, 1, 'dislike', '2026-04-23 09:44:01'),
+(47, 100, 1, 'like', '2026-04-23 09:44:02'),
+(48, 106, 1, 'like', '2026-04-23 12:16:33');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orders`
+--
+
+CREATE TABLE `orders` (
+  `order_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` tinyint(1) DEFAULT 0,
+  `is_paid` tinyint(1) DEFAULT 0,
+  `shipping_fee` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `note` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `status`, `is_paid`, `shipping_fee`, `note`) VALUES
+(1, 8, '2026-04-26 04:46:43', 4, 0, 22000.00, NULL),
+(2, 8, '2026-04-26 04:47:18', 3, 1, 0.00, NULL),
+(3, 8, '2026-04-26 10:27:50', 4, 0, 22000.00, NULL),
+(4, 8, '2026-04-26 10:28:21', 4, 0, 0.00, NULL),
+(5, 8, '2026-04-26 13:57:15', 3, 1, 22000.00, NULL),
+(6, 8, '2026-04-26 13:57:47', 4, 0, 22000.00, NULL),
+(7, 8, '2026-04-26 14:26:10', 4, 0, 22000.00, NULL),
+(8, 8, '2026-04-26 15:02:04', 4, 0, 22000.00, NULL),
+(9, 8, '2026-04-26 15:16:22', 4, 0, 22000.00, NULL),
+(10, 10, '2026-05-02 13:11:21', 1, 0, 22000.00, NULL),
+(11, 10, '2026-05-02 14:41:34', 1, 0, 22000.00, NULL),
+(12, 10, '2026-05-02 14:45:23', 1, 0, 0.00, NULL),
+(13, 10, '2026-05-02 14:56:58', 1, 0, 22000.00, NULL),
+(14, 10, '2026-05-02 15:18:59', 1, 0, 22000.00, NULL),
+(15, 10, '2026-05-02 15:19:18', 3, 1, 22000.00, NULL),
+(16, 10, '2026-05-02 15:28:22', 3, 1, 22000.00, 'ABC'),
+(17, 10, '2026-05-03 08:52:27', 0, 0, 0.00, ''),
+(18, 10, '2026-05-04 03:39:53', 3, 1, 22000.00, ''),
+(19, 10, '2026-05-04 06:49:24', 0, 0, 22000.00, ''),
+(20, 10, '2026-05-04 08:06:51', 0, 0, 22000.00, ''),
+(21, 10, '2026-05-04 08:07:23', 1, 0, 22000.00, ''),
+(22, 10, '2026-05-04 12:53:32', 0, 0, 22000.00, '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `order_details`
+--
+
+CREATE TABLE `order_details` (
+  `detail_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `order_details`
+--
+
+INSERT INTO `order_details` (`detail_id`, `order_id`, `item_id`, `quantity`, `price`) VALUES
+(1, 1, 1, 1, 75000.00),
+(2, 2, 1, 1, 75000.00),
+(3, 3, 1, 1, 75000.00),
+(4, 4, 1, 1, 75000.00),
+(5, 5, 1, 2, 75000.00),
+(6, 6, 1, 1, 75000.00),
+(7, 7, 11, 1, 75000.00),
+(8, 8, 2, 1, 75000.00),
+(9, 9, 2, 1, 75000.00),
+(10, 10, 1, 2, 75000.00),
+(11, 10, 15, 2, 80000.00),
+(12, 11, 1, 5, 75000.00),
+(13, 12, 1, 1, 75000.00),
+(14, 13, 1, 1, 75000.00),
+(15, 14, 1, 1, 75000.00),
+(16, 15, 3, 1, 85000.00),
+(17, 16, 5, 1, 150000.00),
+(18, 17, 2, 1, 75000.00),
+(19, 18, 3, 1, 85000.00),
+(20, 19, 1, 1, 75000.00),
+(21, 19, 3, 1, 85000.00),
+(22, 20, 6, 1, 100000.00),
+(23, 21, 5, 1, 150000.00),
+(24, 22, 2, 1, 75000.00);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `otp`
+--
+
+CREATE TABLE `otp` (
+  `otp_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `code` char(6) NOT NULL,
+  `time_expire` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `is_active` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `otp`
+--
+
+INSERT INTO `otp` (`otp_id`, `user_id`, `code`, `time_expire`, `is_active`) VALUES
+(1, 1, '123456', '2026-04-13 10:00:00', 0),
+(2, 2, '654321', '2026-04-13 10:00:00', 0),
+(3, 5, '479881', '2026-04-23 06:58:10', 1),
+(4, 6, '297742', '2026-04-23 06:56:57', 0),
+(5, 7, '811008', '2026-04-23 13:51:34', 0),
+(6, 8, '955697', '2026-04-26 04:17:59', 0),
+(7, 9, '515256', '2026-04-27 03:11:25', 1),
+(8, 10, '347422', '2026-04-27 09:09:46', 0),
+(9, 10, '201916', '2026-05-03 02:55:47', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_reviews`
+--
+
+CREATE TABLE `product_reviews` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `rating` tinyint(1) NOT NULL DEFAULT 5 COMMENT 'Từ 1 đến 5 sao',
+  `comment` text DEFAULT NULL COMMENT 'Nội dung bình luận, có thể để trống',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `product_reviews`
+--
+
+INSERT INTO `product_reviews` (`id`, `product_id`, `user_id`, `rating`, `comment`, `created_at`, `updated_at`) VALUES
+(1, 9, 10, 5, 'Sách tốt sách tốt', '2026-05-04 13:55:57', '2026-05-04 13:55:57'),
+(2, 9, 8, 4, 'Sách tạm ổn', '2026-05-04 13:57:44', '2026-05-04 13:57:44');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `review_admin_replies`
+--
+
+CREATE TABLE `review_admin_replies` (
+  `id` int(11) NOT NULL,
+  `detail_id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `reply_content` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `review_details`
+--
+
+CREATE TABLE `review_details` (
+  `id` int(11) NOT NULL,
+  `review_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `content` text NOT NULL,
+  `rating` tinyint(4) NOT NULL CHECK (`rating` between 1 and 5),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `user_id` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` tinyint(1) DEFAULT 0,
+  `phone` varchar(20) DEFAULT NULL,
+  `is_verified` tinyint(1) DEFAULT 0,
+  `is_banned` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`user_id`, `email`, `password`, `role`, `phone`, `is_verified`, `is_banned`) VALUES
+(1, 'newmail@example.com', '1', 1, '0909123456', 1, 0),
+(2, 'user@example.com', '1', 0, '0912345678', 1, 1),
+(3, 'test@example.com', '$2y$10$bCcrrIMwvAzNm9CPBd7QF.mvlC53Z1rv5V5JS.17CROJwA1CMU1o.', 0, '0909123456', 1, 0),
+(4, 'test@example.com', '$2y$10$4kPsaF0qN6uyNwsQ9lGVr.5vdG0nW0JLKOA/EajQEHy9QJaP/AXSy', 0, '0909123456', 1, 0),
+(5, '1@gmail.com', '$2y$10$ATPBYZkLnUraXPXIYs5nVeU8ZBqfn3srgpCe77Y7PrO8DOjL/T4QW', 1, '1234567891', 1, 0),
+(6, 'trung.nong7z@gmail.com', '$2y$10$RQfT1Ad7HJSR/xs1DKcex.7rIsHIDoJQtJ3hzU0Vv2eCo17eldJ3W', 0, '1234567890', 1, 0),
+(7, 'theinspirer2004@gmail.com', '$2y$10$u8SKpul00xAo80c27bY/1Om9gVCeRc8YBZFEToupbbf4o8jAegTcS', 0, '12345678', 1, 0),
+(8, 'honatuan2004@gmail.com', '$2y$10$CuGdMneVmEOo8fbx31ppj.NU/3mbTTnjm8qDdoy.A6HWuAplxDoly', 0, '0937980725', 1, 0),
+(9, 'hongocanhtuannoob@gmail.com', '$2y$10$Pssp/..WT6YhbeSadGSEsOPF5gg5Hxs3pvaxz6JSA56yHlV7cuadG', 0, '0937980725', 0, 0),
+(10, 'hongocanhtuan1301@gmail.com', '$2y$10$srN7DyUX5JvRs6ZTUadtGenOq9oXw4VRCR5wRUgs5h7V98peLphO6', 0, '0937980725', 1, 0);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `about_content`
+--
+ALTER TABLE `about_content`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `addresses`
+--
+ALTER TABLE `addresses`
+  ADD PRIMARY KEY (`address_id`);
+
+--
+-- Indexes for table `articles`
+--
+ALTER TABLE `articles`
+  ADD PRIMARY KEY (`id_article`);
+
+--
+-- Indexes for table `comments`
+--
+ALTER TABLE `comments`
+  ADD PRIMARY KEY (`id_comment`),
+  ADD KEY `id_article` (`id_article`),
+  ADD KEY `id_user` (`id_user`),
+  ADD KEY `replied` (`replied`);
+
+--
+-- Indexes for table `comment_votes`
+--
+ALTER TABLE `comment_votes`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_vote` (`comment_id`,`user_id`);
+
+--
+-- Indexes for table `faq`
+--
+ALTER TABLE `faq`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `information`
+--
+ALTER TABLE `information`
+  ADD PRIMARY KEY (`info_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `address_id` (`address_id`);
+
+--
+-- Indexes for table `items`
+--
+ALTER TABLE `items`
+  ADD PRIMARY KEY (`item_id`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `notifications_ibfk_2` (`notification_comment_id`),
+  ADD KEY `fk_notifications_vote_comment` (`notification_vote_comment_id`);
+
+--
+-- Indexes for table `notification_comment`
+--
+ALTER TABLE `notification_comment`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `article_id` (`article_id`),
+  ADD KEY `replied` (`replied`),
+  ADD KEY `notification_comment_ibfk_2` (`comment_id`);
+
+--
+-- Indexes for table `notification_order`
+--
+ALTER TABLE `notification_order`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `notification_setting`
+--
+ALTER TABLE `notification_setting`
+  ADD PRIMARY KEY (`setting_id`),
+  ADD KEY `fk_admin_user` (`admin_id`);
+
+--
+-- Indexes for table `notification_vote_comment`
+--
+ALTER TABLE `notification_vote_comment`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `article_id` (`article_id`),
+  ADD KEY `notification_vote_comment_ibfk_1` (`comment_id`);
+
+--
+-- Indexes for table `orders`
+--
+ALTER TABLE `orders`
+  ADD PRIMARY KEY (`order_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `order_details`
+--
+ALTER TABLE `order_details`
+  ADD PRIMARY KEY (`detail_id`),
+  ADD KEY `order_id` (`order_id`),
+  ADD KEY `item_id` (`item_id`);
+
+--
+-- Indexes for table `otp`
+--
+ALTER TABLE `otp`
+  ADD PRIMARY KEY (`otp_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `product_reviews`
+--
+ALTER TABLE `product_reviews`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_review_item` (`product_id`);
+
+--
+-- Indexes for table `review_admin_replies`
+--
+ALTER TABLE `review_admin_replies`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_reply_detail` (`detail_id`),
+  ADD KEY `fk_reply_admin` (`admin_id`);
+
+--
+-- Indexes for table `review_details`
+--
+ALTER TABLE `review_details`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_detail_review` (`review_id`),
+  ADD KEY `fk_detail_user` (`user_id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`user_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `about_content`
+--
+ALTER TABLE `about_content`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `addresses`
+--
+ALTER TABLE `addresses`
+  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `articles`
+--
+ALTER TABLE `articles`
+  MODIFY `id_article` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `comments`
+--
+ALTER TABLE `comments`
+  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
+
+--
+-- AUTO_INCREMENT for table `comment_votes`
+--
+ALTER TABLE `comment_votes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+
+--
+-- AUTO_INCREMENT for table `faq`
+--
+ALTER TABLE `faq`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `information`
+--
+ALTER TABLE `information`
+  MODIFY `info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `items`
+--
+ALTER TABLE `items`
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+
+--
+-- AUTO_INCREMENT for table `notification_comment`
+--
+ALTER TABLE `notification_comment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `notification_order`
+--
+ALTER TABLE `notification_order`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `notification_setting`
+--
+ALTER TABLE `notification_setting`
+  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `notification_vote_comment`
+--
+ALTER TABLE `notification_vote_comment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+
+--
+-- AUTO_INCREMENT for table `orders`
+--
+ALTER TABLE `orders`
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `order_details`
+--
+ALTER TABLE `order_details`
+  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT for table `otp`
+--
+ALTER TABLE `otp`
+  MODIFY `otp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `product_reviews`
+--
+ALTER TABLE `product_reviews`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `review_admin_replies`
+--
+ALTER TABLE `review_admin_replies`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `review_details`
+--
+ALTER TABLE `review_details`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `comments`
+--
+ALTER TABLE `comments`
+  ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`id_article`) REFERENCES `articles` (`id_article`),
+  ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`replied`) REFERENCES `comments` (`id_comment`);
+
+--
+-- Constraints for table `information`
+--
+ALTER TABLE `information`
+  ADD CONSTRAINT `information_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `information_ibfk_2` FOREIGN KEY (`address_id`) REFERENCES `addresses` (`address_id`);
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `fk_notifications_vote_comment` FOREIGN KEY (`notification_vote_comment_id`) REFERENCES `notification_vote_comment` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`notification_comment_id`) REFERENCES `notification_comment` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `notification_comment`
+--
+ALTER TABLE `notification_comment`
+  ADD CONSTRAINT `notification_comment_ibfk_1` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id_article`),
+  ADD CONSTRAINT `notification_comment_ibfk_2` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`id_comment`) ON DELETE CASCADE,
+  ADD CONSTRAINT `notification_comment_ibfk_3` FOREIGN KEY (`replied`) REFERENCES `comments` (`replied`);
+
+--
+-- Constraints for table `notification_setting`
+--
+ALTER TABLE `notification_setting`
+  ADD CONSTRAINT `fk_admin_user` FOREIGN KEY (`admin_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `notification_vote_comment`
+--
+ALTER TABLE `notification_vote_comment`
+  ADD CONSTRAINT `notification_vote_comment_ibfk_1` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`id_comment`) ON DELETE CASCADE,
+  ADD CONSTRAINT `notification_vote_comment_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id_article`);
+
+--
+-- Constraints for table `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `order_details`
+--
+ALTER TABLE `order_details`
+  ADD CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
+  ADD CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`);
+
+--
+-- Constraints for table `otp`
+--
+ALTER TABLE `otp`
+  ADD CONSTRAINT `otp_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `product_reviews`
+--
+ALTER TABLE `product_reviews`
+  ADD CONSTRAINT `fk_review_item` FOREIGN KEY (`product_id`) REFERENCES `items` (`item_id`);
+
+--
+-- Constraints for table `review_admin_replies`
+--
+ALTER TABLE `review_admin_replies`
+  ADD CONSTRAINT `fk_reply_admin` FOREIGN KEY (`admin_id`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `fk_reply_detail` FOREIGN KEY (`detail_id`) REFERENCES `review_details` (`id`);
+
+--
+-- Constraints for table `review_details`
+--
+ALTER TABLE `review_details`
+  ADD CONSTRAINT `fk_detail_review` FOREIGN KEY (`review_id`) REFERENCES `product_reviews` (`id`),
+  ADD CONSTRAINT `fk_detail_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;

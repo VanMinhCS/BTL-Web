@@ -102,7 +102,7 @@
                                     <li class="<?php echo ($current == 'product_overview') ? 'active' : ''; ?>">
                                         <a href="<?php echo BASE_URL; ?>admin/product/overview">Tổng quan</a>
                                     </li>
-
+                                    
                                     <li class="<?php echo ($current == 'product_order') ? 'active' : ''; ?>">
                                         <a href="<?php echo BASE_URL; ?>admin/product/order">Quản lý đơn hàng</a>
                                     </li>
@@ -121,7 +121,11 @@
                                     <i class="ti-book"></i><span>Quản lý tin tức</span>
                                 </a>
                             </li>
-
+                            <li class="<?php echo ($current == 'news') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/about">
+                                    <i class="ti-book"></i><span>Quản lý giới thiệu</span>
+                                </a>
+                            </li>
                             <li class="<?php echo ($current == 'notification') ? 'active' : ''; ?>">
                                 <a href="<?php echo BASE_URL; ?>admin/notification">
                                     <i class="ti-bell"></i><span>Quản lý thông báo</span>
@@ -134,34 +138,11 @@
                                 </a>
                             </li>
 
-                            <li class="<?php echo ($current == 'contact') ? 'active' : ''; ?>">
-                                <a href="<?php echo BASE_URL; ?>admin/contact">
-                                    <img src="<?php echo BASE_URL ?>assets/img/contact-icon.svg" alt="contact-icon" class="icon">
-                                    <span>Quản lý liên hệ</span>
+                            <li class="<?php echo ($current == 'user') ? 'active' : ''; ?>">
+                                <a href="<?php echo BASE_URL; ?>admin/faq">
+                                    <i class="ti-user"></i><span>Trả lời câu hỏi</span>
                                 </a>
                             </li>
-
-                            <?php 
-                            $info = in_array($current, ['home_info', 'contact_info',]); 
-                            ?>
-                            <li class="<?php echo $info ? 'active mm-active' : ''; ?>">
-                                <a href="javascript:void(0)" aria-expanded="<?php echo $info ? 'true' : 'false'; ?>">
-                                    <img src="<?php echo BASE_URL ?>assets/img/info-icon.svg" alt="info-icon" class="icon">
-                                    <span>Thông tin công khai</span>
-                                </a>
-                                
-                                <ul class="collapse <?php echo $info ? 'show mm-collapse mm-show' : ''; ?>">
-                                    <li class="<?php echo ($current == 'home_info') ? 'active' : ''; ?>">
-                                        <a href="<?php echo BASE_URL; ?>admin/info">Trang chủ</a>
-                                    </li>
-
-                                    <li class="<?php echo ($current == 'contact_info') ? 'active' : ''; ?>">
-                                        <a href="<?php echo BASE_URL; ?>admin/info/contact">Liên hệ</a>
-                                    </li>
-
-                                </ul>
-                            </li>
-                            
                         </ul>
                     </nav>
                 </div>
