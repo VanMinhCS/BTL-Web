@@ -1,57 +1,73 @@
--- --------------------------------------------------------
--- Host:                         127.0.0.1
--- Server version:               8.0.30 - MySQL Community Server - GPL
--- Server OS:                    Win64
--- HeidiSQL Version:             12.1.0.6537
--- --------------------------------------------------------
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: May 05, 2026 at 04:19 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8 */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
+--
+-- Database: `bk88`
+--
 
--- Dumping database structure for bk88
-CREATE DATABASE IF NOT EXISTS `bk88` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `bk88`;
+-- --------------------------------------------------------
 
--- Dumping structure for table bk88.addresses
-CREATE TABLE IF NOT EXISTS `addresses` (
-  `address_id` int NOT NULL AUTO_INCREMENT,
-  `street` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `ward` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `city` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`address_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+--
+-- Table structure for table `addresses`
+--
 
--- Dumping data for table bk88.addresses: ~8 rows (approximately)
+CREATE TABLE `addresses` (
+  `address_id` int(11) NOT NULL,
+  `street` varchar(100) DEFAULT NULL,
+  `ward` varchar(100) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `addresses`
+--
+
 INSERT INTO `addresses` (`address_id`, `street`, `ward`, `city`) VALUES
-	(1, '12 Nguyễn Huệ', 'Phường Bến Nghé', 'TP.HCM'),
-	(2, '45 Lê Lợi', 'Phường Bến Thành', 'TP.HCM'),
-	(3, '', '', ''),
-	(4, '', '', ''),
-	(5, '', '', ''),
-	(6, '1/2/13 Đường 5E', 'Phường Bình Hưng Hòa', 'TP.HCM'),
-	(7, '', '', ''),
-	(8, '', '', '');
+(1, '12 Nguyễn Huệ', 'Phường Bến Nghé', 'TP.HCM'),
+(2, '45 Lê Lợi', 'Phường Bến Thành', 'TP.HCM'),
+(3, '', '', ''),
+(4, '', '', ''),
+(5, '', '', ''),
+(6, '1/2/13 Đường 5E', 'Phường Bình Hưng Hòa', 'TP.HCM'),
+(7, '', '', ''),
+(8, '1/2/13 Đường 5E', 'Bình Hưng Hòa', 'TP.HCM');
 
--- Dumping structure for table bk88.articles
-CREATE TABLE IF NOT EXISTS `articles` (
-  `id_article` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `description` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `time_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `status` tinyint(1) NOT NULL DEFAULT '0',
-  `content` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `background` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id_article`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+-- --------------------------------------------------------
 
--- Dumping data for table bk88.articles: ~0 rows (approximately)
+--
+-- Table structure for table `articles`
+--
+
+CREATE TABLE `articles` (
+  `id_article` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `time_modified` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` tinyint(1) NOT NULL DEFAULT 0,
+  `content` text NOT NULL,
+  `background` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `articles`
+--
+
 INSERT INTO `articles` (`id_article`, `title`, `description`, `time_modified`, `status`, `content`, `background`) VALUES
 (1, 'Bài viết mẫu BK88', 'Giới thiệu', '2026-05-04 07:49:10', 1, 'Nội dung thử nghiệm...', '/assets/img/article/article1.png'),
 (2, 'Bài viết mới', '', '2026-05-04 07:28:01', 1, '<iframe class=\"ql-video\" frameborder=\"0\" allowfullscreen=\"true\" src=\"https://www.youtube.com/embed/XbGs_qK2PQA?showinfo=0\"></iframe><p class=\"ql-align-center\"><br></p>', 'assets/img/article/article2.png');
@@ -110,32 +126,38 @@ INSERT INTO `comments` (`id_comment`, `id_article`, `id_user`, `text`, `date_mod
 (107, 1, 5, 'hay', '2026-04-23 12:16:38', 0, NULL),
 (108, 1, 5, 'k', '2026-05-04 08:00:28', 0, NULL);
 
--- Dumping structure for table bk88.comment_votes
-CREATE TABLE IF NOT EXISTS `comment_votes` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `comment_id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `vote` enum('like','dislike') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_vote` (`comment_id`,`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=123 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+-- --------------------------------------------------------
 
--- Dumping data for table bk88.comment_votes: ~12 rows (approximately)
+--
+-- Table structure for table `comment_votes`
+--
+
+CREATE TABLE `comment_votes` (
+  `id` int(11) NOT NULL,
+  `comment_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `vote` enum('like','dislike') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `comment_votes`
+--
+
 INSERT INTO `comment_votes` (`id`, `comment_id`, `user_id`, `vote`) VALUES
-	(1, 1, 2, 'like'),
-	(2, 1, 3, 'like'),
-	(3, 1, 4, 'dislike'),
-	(5, 2, 3, 'like'),
-	(6, 3, 2, 'dislike'),
-	(62, 3, 1, 'like'),
-	(66, 1, 1, 'dislike'),
-	(69, 55, 1, 'like'),
-	(70, 82, 1, 'dislike'),
-	(86, 98, 1, 'dislike'),
-	(110, 102, 6, 'dislike'),
-	(122, 106, 5, 'like');
+(1, 1, 2, 'like'),
+(2, 1, 3, 'like'),
+(3, 1, 4, 'dislike'),
+(5, 2, 3, 'like'),
+(6, 3, 2, 'dislike'),
+(62, 3, 1, 'like'),
+(66, 1, 1, 'dislike'),
+(69, 55, 1, 'like'),
+(70, 82, 1, 'dislike'),
+(86, 98, 1, 'dislike'),
+(110, 102, 6, 'dislike'),
+(122, 106, 5, 'like');
 
--- Dumping structure for table bk88.contacts
+
 CREATE TABLE IF NOT EXISTS `contacts` (
   `contact_id` int NOT NULL AUTO_INCREMENT,
   `customer_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -297,44 +319,54 @@ CREATE TABLE IF NOT EXISTS `home_settings` (
 INSERT INTO `home_settings` (`id`, `setting_key`, `setting_value`, `updated_at`) VALUES
 	(1, 'site_logo', 'logo88.png', '2026-05-05 09:34:15');
 
--- Dumping structure for table bk88.information
-CREATE TABLE IF NOT EXISTS `information` (
-  `info_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `address_id` int NOT NULL,
-  `firstname` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `lastname` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`info_id`),
-  KEY `user_id` (`user_id`),
-  KEY `address_id` (`address_id`),
-  CONSTRAINT `information_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `information_ibfk_2` FOREIGN KEY (`address_id`) REFERENCES `addresses` (`address_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+-- --------------------------------------------------------
 
--- Dumping data for table bk88.information: ~8 rows (approximately)
+--
+-- Table structure for table `information`
+--
+
+CREATE TABLE `information` (
+  `info_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `address_id` int(11) NOT NULL,
+  `firstname` varchar(50) DEFAULT NULL,
+  `lastname` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `information`
+--
+
 INSERT INTO `information` (`info_id`, `user_id`, `address_id`, `firstname`, `lastname`) VALUES
-	(1, 1, 1, 'Trung', 'Admin'),
-	(2, 2, 2, 'Ngọc', 'User'),
-	(5, 5, 3, 'T', 'N'),
-	(6, 6, 4, 't', 'n'),
-	(7, 7, 5, '2', ''),
-	(8, 8, 6, 'Tuấn', 'Hồ Ngọc Anh'),
-	(9, 9, 7, 'Tuan', 'Ho Ngoc Anh'),
-	(10, 10, 8, 'Tuan', 'Ho Ngoc Anh');
+(1, 1, 1, 'Trung', 'Admin'),
+(2, 2, 2, 'Ngọc', 'User'),
+(5, 5, 3, 'T', 'N'),
+(6, 6, 4, 't', 'n'),
+(7, 7, 5, '2', ''),
+(8, 8, 6, 'Tuấn', 'Hồ Ngọc Anh'),
+(9, 9, 7, 'Tuan', 'Ho Ngoc Anh'),
+(10, 10, 8, 'Tuan', 'Ho Ngoc Anh');
 
--- Dumping structure for table bk88.items
-CREATE TABLE IF NOT EXISTS `items` (
-  `item_id` int NOT NULL AUTO_INCREMENT,
-  `item_name` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `item_stock` int DEFAULT '0',
-  `description` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `items`
+--
+
+CREATE TABLE `items` (
+  `item_id` int(11) NOT NULL,
+  `item_name` varchar(100) NOT NULL,
+  `item_stock` int(11) DEFAULT 0,
+  `description` text DEFAULT NULL,
   `price` decimal(10,2) NOT NULL,
-  `cost_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `item_image` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`item_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `cost_price` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `item_image` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table bk88.items: ~11 rows (approximately)
+--
+-- Dumping data for table `items`
+--
+
 INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `description`, `price`, `cost_price`, `item_image`) VALUES
 (1, 'Giải tích 1', 87, 'Giáo trình Giải tích 1', 75000.00, 61000.00, '1777112063_gt1.png'),
 (2, 'Giải tích 2', 98, 'Giáo trình Giải tích 2', 75000.00, 60000.00, '1777212188_gt2.png'),
@@ -348,23 +380,22 @@ INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `description`, `price
 (11, 'Lịch sử Đảng Cộng sản Việt Nam', 0, 'Giáo trình LSĐCSVN', 75000.00, 60000.00, '1777213030_lsd.png'),
 (15, 'Tư tưởng Hồ Chí Minh', 98, 'Giáo trình TTHCM', 80000.00, 65000.00, '1777521969_tthcm.png');
 
--- Dumping structure for table bk88.notifications
-CREATE TABLE IF NOT EXISTS `notifications` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `type` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `user_id` int NOT NULL,
-  `notification_comment_id` int DEFAULT NULL,
-  `is_read` tinyint(1) DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `notification_vote_comment_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `notifications_ibfk_2` (`notification_comment_id`),
-  KEY `fk_notifications_vote_comment` (`notification_vote_comment_id`),
-  CONSTRAINT `fk_notifications_vote_comment` FOREIGN KEY (`notification_vote_comment_id`) REFERENCES `notification_vote_comment` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`notification_comment_id`) REFERENCES `notification_comment` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `notification_comment_id` int(11) DEFAULT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `notification_vote_comment_id` int(11) DEFAULT NULL,
+  `notification_order_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `notifications`
@@ -453,7 +484,10 @@ CREATE TABLE `notification_comment` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table bk88.notification_comment: ~13 rows (approximately)
+--
+-- Dumping data for table `notification_comment`
+--
+
 INSERT INTO `notification_comment` (`id`, `article_id`, `comment_id`, `content`, `replied`, `created_at`) VALUES
 (1, 1, 95, 'd', NULL, '2026-04-17 10:33:39'),
 (2, 1, 96, 'đs', 95, '2026-04-17 10:35:38'),
@@ -548,68 +582,74 @@ CREATE TABLE `notification_vote_comment` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table bk88.notification_vote_comment: ~0 rows (approximately)
-INSERT INTO `notification_vote_comment` (`id`, `comment_id`, `article_id`, `vote_type`, `created_at`) VALUES
-	(1, 68, 1, 'like', '2026-04-17 10:27:50'),
-	(2, 68, 1, 'dislike', '2026-04-17 10:28:19'),
-	(3, 68, 1, 'dislike', '2026-04-17 10:28:30'),
-	(4, 68, 1, 'like', '2026-04-17 10:31:44'),
-	(5, 98, 1, 'like', '2026-04-23 07:35:15'),
-	(6, 98, 1, 'dislike', '2026-04-23 07:35:16'),
-	(7, 99, 1, 'dislike', '2026-04-23 07:35:19'),
-	(8, 99, 1, 'like', '2026-04-23 07:35:24'),
-	(9, 98, 1, 'dislike', '2026-04-23 07:37:24'),
-	(10, 99, 1, 'dislike', '2026-04-23 07:37:28'),
-	(11, 99, 1, 'dislike', '2026-04-23 07:37:29'),
-	(12, 99, 1, 'dislike', '2026-04-23 07:37:29'),
-	(13, 99, 1, 'like', '2026-04-23 07:39:33'),
-	(14, 99, 1, 'dislike', '2026-04-23 07:39:34'),
-	(15, 99, 1, 'like', '2026-04-23 07:41:36'),
-	(16, 99, 1, 'dislike', '2026-04-23 07:41:44'),
-	(17, 99, 1, 'like', '2026-04-23 07:41:46'),
-	(18, 99, 1, 'like', '2026-04-23 07:41:47'),
-	(19, 99, 1, 'dislike', '2026-04-23 07:41:56'),
-	(20, 98, 1, 'like', '2026-04-23 07:41:58'),
-	(21, 99, 1, 'like', '2026-04-23 07:42:08'),
-	(22, 99, 1, 'like', '2026-04-23 07:42:53'),
-	(23, 99, 1, 'dislike', '2026-04-23 07:42:57'),
-	(24, 99, 1, 'like', '2026-04-23 07:43:20'),
-	(25, 99, 1, 'dislike', '2026-04-23 07:43:21'),
-	(26, 99, 1, 'like', '2026-04-23 07:44:39'),
-	(27, 99, 1, 'dislike', '2026-04-23 07:44:40'),
-	(28, 99, 1, 'dislike', '2026-04-23 07:44:42'),
-	(29, 99, 1, 'like', '2026-04-23 07:44:43'),
-	(30, 99, 1, 'like', '2026-04-23 07:44:44'),
-	(31, 99, 1, 'dislike', '2026-04-23 07:44:47'),
-	(32, 99, 1, 'like', '2026-04-23 07:44:48'),
-	(33, 99, 1, 'like', '2026-04-23 07:44:52'),
-	(34, 100, 1, 'like', '2026-04-23 07:46:18'),
-	(35, 100, 1, 'dislike', '2026-04-23 07:46:19'),
-	(36, 100, 1, 'like', '2026-04-23 07:46:21'),
-	(37, 100, 1, 'dislike', '2026-04-23 07:46:22'),
-	(38, 100, 1, 'dislike', '2026-04-23 07:46:25'),
-	(40, 100, 1, 'like', '2026-04-23 09:38:46'),
-	(41, 100, 1, 'like', '2026-04-23 09:38:47'),
-	(42, 100, 1, 'dislike', '2026-04-23 09:38:47'),
-	(43, 100, 1, 'like', '2026-04-23 09:39:10'),
-	(44, 100, 1, 'dislike', '2026-04-23 09:40:49'),
-	(45, 100, 1, 'like', '2026-04-23 09:40:51'),
-	(46, 100, 1, 'dislike', '2026-04-23 09:44:01'),
-	(47, 100, 1, 'like', '2026-04-23 09:44:02'),
-	(48, 106, 1, 'like', '2026-04-23 12:16:33');
+--
+-- Dumping data for table `notification_vote_comment`
+--
 
--- Dumping structure for table bk88.orders
-CREATE TABLE IF NOT EXISTS `orders` (
-  `order_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `order_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` tinyint(1) DEFAULT '0',
-  `is_paid` tinyint(1) DEFAULT '0',
-  `shipping_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
-  PRIMARY KEY (`order_id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+INSERT INTO `notification_vote_comment` (`id`, `comment_id`, `article_id`, `vote_type`, `created_at`) VALUES
+(1, 68, 1, 'like', '2026-04-17 10:27:50'),
+(2, 68, 1, 'dislike', '2026-04-17 10:28:19'),
+(3, 68, 1, 'dislike', '2026-04-17 10:28:30'),
+(4, 68, 1, 'like', '2026-04-17 10:31:44'),
+(5, 98, 1, 'like', '2026-04-23 07:35:15'),
+(6, 98, 1, 'dislike', '2026-04-23 07:35:16'),
+(7, 99, 1, 'dislike', '2026-04-23 07:35:19'),
+(8, 99, 1, 'like', '2026-04-23 07:35:24'),
+(9, 98, 1, 'dislike', '2026-04-23 07:37:24'),
+(10, 99, 1, 'dislike', '2026-04-23 07:37:28'),
+(11, 99, 1, 'dislike', '2026-04-23 07:37:29'),
+(12, 99, 1, 'dislike', '2026-04-23 07:37:29'),
+(13, 99, 1, 'like', '2026-04-23 07:39:33'),
+(14, 99, 1, 'dislike', '2026-04-23 07:39:34'),
+(15, 99, 1, 'like', '2026-04-23 07:41:36'),
+(16, 99, 1, 'dislike', '2026-04-23 07:41:44'),
+(17, 99, 1, 'like', '2026-04-23 07:41:46'),
+(18, 99, 1, 'like', '2026-04-23 07:41:47'),
+(19, 99, 1, 'dislike', '2026-04-23 07:41:56'),
+(20, 98, 1, 'like', '2026-04-23 07:41:58'),
+(21, 99, 1, 'like', '2026-04-23 07:42:08'),
+(22, 99, 1, 'like', '2026-04-23 07:42:53'),
+(23, 99, 1, 'dislike', '2026-04-23 07:42:57'),
+(24, 99, 1, 'like', '2026-04-23 07:43:20'),
+(25, 99, 1, 'dislike', '2026-04-23 07:43:21'),
+(26, 99, 1, 'like', '2026-04-23 07:44:39'),
+(27, 99, 1, 'dislike', '2026-04-23 07:44:40'),
+(28, 99, 1, 'dislike', '2026-04-23 07:44:42'),
+(29, 99, 1, 'like', '2026-04-23 07:44:43'),
+(30, 99, 1, 'like', '2026-04-23 07:44:44'),
+(31, 99, 1, 'dislike', '2026-04-23 07:44:47'),
+(32, 99, 1, 'like', '2026-04-23 07:44:48'),
+(33, 99, 1, 'like', '2026-04-23 07:44:52'),
+(34, 100, 1, 'like', '2026-04-23 07:46:18'),
+(35, 100, 1, 'dislike', '2026-04-23 07:46:19'),
+(36, 100, 1, 'like', '2026-04-23 07:46:21'),
+(37, 100, 1, 'dislike', '2026-04-23 07:46:22'),
+(38, 100, 1, 'dislike', '2026-04-23 07:46:25'),
+(40, 100, 1, 'like', '2026-04-23 09:38:46'),
+(41, 100, 1, 'like', '2026-04-23 09:38:47'),
+(42, 100, 1, 'dislike', '2026-04-23 09:38:47'),
+(43, 100, 1, 'like', '2026-04-23 09:39:10'),
+(44, 100, 1, 'dislike', '2026-04-23 09:40:49'),
+(45, 100, 1, 'like', '2026-04-23 09:40:51'),
+(46, 100, 1, 'dislike', '2026-04-23 09:44:01'),
+(47, 100, 1, 'like', '2026-04-23 09:44:02'),
+(48, 106, 1, 'like', '2026-04-23 12:16:33');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orders`
+--
+
+CREATE TABLE `orders` (
+  `order_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` tinyint(1) DEFAULT 0,
+  `is_paid` tinyint(1) DEFAULT 0,
+  `shipping_fee` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `note` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `orders`
@@ -639,21 +679,24 @@ INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `status`, `is_paid`, 
 (21, 10, '2026-05-04 08:07:23', 1, 0, 22000.00, ''),
 (22, 10, '2026-05-04 12:53:32', 0, 0, 22000.00, '');
 
--- Dumping structure for table bk88.order_details
-CREATE TABLE IF NOT EXISTS `order_details` (
-  `detail_id` int NOT NULL AUTO_INCREMENT,
-  `order_id` int NOT NULL,
-  `item_id` int NOT NULL,
-  `quantity` int NOT NULL,
-  `price` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`detail_id`),
-  KEY `order_id` (`order_id`),
-  KEY `item_id` (`item_id`),
-  CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
-  CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+-- --------------------------------------------------------
 
--- Dumping data for table bk88.order_details: ~0 rows (approximately)
+--
+-- Table structure for table `order_details`
+--
+
+CREATE TABLE `order_details` (
+  `detail_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `order_details`
+--
+
 INSERT INTO `order_details` (`detail_id`, `order_id`, `item_id`, `quantity`, `price`) VALUES
 (1, 1, 1, 1, 75000.00),
 (2, 2, 1, 1, 75000.00),
@@ -680,28 +723,34 @@ INSERT INTO `order_details` (`detail_id`, `order_id`, `item_id`, `quantity`, `pr
 (23, 21, 5, 1, 150000.00),
 (24, 22, 2, 1, 75000.00);
 
--- Dumping structure for table bk88.otp
-CREATE TABLE IF NOT EXISTS `otp` (
-  `otp_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `code` char(6) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `time_expire` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `is_active` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`otp_id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `otp_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+-- --------------------------------------------------------
 
--- Dumping data for table bk88.otp: ~0 rows (approximately)
+--
+-- Table structure for table `otp`
+--
+
+CREATE TABLE `otp` (
+  `otp_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `code` char(6) NOT NULL,
+  `time_expire` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `is_active` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `otp`
+--
+
 INSERT INTO `otp` (`otp_id`, `user_id`, `code`, `time_expire`, `is_active`) VALUES
-	(1, 1, '123456', '2026-04-13 10:00:00', 0),
-	(2, 2, '654321', '2026-04-13 10:00:00', 0),
-	(3, 5, '479881', '2026-04-23 06:58:10', 1),
-	(4, 6, '297742', '2026-04-23 06:56:57', 0),
-	(5, 7, '811008', '2026-04-23 13:51:34', 0),
-	(6, 8, '955697', '2026-04-26 04:17:59', 0),
-	(7, 9, '515256', '2026-04-27 03:11:25', 1),
-	(8, 10, '347422', '2026-04-27 09:09:46', 0);
+(1, 1, '123456', '2026-04-13 10:00:00', 0),
+(2, 2, '654321', '2026-04-13 10:00:00', 0),
+(3, 5, '479881', '2026-04-23 06:58:10', 1),
+(4, 6, '297742', '2026-04-23 06:56:57', 0),
+(5, 7, '811008', '2026-04-23 13:51:34', 0),
+(6, 8, '955697', '2026-04-26 04:17:59', 0),
+(7, 9, '515256', '2026-04-27 03:11:25', 1),
+(8, 10, '347422', '2026-04-27 09:09:46', 0),
+(9, 10, '201916', '2026-05-03 02:55:47', 1);
 
 -- --------------------------------------------------------
 
@@ -727,65 +776,65 @@ INSERT INTO `product_reviews` (`id`, `product_id`, `user_id`, `rating`, `comment
 (1, 9, 10, 5, 'Sách tốt sách tốt', '2026-05-04 13:55:57', '2026-05-04 13:55:57'),
 (2, 9, 8, 4, 'Sách tạm ổn', '2026-05-04 13:57:44', '2026-05-04 13:57:44');
 
--- Dumping data for table bk88.product_reviews: ~0 rows (approximately)
+-- --------------------------------------------------------
 
--- Dumping structure for table bk88.review_admin_replies
-CREATE TABLE IF NOT EXISTS `review_admin_replies` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `detail_id` int NOT NULL,
-  `admin_id` int NOT NULL,
-  `reply_content` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `fk_reply_detail` (`detail_id`),
-  KEY `fk_reply_admin` (`admin_id`),
-  CONSTRAINT `fk_reply_admin` FOREIGN KEY (`admin_id`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `fk_reply_detail` FOREIGN KEY (`detail_id`) REFERENCES `review_details` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+--
+-- Table structure for table `review_admin_replies`
+--
 
--- Dumping data for table bk88.review_admin_replies: ~0 rows (approximately)
+CREATE TABLE `review_admin_replies` (
+  `id` int(11) NOT NULL,
+  `detail_id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `reply_content` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping structure for table bk88.review_details
-CREATE TABLE IF NOT EXISTS `review_details` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `review_id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `content` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `rating` tinyint NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `fk_detail_review` (`review_id`),
-  KEY `fk_detail_user` (`user_id`),
-  CONSTRAINT `fk_detail_review` FOREIGN KEY (`review_id`) REFERENCES `product_reviews` (`id`),
-  CONSTRAINT `fk_detail_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `review_details_chk_1` CHECK ((`rating` between 1 and 5))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+-- --------------------------------------------------------
 
--- Dumping data for table bk88.review_details: ~0 rows (approximately)
+--
+-- Table structure for table `review_details`
+--
 
--- Dumping structure for table bk88.users
-CREATE TABLE IF NOT EXISTS `users` (
-  `user_id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `role` tinyint(1) DEFAULT '0',
-  `phone` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `is_verified` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+CREATE TABLE `review_details` (
+  `id` int(11) NOT NULL,
+  `review_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `content` text NOT NULL,
+  `rating` tinyint(4) NOT NULL CHECK (`rating` between 1 and 5),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table bk88.users: ~10 rows (approximately)
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `user_id` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` tinyint(1) DEFAULT 0,
+  `phone` varchar(20) DEFAULT NULL,
+  `is_verified` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
 INSERT INTO `users` (`user_id`, `email`, `password`, `role`, `phone`, `is_verified`) VALUES
-	(1, 'newmail@example.com', '1', 1, '0909123456', 1),
-	(2, 'user@example.com', '1', 0, '0912345678', 1),
-	(3, 'test@example.com', '$2y$10$bCcrrIMwvAzNm9CPBd7QF.mvlC53Z1rv5V5JS.17CROJwA1CMU1o.', 0, '0909123456', 1),
-	(4, 'test@example.com', '$2y$10$4kPsaF0qN6uyNwsQ9lGVr.5vdG0nW0JLKOA/EajQEHy9QJaP/AXSy', 0, '0909123456', 1),
-	(5, '1@gmail.com', '$2y$10$ATPBYZkLnUraXPXIYs5nVeU8ZBqfn3srgpCe77Y7PrO8DOjL/T4QW', 1, '1234567891', 1),
-	(6, 'trung.nong7z@gmail.com', '$2y$10$RQfT1Ad7HJSR/xs1DKcex.7rIsHIDoJQtJ3hzU0Vv2eCo17eldJ3W', 0, '1234567890', 1),
-	(7, 'theinspirer2004@gmail.com', '$2y$10$u8SKpul00xAo80c27bY/1Om9gVCeRc8YBZFEToupbbf4o8jAegTcS', 0, '12345678', 1),
-	(8, 'honatuan2004@gmail.com', '$2y$10$CuGdMneVmEOo8fbx31ppj.NU/3mbTTnjm8qDdoy.A6HWuAplxDoly', 0, '0937980725', 1),
-	(9, 'hongocanhtuannoob@gmail.com', '$2y$10$Pssp/..WT6YhbeSadGSEsOPF5gg5Hxs3pvaxz6JSA56yHlV7cuadG', 0, '0937980725', 0),
-	(10, 'hongocanhtuan1301@gmail.com', '$2y$10$6Ojm.2HoFD/IEaOHYeHhr.b9vzbfQCg1.xjKHK6qg8G57POSjSpk6', 0, '0937980725', 1);
+(1, 'newmail@example.com', '1', 1, '0909123456', 1),
+(2, 'user@example.com', '1', 0, '0912345678', 1),
+(3, 'test@example.com', '$2y$10$bCcrrIMwvAzNm9CPBd7QF.mvlC53Z1rv5V5JS.17CROJwA1CMU1o.', 0, '0909123456', 1),
+(4, 'test@example.com', '$2y$10$4kPsaF0qN6uyNwsQ9lGVr.5vdG0nW0JLKOA/EajQEHy9QJaP/AXSy', 0, '0909123456', 1),
+(5, '1@gmail.com', '$2y$10$ATPBYZkLnUraXPXIYs5nVeU8ZBqfn3srgpCe77Y7PrO8DOjL/T4QW', 1, '1234567891', 1),
+(6, 'trung.nong7z@gmail.com', '$2y$10$RQfT1Ad7HJSR/xs1DKcex.7rIsHIDoJQtJ3hzU0Vv2eCo17eldJ3W', 0, '1234567890', 1),
+(7, 'theinspirer2004@gmail.com', '$2y$10$u8SKpul00xAo80c27bY/1Om9gVCeRc8YBZFEToupbbf4o8jAegTcS', 0, '12345678', 1),
+(8, 'honatuan2004@gmail.com', '$2y$10$CuGdMneVmEOo8fbx31ppj.NU/3mbTTnjm8qDdoy.A6HWuAplxDoly', 0, '0937980725', 1),
+(9, 'hongocanhtuannoob@gmail.com', '$2y$10$Pssp/..WT6YhbeSadGSEsOPF5gg5Hxs3pvaxz6JSA56yHlV7cuadG', 0, '0937980725', 0),
+(10, 'hongocanhtuan1301@gmail.com', '$2y$10$srN7DyUX5JvRs6ZTUadtGenOq9oXw4VRCR5wRUgs5h7V98peLphO6', 0, '0937980725', 1);
 
 --
 -- Indexes for dumped tables
@@ -1122,6 +1171,3 @@ ALTER TABLE `review_details`
   ADD CONSTRAINT `fk_detail_review` FOREIGN KEY (`review_id`) REFERENCES `product_reviews` (`id`),
   ADD CONSTRAINT `fk_detail_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
