@@ -214,20 +214,6 @@ INSERT INTO `home_featured_products` (`id`, `item_id`, `sort_order`, `is_active`
 	(4, 4, 4, 1, '2026-05-04 15:11:56'),
 	(6, 7, 5, 1, '2026-05-04 15:59:07');
 
--- Dumping structure for table bk88.home_info_fields
-CREATE TABLE IF NOT EXISTS `home_info_fields` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sort_order` int DEFAULT '0',
-  `is_active` tinyint(1) DEFAULT '1',
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Dumping data for table bk88.home_info_fields: ~0 rows (approximately)
-
 -- Dumping structure for table bk88.home_quotes
 CREATE TABLE IF NOT EXISTS `home_quotes` (
   `id` int NOT NULL AUTO_INCREMENT,
