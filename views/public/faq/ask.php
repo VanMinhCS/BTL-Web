@@ -32,7 +32,7 @@
 
         <div class="glass-card">
             <h3>Gửi Thắc Mắc Mới</h3>
-            <form action="<?php echo BASE_URL; ?>member/submit_faq" method="POST" enctype="multipart/form-data">
+            <form action="<?php echo BASE_URL; ?>faq/submit_faq" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label>Chọn chủ đề:</label>
                     <select name="category" class="form-input" required>
