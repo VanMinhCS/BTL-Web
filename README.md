@@ -1,1 +1,4 @@
-Merge code test ở đây, ok hết thì merge nhánh này vô main
+# Cách cài đặt hệ thống BK88:
+## Bước 1: Clone git về folder tùy chọn.
+## Bước 2: Vào file config root trong XAMPP/apache/conf/httpd.conf
+## Bước 3: Chỉnh đường dẫn từ mặc định thành <đường dẫn thư mục>/public ở dòng 252 253 trong file httpd.conf
