@@ -130,6 +130,7 @@
         <div class="d-flex align-items-center gap-2">
             <label for="sortBy" class="fw-bold mb-0 text-nowrap">Sắp xếp theo:</label>
             <select id="sortBy" class="form-select w-auto shadow-sm border-dark">
+                <option value="sold-desc">Bán chạy nhất</option>
                 <option value="name-asc">Tên: A-Z</option>
                 <option value="name-desc">Tên: Z-A</option>
                 <option value="price-asc">Giá: Thấp đến Cao</option>
@@ -142,7 +143,7 @@
     <div class="row row-cols-1 row-cols-md-3 g-4" id="productList">
         <?php foreach ($products as $item): ?>
         <?php $rawPrice = $item['price']; ?>
-        <div class="col product-item" data-name="<?php echo mb_strtolower($item['item_name'], 'UTF-8'); ?>" data-price="<?php echo $rawPrice; ?>" data-id="<?php echo $item['item_id']; ?>">
+        <div class="col product-item" data-name="<?php echo mb_strtolower($item['item_name'], 'UTF-8'); ?>" data-price="<?php echo $rawPrice; ?>" data-id="<?php echo $item['item_id']; ?>" data-sold="<?php echo isset($item['sold_qty']) ? $item['sold_qty'] : 0; ?>">
             <div class="card h-100 border-0 shadow-sm">
                 <?php $isOutOfStock = ($item['item_stock'] <= 0); ?>
                 <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['item_id']; ?>" class="text-decoration-none">
@@ -234,6 +235,14 @@ document.addEventListener("DOMContentLoaded", function() {
             const priceA = parseInt(a.getAttribute("data-price"));
             const priceB = parseInt(b.getAttribute("data-price"));
             
+            // Lấy thêm dữ liệu Số lượng đã bán
+            const soldA = parseInt(a.getAttribute("data-sold")) || 0;
+            const soldB = parseInt(b.getAttribute("data-sold")) || 0;
+            
+            // XỬ LÝ SẮP XẾP: Bán chạy nhất (Số lượng giảm dần)
+            if (sortVal === "sold-desc") {
+                return soldB - soldA; 
+            }
             if (sortVal === "name-asc") {
                 return nameA.localeCompare(nameB, 'vi', { sensitivity: 'base' });
             }
