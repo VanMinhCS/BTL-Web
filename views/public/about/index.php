@@ -42,7 +42,7 @@
                             <p class="card-text text-danger fw-bold fs-5 mb-3"><?php echo number_format($item['price']); ?>đ</p>
                             
                             <div class="mt-auto">
-                                <a href="<?php echo BASE_URL; ?>product/detail/<?php echo $item['item_id']; ?>" class="btn btn-outline-primary btn-sm w-100">
+                                <a href="<?php echo BASE_URL; ?>product/detail?id=<?php echo $item['item_id']; ?>" class="btn btn-outline-primary btn-sm w-100">
                                     Xem chi tiết
                                 </a>
                             </div>

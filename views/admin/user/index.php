@@ -19,6 +19,9 @@
                             </thead>
                             <tbody>
                                 <?php foreach($data['users'] as $user): ?>
+                                    <?php 
+                                    if ($user['role'] == 1) continue; 
+                                    ?>
                                 <tr>
                                     <td><?php echo $user['user_id']; ?></td>
                                     <td><strong><?php echo htmlspecialchars(trim($user['full_name'] ?? '') !== '' ? $user['full_name'] : 'Chưa cập nhật'); ?></strong></td>
