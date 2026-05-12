@@ -89,7 +89,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0)" class="text-danger" onclick="confirmDelete(<?php echo $item['item_id']; ?>)">
+                                            <a href="javascript:void(0)" class="text-danger" onclick="confirmDelete(<?php echo $item['item_id']; ?>, this)">
                                                 <i class="ti-trash"></i>
                                             </a>
                                         </li>
@@ -109,62 +109,87 @@
 </div>
 
 <script>
-function confirmDelete(id) {
+// --- 1. HÀM XÓA BẰNG AJAX CỰC MƯỢT ---
+async function confirmDelete(id, btnElement) {
     if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
-        window.location.href = '<?php echo BASE_URL; ?>admin/product/delete?id=' + id;
+        // Lưu lại icon cũ và đổi sang biểu tượng Loading
+        const originalHtml = btnElement.innerHTML;
+        btnElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+        btnElement.style.pointerEvents = 'none'; // Khóa nút không cho bấm 2 lần
+
+        try {
+            // Gọi lệnh xóa ngầm lên server
+            const response = await fetch('<?php echo BASE_URL; ?>admin/product/delete?id=' + id);
+            
+            // Vì Controller PHP của bạn dùng lệnh header() để chuyển về trang có ?status=deleted
+            // Nên ta chỉ cần kiểm tra xem URL trả về có chứa chữ 'status=deleted' hay không
+            if (response.ok && response.url.includes('status=deleted')) {
+                
+                // Xóa luôn dòng <tr> chứa sản phẩm đó khỏi màn hình (hiệu ứng tức thì)
+                const row = btnElement.closest('.admin-product-row');
+                if (row) row.remove();
+                
+                // Gọi hàm cập nhật lại số trang
+                if (typeof window.reRenderProductTable === 'function') {
+                    window.reRenderProductTable();
+                }
+
+            } else {
+                // Nếu PHP trả về thông báo lỗi 1451 (sản phẩm đã có người mua) mà ta làm lúc nãy
+                alert('Không thể xóa! Sản phẩm này đã nằm trong lịch sử đơn hàng của khách.');
+                btnElement.innerHTML = originalHtml;
+                btnElement.style.pointerEvents = 'auto';
+            }
+        } catch (error) {
+            alert('Lỗi kết nối máy chủ!');
+            btnElement.innerHTML = originalHtml;
+            btnElement.style.pointerEvents = 'auto';
+        }
     }
 }
 
-// SCRIPT TÌM KIẾM & PHÂN TRANG CHO BẢNG ADMIN
-document.addEventListener("DOMContentLoaded", function() {
+
+// --- 2. SCRIPT TÌM KIẾM & PHÂN TRANG (Đã đóng gói chống xung đột) ---
+(function() {
     const productList = document.getElementById("adminProductList");
     const paginationContainer = document.getElementById("adminPagination");
     const searchInput = document.getElementById("adminSearchInput");
     const searchBtn = document.getElementById("adminSearchBtn");
     
-    // Lưu trữ toàn bộ dữ liệu ban đầu
-    const allRows = Array.from(productList.getElementsByClassName("admin-product-row"));
-    let filteredRows = [...allRows]; // Mảng này sẽ thay đổi khi tìm kiếm
+    if (!productList) return;
+
+    // Đổi const thành let để lát có thể cập nhật lại mảng sau khi Xóa
+    let allRows = Array.from(productList.getElementsByClassName("admin-product-row"));
+    let filteredRows = [...allRows]; 
     
     const itemsPerPage = 10;
     let currentPage = 1;
 
-    // HÀM TÌM KIẾM
     function filterTable() {
         const keyword = searchInput.value.trim().toLowerCase();
-        currentPage = 1; // Reset về trang 1 khi tìm kiếm
+        currentPage = 1;
 
         if (keyword === "") {
-            filteredRows = [...allRows]; // Rỗng thì trả lại toàn bộ
+            filteredRows = [...allRows]; 
         } else {
-            // Lọc ra các dòng có chứa từ khóa ở cột "Tên sản phẩm" (cột thứ 3, index = 2)
             filteredRows = allRows.filter(row => {
                 const nameCell = row.getElementsByTagName("td")[2]; 
                 const nameText = nameCell.textContent || nameCell.innerText;
                 return nameText.toLowerCase().includes(keyword);
             });
         }
-
-        // Giấu TẤT CẢ đi trước khi render lại
         allRows.forEach(row => row.style.display = "none");
         renderTable();
     }
 
-    // HÀM HIỂN THỊ DỮ LIỆU
     function renderTable() {
-        // Đảm bảo các dòng trong mảng filtered cũng đang bị giấu
         filteredRows.forEach(row => row.style.display = "none");
-        
-        // Chỉ hiện số dòng thuộc trang hiện tại (lấy từ mảng đã lọc)
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
         filteredRows.slice(start, end).forEach(row => row.style.display = "");
-        
-        // Vẽ nút phân trang dựa trên số lượng kết quả tìm được
         renderPagination(Math.ceil(filteredRows.length / itemsPerPage));
     }
 
-    // HÀM VẼ NÚT PHÂN TRANG
     function renderPagination(totalPages) {
         paginationContainer.innerHTML = "";
         if (totalPages <= 1) return;
@@ -172,14 +197,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const ul = document.createElement("ul");
         ul.className = "pagination mb-0";
         
-        // Nút Prev
         const liPrev = document.createElement("li");
         liPrev.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
         liPrev.innerHTML = `<a class="page-link" href="javascript:void(0)">&laquo;</a>`;
         liPrev.onclick = () => { if (currentPage > 1) { currentPage--; renderTable(); } };
         ul.appendChild(liPrev);
 
-        // Các nút số
         for (let i = 1; i <= totalPages; i++) {
             const li = document.createElement("li");
             li.className = `page-item ${currentPage === i ? 'active' : ''}`;
@@ -188,7 +211,6 @@ document.addEventListener("DOMContentLoaded", function() {
             ul.appendChild(li);
         }
 
-        // Nút Next
         const liNext = document.createElement("li");
         liNext.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
         liNext.innerHTML = `<a class="page-link" href="javascript:void(0)">&raquo;</a>`;
@@ -198,18 +220,22 @@ document.addEventListener("DOMContentLoaded", function() {
         paginationContainer.appendChild(ul);
     }
 
-    // Bắt sự kiện bấm nút Tìm kiếm
-    searchBtn.addEventListener("click", filterTable);
+    if (searchBtn) searchBtn.addEventListener("click", filterTable);
+    if (searchInput) {
+        searchInput.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                filterTable();
+            }
+        });
+    }
 
-    // Bắt sự kiện gõ Enter trong ô tìm kiếm
-    searchInput.addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            filterTable();
-        }
-    });
+    // Hàm toàn cục này sẽ được gọi ở bước xóa thành công (Bên trên)
+    window.reRenderProductTable = function() {
+        allRows = Array.from(productList.getElementsByClassName("admin-product-row"));
+        filterTable(); 
+    };
 
-    // Chạy lần đầu tiên khi load web
     renderTable();
-});
+})();
 </script>
