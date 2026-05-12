@@ -73,7 +73,7 @@
             <div class="sidebar-header">
                 <div class="logo">
                     <a href="<?php echo BASE_URL; ?>admin/dashboard">
-                        <img src="<?php echo BASE_URL; ?>assets/srtdash-admin-dashboard/srtdash/assets/images/icon/logo.png" alt="logo">
+                        <img src="<?php echo BASE_URL; ?>assets/img/bk88-admin-logo.png" alt="logo">
                     </a>
                 </div>
             </div>

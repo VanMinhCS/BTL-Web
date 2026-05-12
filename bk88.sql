@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 11, 2026 at 06:02 PM
+-- Generation Time: May 12, 2026 at 03:10 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -41,7 +41,7 @@ CREATE TABLE `addresses` (
 INSERT INTO `addresses` (`address_id`, `street`, `ward`, `city`) VALUES
 (1, '12 Nguyễn Huệ', 'Phường Bến Nghé', 'TP.HCM'),
 (2, '45 Lê Lợi', 'Phường Bến Thành', 'TP.HCM'),
-(3, '', '', ''),
+(3, 'a', 'a', 'a'),
 (4, '', '', ''),
 (5, '', '', ''),
 (6, '1/2/13 Đường 5E', 'Phường Bình Hưng Hòa', 'TP.HCM'),
@@ -185,7 +185,27 @@ CREATE TABLE `contacts` (
 INSERT INTO `contacts` (`contact_id`, `customer_name`, `customer_email`, `subject`, `message`, `status`, `created_at`) VALUES
 (1, 'Nguyễn Văn Minh', 'd@l.m', 'Quá xuất sắc', 'Quá mạnh', 0, '2026-05-03 03:11:11'),
 (2, 'Pablo Jenkins PhD', 'Kadin46@hotmail.com', 'Dynamic Infrastructure Orchestrator', 'Adipisci vitae non vacuus comparo.', 1, '2026-05-03 03:18:01'),
-(32, 'Nguyễn Văn Minh', 'minh@nguyen.com', 'Halo', 'FOR TEST ONLY', 0, '2026-05-11 08:01:53');
+(32, 'Nguyễn Văn Minh', 'minh@nguyen.com', 'Halo', 'FOR TEST ONLY', 0, '2026-05-11 08:01:53'),
+(33, 'Kurt Gleichner', 'Nash.Kulas48@gmail.com', 'Customer Directives Consultant', 'Quidem abduco aegre claro repellendus unde usus callide. Crepusculum campana vox vinco conventus summopere censura. Utroque tubineus assumenda tunc approbo amitto coruscus aspicio.', 0, '2026-05-12 02:53:45'),
+(34, 'Sylvester Dare', 'Wendell.Schmeler@hotmail.com', 'Principal Assurance Manager', 'Defluo tabgo allatus quos defluo bene comes surgo tergo. Votum cupio pectus ullus clementia confido decens speculum addo tripudio. Coniuratio damnatio tot vulgus cultura turba acies abscido.', 0, '2026-05-12 02:53:45'),
+(35, 'Eugene Marvin', 'Lucius.Olson@hotmail.com', 'Lead Tactics Producer', 'Tui tredecim amitto. Defluo terga aspicio delectus. Quis tristis vociferor commodo xiphias eum utilis.', 0, '2026-05-12 02:53:45'),
+(36, 'Elizabeth Tremblay', 'Gilda.Wisozk@gmail.com', 'Internal Assurance Administrator', 'Thema tabula esse adinventitias tego itaque defungo comprehendo. Conservo communis cum. Tener incidunt textor considero.', 0, '2026-05-12 02:53:45'),
+(37, 'Chad Williamson', 'Abagail.Stroman@hotmail.com', 'Central Data Consultant', 'Solus tollo terga appello. Suffragium beatae curvo complectus umbra voluptatum accendo argentum. Cuppedia magnam canonicus aliquam dolorem antiquus vester.', 0, '2026-05-12 02:53:45'),
+(38, 'Tricia Botsford', 'Dora.Goldner81@hotmail.com', 'National Configuration Planner', 'Adamo campana benigne torrens. Sit triduana somniculosus vobis summopere decens supra succurro tubineus. Barba sunt textus umbra calcar territo tabella commodi.', 0, '2026-05-12 02:53:45'),
+(39, 'Caroline Schmitt', 'Joe.Daniel@gmail.com', 'Legacy Communications Agent', 'Volutabrum arx vulnero vos distinctio non carmen amoveo. Turbo vere vilitas. Stips cumque delectus tandem crudelis spargo auctus perferendis abbas.', 0, '2026-05-12 02:53:45'),
+(40, 'Robin Koepp', 'Lavon97@hotmail.com', 'District Paradigm Engineer', 'Numquam aeternus tum. Tabella denego cubitum. Repudiandae crebro earum curriculum averto aiunt traho cultura aestivus.', 0, '2026-05-12 02:53:45'),
+(41, 'Dexter Leuschke', 'Liam_Grant@hotmail.com', 'Investor Creative Orchestrator', 'Verbum comis tubineus cernuus compono vomer acceptus calco vado carcer. Caterva turba tendo stabilis. Quibusdam denique vigilo.', 0, '2026-05-12 02:53:45'),
+(42, 'Dr. Courtney Leffler', 'Yasmeen_Kuhic68@yahoo.com', 'Forward Marketing Planner', 'Laboriosam error damnatio. Defleo claro tepesco. Adaugeo tabula attero tutamen.', 0, '2026-05-12 02:53:45'),
+(43, 'Mrs. Caroline Kassulke', 'Freeda.OReilly15@hotmail.com', 'Lead Research Director', 'Molestiae recusandae abscido acies deprecator cado auctus. Possimus appello ait argentum bardus. Teneo cubo comparo claudeo coma.', 0, '2026-05-12 02:53:45'),
+(44, 'Patsy Schowalter II', 'Christ88@hotmail.com', 'Dynamic Identity Strategist', 'Teres considero texo arbitro. Vel eligendi defaeco vilicus accusator celo ab universe officiis aliquid. Ipsa templum hic timidus argumentum spiritus carbo solutio.', 0, '2026-05-12 02:53:45'),
+(45, 'Chris Harber', 'Oma99@hotmail.com', 'Dynamic Brand Officer', 'Accendo verbera cruciamentum spero adficio facere dolor perferendis testimonium. Voluptas beneficium denuncio corona claro. Clibanus supra acsi amaritudo annus quae.', 0, '2026-05-12 02:53:45'),
+(46, 'Christina Denesik', 'Jayde_Pouros@yahoo.com', 'Chief Accounts Strategist', 'Vesper comburo crastinus avarus curiositas statim tabesco denuncio succurro repellat. Correptius currus ancilla. Abbas socius supra voluptas.', 0, '2026-05-12 02:53:45'),
+(47, 'Dr. Viola Morissette', 'Bettie36@yahoo.com', 'Investor Markets Representative', 'Adeo adiuvo acceptus clarus vivo angustus vester explicabo. Placeat patrocinor umquam tracto amaritudo. Vis verecundia id absque angulus tristis.', 0, '2026-05-12 02:53:45'),
+(48, 'Krista Schaden', 'Brain.Wilkinson18@gmail.com', 'Product Branding Planner', 'Vivo summa rem. Tenax minus studio. Conspergo qui curto abundans.', 0, '2026-05-12 02:53:45'),
+(49, 'Ms. Bonnie Batz', 'Joelle24@gmail.com', 'Lead Interactions Analyst', 'Fugit totidem spectaculum causa supra eos cunae vesica aetas sordeo. Abeo cupressus adficio eaque suggero aspicio. Pecco ager bibo cena condico vulnero repellendus non arma solvo.', 0, '2026-05-12 02:53:45'),
+(50, 'Peter Hahn', 'Candelario_Dooley@gmail.com', 'Forward Program Consultant', 'Illum adeptio clibanus cena. Nisi capto debeo cresco circumvenio pel vesper. Contigo tribuo consectetur curto coaegresco theca despecto asper voluptas.', 0, '2026-05-12 02:53:45'),
+(51, 'Annette Heathcote', 'Kendra31@gmail.com', 'International Optimization Specialist', 'Curto provident impedit voro. Tergeo rem denique vulgus crastinus. Amor velum creator cum sopor.', 0, '2026-05-12 02:53:45'),
+(52, 'Kay Buckridge', 'Anne_Cummerata62@gmail.com', 'Senior Functionality Planner', 'Creo sed temeritas vociferor cenaculum magni distinctio. Carmen nihil tyrannus. Aestivus bos pecto.', 0, '2026-05-12 02:53:45');
 
 -- --------------------------------------------------------
 
@@ -385,15 +405,15 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `sold_qty`, `description`, `price`, `cost_price`, `item_image`) VALUES
-(1, 'Giải tích 1', 88, 3, 'Giáo trình Giải tích 1', 75000.00, 61000.00, '1777112063_gt1.png'),
-(2, 'Giải tích 2', 98, 0, 'Giáo trình Giải tích 2', 75000.00, 60000.00, '1777212188_gt2.png'),
-(3, 'Đại số tuyến tính', 97, 2, 'Giáo trình Đại số tuyến tính', 85000.00, 70000.00, '1777212218_dstt.png'),
+(1, 'Giải tích 1', 89, 3, 'Giáo trình Giải tích 1', 75000.00, 61000.00, '1777112063_gt1.png'),
+(2, 'Giải tích 2', 99, 0, 'Giáo trình Giải tích 2', 75000.00, 60000.00, '1777212188_gt2.png'),
+(3, 'Đại số tuyến tính', 98, 2, 'Giáo trình Đại số tuyến tính', 85000.00, 70000.00, '1777212218_dstt.png'),
 (4, 'Hóa đại cương', 100, 0, 'Giáo trình Hóa đại cương', 100000.00, 85000.00, '1777212252_hdc.png'),
-(5, 'Kỹ thuật Lập trình', 98, 1, 'Giáo trình Kỹ thuật Lập trình', 150000.00, 135000.00, '1777212284_ktlt.png'),
+(5, 'Kỹ thuật Lập trình', 99, 1, 'Giáo trình Kỹ thuật Lập trình', 150000.00, 135000.00, '1777212284_ktlt.png'),
 (6, 'Cấu trúc dữ liệu & Giải thuật', 99, 0, 'Giáo trình CTDL&GT', 100000.00, 80000.00, '1777212312_ctdlgt.png'),
 (7, 'Triết học Mác - Lênin', 100, 0, 'Giáo trình Triết học Mác - Lênin', 85000.00, 70000.00, '1777212345_triethoc.png'),
 (8, 'Kinh tế chính trị Mác - Lênin', 100, 0, 'Giáo trình Kinh tế chính trị Mác - Lênin', 72000.00, 60000.00, '1777212383_ktct.png'),
-(9, 'Chủ nghĩa Xã hội Khoa học', 100, 0, 'Giáo trình CNXHKH', 77000.00, 60000.00, '1777212448_cnxhkh.png'),
+(9, 'Chủ nghĩa Xã hội Khoa học', 99, 0, 'Giáo trình CNXHKH', 77000.00, 60000.00, '1777212448_cnxhkh.png'),
 (11, 'Lịch sử Đảng Cộng sản Việt Nam', 0, 0, 'Giáo trình LSĐCSVN', 75000.00, 60000.00, '1777213030_lsd.png'),
 (15, 'Tư tưởng Hồ Chí Minh', 98, 0, 'Giáo trình TTHCM', 80000.00, 65000.00, '1777521969_tthcm.png');
 
@@ -489,7 +509,8 @@ INSERT INTO `notifications` (`id`, `type`, `user_id`, `notification_comment_id`,
 (73, 'comment', 5, 20, 0, '2026-05-11 15:49:36', NULL, NULL),
 (74, 'vote_comment', 5, NULL, 0, '2026-05-11 15:49:39', 49, NULL),
 (75, 'comment', 5, 21, 0, '2026-05-11 15:59:09', NULL, NULL),
-(76, 'comment', 5, 22, 0, '2026-05-11 16:03:04', NULL, NULL);
+(76, 'comment', 5, 22, 0, '2026-05-11 16:03:04', NULL, NULL),
+(77, 'order', 5, NULL, 1, '2026-05-12 02:54:24', NULL, 6);
 
 -- --------------------------------------------------------
 
@@ -552,7 +573,8 @@ INSERT INTO `notification_order` (`id`, `order_id`, `order_status`, `created_at`
 (2, 19, 'chờ xác nhận', '2026-05-04 06:49:24'),
 (3, 20, 'chờ xác nhận', '2026-05-04 08:06:51'),
 (4, 21, 'chờ xác nhận', '2026-05-04 08:07:23'),
-(5, 22, 'chờ xác nhận', '2026-05-04 12:53:32');
+(5, 22, 'chờ xác nhận', '2026-05-04 12:53:32'),
+(6, 23, 'chờ xác nhận', '2026-05-12 02:54:24');
 
 -- --------------------------------------------------------
 
@@ -701,10 +723,11 @@ INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `status`, `is_paid`, 
 (16, 10, '2026-05-02 15:28:22', 3, 1, 22000.00, 'ABC'),
 (17, 10, '2026-05-03 08:52:27', 0, 0, 0.00, ''),
 (18, 10, '2026-05-04 03:39:53', 3, 1, 22000.00, ''),
-(19, 10, '2026-05-04 06:49:24', 0, 0, 22000.00, ''),
+(19, 10, '2026-05-04 06:49:24', 4, 0, 22000.00, ''),
 (20, 10, '2026-05-04 08:06:51', 0, 0, 22000.00, ''),
-(21, 10, '2026-05-04 08:07:23', 1, 0, 22000.00, ''),
-(22, 10, '2026-05-04 12:53:32', 0, 0, 22000.00, '');
+(21, 10, '2026-05-04 08:07:23', 4, 0, 22000.00, ''),
+(22, 10, '2026-05-04 12:53:32', 4, 0, 22000.00, ''),
+(23, 5, '2026-05-12 02:54:24', 0, 0, 22000.00, 'a');
 
 -- --------------------------------------------------------
 
@@ -748,7 +771,8 @@ INSERT INTO `order_details` (`detail_id`, `order_id`, `item_id`, `quantity`, `pr
 (21, 19, 3, 1, 85000.00),
 (22, 20, 6, 1, 100000.00),
 (23, 21, 5, 1, 150000.00),
-(24, 22, 2, 1, 75000.00);
+(24, 22, 2, 1, 75000.00),
+(25, 23, 9, 1, 77000.00);
 
 -- --------------------------------------------------------
 
@@ -1078,7 +1102,7 @@ ALTER TABLE `comment_votes`
 -- AUTO_INCREMENT for table `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `contact_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `contact_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `contact_info_fields`
@@ -1132,7 +1156,7 @@ ALTER TABLE `items`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `notification_comment`
@@ -1144,7 +1168,7 @@ ALTER TABLE `notification_comment`
 -- AUTO_INCREMENT for table `notification_order`
 --
 ALTER TABLE `notification_order`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `notification_setting`
@@ -1162,13 +1186,13 @@ ALTER TABLE `notification_vote_comment`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `order_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `order_details`
 --
 ALTER TABLE `order_details`
-  MODIFY `detail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `detail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `otp`
