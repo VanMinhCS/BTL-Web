@@ -30,6 +30,7 @@
                                 <th>Tên sản phẩm</th>
                                 <th>Giá bán</th>
                                 <th>Kho hàng</th>
+                                <th>Đã bán</th>
                                 <th>Đánh giá</th>
                                 <th>Thao tác</th>
                             </tr>
@@ -56,6 +57,12 @@
                                     <?php else: ?>
                                         <span class="badge bg-danger">Hết hàng</span>
                                     <?php endif; ?>
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-info text-dark">
+                                        <?php echo isset($item['sold_qty']) ? $item['sold_qty'] : 0; ?>
+                                    </span>
                                 </td>
 
                                 <td>
