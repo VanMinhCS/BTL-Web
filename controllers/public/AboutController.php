@@ -20,6 +20,7 @@ class AboutController extends Controller {
             'title'             => $content['title'] ?? 'Giới Thiệu BK88',
             'description'       => $content['description'] ?? 'Nền tảng giải trí hàng đầu...',
             'features'          => !empty($content['features']) ? explode(',', $content['features']) : [],
+            'currentPage'      => $content['currentPage'] ?? 'about',
             'featured_products' => $featured_products 
         ];
 

@@ -13,7 +13,8 @@ class FaqController extends Controller {
 
         // 3. Đóng gói dữ liệu gửi sang View
         $data = [
-            'public_faqs' => $publicFaqs
+            'public_faqs' => $publicFaqs,
+            'currentPage' => "faq"
         ];
 
         // 4. Hiển thị giao diện
