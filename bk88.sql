@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: May 12, 2026 at 04:31 AM
--- Server version: 8.0.30
--- PHP Version: 8.1.10
+-- Host: 127.0.0.1
+-- Generation Time: May 12, 2026 at 10:46 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,12 +28,12 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `about_content` (
-  `id` int NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Giới Thiệu BK88',
-  `description` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nội dung mô tả chi tiết',
-  `features` text COLLATE utf8mb4_unicode_ci COMMENT 'Các ưu điểm nổi bật, ngăn cách bằng dấu phẩy',
-  `featured_items` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL DEFAULT 'Giới Thiệu BK88',
+  `description` text NOT NULL COMMENT 'Nội dung mô tả chi tiết',
+  `features` text DEFAULT NULL COMMENT 'Các ưu điểm nổi bật, ngăn cách bằng dấu phẩy',
+  `featured_items` varchar(255) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -50,11 +50,11 @@ INSERT INTO `about_content` (`id`, `title`, `description`, `features`, `featured
 --
 
 CREATE TABLE `addresses` (
-  `address_id` int NOT NULL,
-  `street` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `ward` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `city` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `address_id` int(11) NOT NULL,
+  `street` varchar(100) DEFAULT NULL,
+  `ward` varchar(100) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `addresses`
@@ -77,22 +77,21 @@ INSERT INTO `addresses` (`address_id`, `street`, `ward`, `city`) VALUES
 --
 
 CREATE TABLE `articles` (
-  `id_article` int NOT NULL,
-  `title` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `time_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `status` tinyint(1) NOT NULL DEFAULT '0',
-  `content` text COLLATE utf8mb3_unicode_ci NOT NULL,
-  `background` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `id_article` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `time_modified` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` tinyint(1) NOT NULL DEFAULT 0,
+  `content` text NOT NULL,
+  `background` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `articles`
 --
 
 INSERT INTO `articles` (`id_article`, `title`, `description`, `time_modified`, `status`, `content`, `background`) VALUES
-(1, 'Bài viết mẫu BK88', 'Giới thiệu', '2026-05-04 07:49:10', 1, 'Nội dung thử nghiệm...', '/assets/img/article/article1.png'),
-(2, 'Bài viết mới', '', '2026-05-04 07:28:01', 1, '<iframe class=\"ql-video\" frameborder=\"0\" allowfullscreen=\"true\" src=\"https://www.youtube.com/embed/XbGs_qK2PQA?showinfo=0\"></iframe><p class=\"ql-align-center\"><br></p>', 'assets/img/article/article2.png');
+(3, 'Bài viết giới thiệu', 'Giới thiệu công ty', '2026-05-12 08:44:54', 1, '<p class=\"ql-align-justify\">Bài viết cung cấp thông tin cho người xem một gốc nhìn mới về&nbsp;<strong style=\"color: rgb(230, 0, 0);\"><u>BK88</u></strong><span style=\"color: rgb(230, 0, 0);\">&nbsp;</span>. Cảm ơn các bạn đã chú ý đón đọc.</p>', '/assets/img/article/article3.png');
 
 -- --------------------------------------------------------
 
@@ -101,21 +100,20 @@ INSERT INTO `articles` (`id_article`, `title`, `description`, `time_modified`, `
 --
 
 CREATE TABLE `comments` (
-  `id_comment` int NOT NULL,
-  `id_article` int NOT NULL,
-  `id_user` int NOT NULL,
-  `text` text COLLATE utf8mb3_unicode_ci NOT NULL,
-  `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `is_edited` tinyint(1) DEFAULT '0',
-  `replied` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `id_comment` int(11) NOT NULL,
+  `id_article` int(11) NOT NULL,
+  `id_user` int(11) NOT NULL,
+  `text` text NOT NULL,
+  `date_modified` timestamp NOT NULL DEFAULT current_timestamp(),
+  `is_edited` tinyint(1) DEFAULT 0,
+  `replied` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `comments`
 --
 
 INSERT INTO `comments` (`id_comment`, `id_article`, `id_user`, `text`, `date_modified`, `is_edited`, `replied`) VALUES
-(1, 1, 1, 'Bài viết rất hữu ích!', '2026-04-15 07:40:59', 0, NULL),
 (2, 1, 2, 'Mình thấy phần hướng dẫn khá rõ ràng.', '2026-04-15 12:04:15', 0, NULL),
 (3, 1, 3, 'Thông tin khá đầy đủ.', '2026-04-15 12:04:19', 0, NULL),
 (44, 1, 1, 'Nội dung bình luận thử nghiệm', '2026-04-15 14:17:30', 0, NULL),
@@ -147,7 +145,8 @@ INSERT INTO `comments` (`id_comment`, `id_article`, `id_user`, `text`, `date_mod
 (106, 1, 6, 'đe', '2026-04-23 09:51:10', 1, 105),
 (107, 1, 5, 'hay', '2026-04-23 12:16:38', 0, NULL),
 (108, 1, 5, 'k', '2026-05-04 08:00:28', 0, NULL),
-(109, 1, 5, 'AD', '2026-05-11 15:46:13', 0, NULL);
+(109, 1, 5, 'AD', '2026-05-11 15:46:13', 0, NULL),
+(110, 3, 5, 'Xin chào', '2026-05-12 08:43:10', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -156,11 +155,11 @@ INSERT INTO `comments` (`id_comment`, `id_article`, `id_user`, `text`, `date_mod
 --
 
 CREATE TABLE `comment_votes` (
-  `id` int NOT NULL,
-  `comment_id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `vote` enum('like','dislike') COLLATE utf8mb3_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `id` int(11) NOT NULL,
+  `comment_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `vote` enum('like','dislike') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `comment_votes`
@@ -187,13 +186,13 @@ INSERT INTO `comment_votes` (`id`, `comment_id`, `user_id`, `vote`) VALUES
 --
 
 CREATE TABLE `contacts` (
-  `contact_id` int NOT NULL,
-  `customer_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `customer_email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `subject` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` tinyint(1) DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `contact_id` int(11) NOT NULL,
+  `customer_name` varchar(255) NOT NULL,
+  `customer_email` varchar(255) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `status` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -231,13 +230,13 @@ INSERT INTO `contacts` (`contact_id`, `customer_name`, `customer_email`, `subjec
 --
 
 CREATE TABLE `contact_info_fields` (
-  `id` int NOT NULL,
-  `label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sort_order` int DEFAULT '0',
-  `is_active` tinyint(1) DEFAULT '1',
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `value` text NOT NULL,
+  `icon` varchar(50) DEFAULT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  `is_active` tinyint(1) DEFAULT 1,
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -258,13 +257,13 @@ INSERT INTO `contact_info_fields` (`id`, `label`, `value`, `icon`, `sort_order`,
 --
 
 CREATE TABLE `faq` (
-  `id` int NOT NULL,
-  `user_id` int NOT NULL COMMENT 'ID của người dùng từ user_table',
-  `category` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `question` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `answer` text COLLATE utf8mb4_unicode_ci,
-  `status` tinyint(1) DEFAULT '0' COMMENT '0: Chờ duyệt, 1: Đã trả lời (Hiện Public)',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL COMMENT 'ID của người dùng từ user_table',
+  `category` varchar(100) NOT NULL,
+  `question` text NOT NULL,
+  `answer` text DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 0 COMMENT '0: Chờ duyệt, 1: Đã trả lời (Hiện Public)',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -290,11 +289,11 @@ INSERT INTO `faq` (`id`, `user_id`, `category`, `question`, `answer`, `status`, 
 --
 
 CREATE TABLE `home_featured_products` (
-  `id` int NOT NULL,
-  `item_id` int NOT NULL,
-  `sort_order` int DEFAULT '0',
-  `is_active` tinyint(1) DEFAULT '1',
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  `is_active` tinyint(1) DEFAULT 1,
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -315,13 +314,13 @@ INSERT INTO `home_featured_products` (`id`, `item_id`, `sort_order`, `is_active`
 --
 
 CREATE TABLE `home_quotes` (
-  `id` int NOT NULL,
-  `quote_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `author` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sort_order` int DEFAULT '0',
-  `is_active` tinyint(1) DEFAULT '1',
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `quote_text` text NOT NULL,
+  `author` varchar(255) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  `is_active` tinyint(1) DEFAULT 1,
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -341,12 +340,12 @@ INSERT INTO `home_quotes` (`id`, `quote_text`, `author`, `image`, `sort_order`, 
 --
 
 CREATE TABLE `home_reasons` (
-  `id` int NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `sort_order` int DEFAULT '0',
-  `is_active` tinyint(1) DEFAULT '1',
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  `is_active` tinyint(1) DEFAULT 1,
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -368,12 +367,12 @@ INSERT INTO `home_reasons` (`id`, `title`, `description`, `sort_order`, `is_acti
 --
 
 CREATE TABLE `home_sections` (
-  `id` int NOT NULL,
-  `section_key` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `subtitle` text COLLATE utf8mb4_unicode_ci,
-  `is_active` tinyint(1) DEFAULT '1',
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `section_key` varchar(50) NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `subtitle` text DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -392,10 +391,10 @@ INSERT INTO `home_sections` (`id`, `section_key`, `title`, `subtitle`, `is_activ
 --
 
 CREATE TABLE `home_settings` (
-  `id` int NOT NULL,
-  `setting_key` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `setting_value` text COLLATE utf8mb4_unicode_ci,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` text DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -412,12 +411,12 @@ INSERT INTO `home_settings` (`id`, `setting_key`, `setting_value`, `updated_at`)
 --
 
 CREATE TABLE `information` (
-  `info_id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `address_id` int NOT NULL,
-  `firstname` varchar(50) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `lastname` varchar(50) COLLATE utf8mb3_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `info_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `address_id` int(11) NOT NULL,
+  `firstname` varchar(50) DEFAULT NULL,
+  `lastname` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `information`
@@ -440,15 +439,15 @@ INSERT INTO `information` (`info_id`, `user_id`, `address_id`, `firstname`, `las
 --
 
 CREATE TABLE `items` (
-  `item_id` int NOT NULL,
-  `item_name` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `item_stock` int DEFAULT '0',
-  `sold_qty` int DEFAULT '0',
-  `description` text COLLATE utf8mb3_unicode_ci,
+  `item_id` int(11) NOT NULL,
+  `item_name` varchar(100) NOT NULL,
+  `item_stock` int(11) DEFAULT 0,
+  `sold_qty` int(11) DEFAULT 0,
+  `description` text DEFAULT NULL,
   `price` decimal(10,2) NOT NULL,
-  `cost_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `item_image` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `cost_price` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `item_image` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `items`
@@ -474,15 +473,15 @@ INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `sold_qty`, `descript
 --
 
 CREATE TABLE `notifications` (
-  `id` int NOT NULL,
-  `type` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `user_id` int NOT NULL,
-  `notification_comment_id` int DEFAULT NULL,
-  `is_read` tinyint(1) DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `notification_vote_comment_id` int DEFAULT NULL,
-  `notification_order_id` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `id` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `notification_comment_id` int(11) DEFAULT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `notification_vote_comment_id` int(11) DEFAULT NULL,
+  `notification_order_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `notifications`
@@ -555,7 +554,8 @@ INSERT INTO `notifications` (`id`, `type`, `user_id`, `notification_comment_id`,
 (69, 'order', 10, NULL, 1, '2026-05-04 08:06:51', NULL, 3),
 (70, 'order', 10, NULL, 1, '2026-05-04 08:07:23', NULL, 4),
 (71, 'order', 10, NULL, 1, '2026-05-04 12:53:32', NULL, 5),
-(72, 'comment', 5, 19, 0, '2026-05-11 15:46:13', NULL, NULL);
+(72, 'comment', 5, 19, 0, '2026-05-11 15:46:13', NULL, NULL),
+(73, 'comment', 5, 20, 0, '2026-05-12 08:43:10', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -564,13 +564,13 @@ INSERT INTO `notifications` (`id`, `type`, `user_id`, `notification_comment_id`,
 --
 
 CREATE TABLE `notification_comment` (
-  `id` int NOT NULL,
-  `article_id` int NOT NULL,
-  `comment_id` int NOT NULL,
-  `content` text COLLATE utf8mb3_unicode_ci NOT NULL,
-  `replied` int DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `id` int(11) NOT NULL,
+  `article_id` int(11) NOT NULL,
+  `comment_id` int(11) NOT NULL,
+  `content` text NOT NULL,
+  `replied` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `notification_comment`
@@ -591,7 +591,8 @@ INSERT INTO `notification_comment` (`id`, `article_id`, `comment_id`, `content`,
 (16, 1, 106, 'đe', 105, '2026-04-23 09:51:10'),
 (17, 1, 107, 'hay', NULL, '2026-04-23 12:16:38'),
 (18, 1, 108, 'k', NULL, '2026-05-04 08:00:28'),
-(19, 1, 109, 'AD', NULL, '2026-05-11 15:46:13');
+(19, 1, 109, 'AD', NULL, '2026-05-11 15:46:13'),
+(20, 3, 110, 'Xin chào', NULL, '2026-05-12 08:43:10');
 
 -- --------------------------------------------------------
 
@@ -600,10 +601,10 @@ INSERT INTO `notification_comment` (`id`, `article_id`, `comment_id`, `content`,
 --
 
 CREATE TABLE `notification_order` (
-  `id` int NOT NULL,
-  `order_id` int NOT NULL,
-  `order_status` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `order_status` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -624,15 +625,15 @@ INSERT INTO `notification_order` (`id`, `order_id`, `order_status`, `created_at`
 --
 
 CREATE TABLE `notification_setting` (
-  `setting_id` int NOT NULL,
-  `admin_id` int NOT NULL,
-  `is_enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `enable_comment` tinyint(1) DEFAULT '1',
-  `enable_reply` tinyint(1) DEFAULT '1',
-  `enable_edit` tinyint(1) DEFAULT '1',
-  `enable_vote` tinyint(1) DEFAULT '1',
-  `enable_order` tinyint(1) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `setting_id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `is_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `enable_comment` tinyint(1) DEFAULT 1,
+  `enable_reply` tinyint(1) DEFAULT 1,
+  `enable_edit` tinyint(1) DEFAULT 1,
+  `enable_vote` tinyint(1) DEFAULT 1,
+  `enable_order` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `notification_setting`
@@ -664,12 +665,12 @@ DELIMITER ;
 --
 
 CREATE TABLE `notification_vote_comment` (
-  `id` int NOT NULL,
-  `comment_id` int NOT NULL,
-  `article_id` int NOT NULL,
-  `vote_type` enum('like','dislike') COLLATE utf8mb3_unicode_ci NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `id` int(11) NOT NULL,
+  `comment_id` int(11) NOT NULL,
+  `article_id` int(11) NOT NULL,
+  `vote_type` enum('like','dislike') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `notification_vote_comment`
@@ -731,14 +732,14 @@ INSERT INTO `notification_vote_comment` (`id`, `comment_id`, `article_id`, `vote
 --
 
 CREATE TABLE `orders` (
-  `order_id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `order_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` tinyint(1) DEFAULT '0',
-  `is_paid` tinyint(1) DEFAULT '0',
-  `shipping_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `note` text COLLATE utf8mb3_unicode_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `order_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` tinyint(1) DEFAULT 0,
+  `is_paid` tinyint(1) DEFAULT 0,
+  `shipping_fee` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `note` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `orders`
@@ -775,12 +776,12 @@ INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `status`, `is_paid`, 
 --
 
 CREATE TABLE `order_details` (
-  `detail_id` int NOT NULL,
-  `order_id` int NOT NULL,
-  `item_id` int NOT NULL,
-  `quantity` int NOT NULL,
+  `detail_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `order_details`
@@ -819,12 +820,12 @@ INSERT INTO `order_details` (`detail_id`, `order_id`, `item_id`, `quantity`, `pr
 --
 
 CREATE TABLE `otp` (
-  `otp_id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `code` char(6) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `time_expire` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `is_active` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `otp_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `code` char(6) NOT NULL,
+  `time_expire` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `is_active` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `otp`
@@ -848,14 +849,14 @@ INSERT INTO `otp` (`otp_id`, `user_id`, `code`, `time_expire`, `is_active`) VALU
 --
 
 CREATE TABLE `product_reviews` (
-  `id` int NOT NULL,
-  `product_id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `rating` tinyint(1) NOT NULL DEFAULT '5' COMMENT 'Từ 1 đến 5 sao',
-  `comment` text COLLATE utf8mb3_unicode_ci COMMENT 'Nội dung bình luận, có thể để trống',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `rating` tinyint(1) NOT NULL DEFAULT 5 COMMENT 'Từ 1 đến 5 sao',
+  `comment` text DEFAULT NULL COMMENT 'Nội dung bình luận, có thể để trống',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `product_reviews`
@@ -872,12 +873,12 @@ INSERT INTO `product_reviews` (`id`, `product_id`, `user_id`, `rating`, `comment
 --
 
 CREATE TABLE `review_admin_replies` (
-  `id` int NOT NULL,
-  `detail_id` int NOT NULL,
-  `admin_id` int NOT NULL,
-  `reply_content` text COLLATE utf8mb3_unicode_ci NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `id` int(11) NOT NULL,
+  `detail_id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `reply_content` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -886,13 +887,13 @@ CREATE TABLE `review_admin_replies` (
 --
 
 CREATE TABLE `review_details` (
-  `id` int NOT NULL,
-  `review_id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `content` text COLLATE utf8mb3_unicode_ci NOT NULL,
-  `rating` tinyint NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ;
+  `id` int(11) NOT NULL,
+  `review_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `rating` tinyint(4) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -901,14 +902,14 @@ CREATE TABLE `review_details` (
 --
 
 CREATE TABLE `users` (
-  `user_id` int NOT NULL,
-  `email` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `role` tinyint(1) DEFAULT '0',
-  `phone` varchar(20) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `is_verified` tinyint(1) DEFAULT '0',
-  `is_banned` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `user_id` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` tinyint(1) DEFAULT 0,
+  `phone` varchar(20) DEFAULT NULL,
+  `is_verified` tinyint(1) DEFAULT 0,
+  `is_banned` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `users`
@@ -1128,257 +1129,173 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `about_content`
 --
 ALTER TABLE `about_content`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `addresses`
 --
 ALTER TABLE `addresses`
-  MODIFY `address_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `articles`
 --
 ALTER TABLE `articles`
-  MODIFY `id_article` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_article` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id_comment` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
+  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 
 --
 -- AUTO_INCREMENT for table `comment_votes`
 --
 ALTER TABLE `comment_votes`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
 
 --
 -- AUTO_INCREMENT for table `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `contact_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `contact_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `contact_info_fields`
 --
 ALTER TABLE `contact_info_fields`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `faq`
 --
 ALTER TABLE `faq`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `home_featured_products`
 --
 ALTER TABLE `home_featured_products`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `home_quotes`
 --
 ALTER TABLE `home_quotes`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `home_reasons`
 --
 ALTER TABLE `home_reasons`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `home_sections`
 --
 ALTER TABLE `home_sections`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `home_settings`
 --
 ALTER TABLE `home_settings`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `information`
 --
 ALTER TABLE `information`
-  MODIFY `info_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT for table `notification_comment`
 --
 ALTER TABLE `notification_comment`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `notification_order`
 --
 ALTER TABLE `notification_order`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `notification_setting`
 --
 ALTER TABLE `notification_setting`
-  MODIFY `setting_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `notification_vote_comment`
 --
 ALTER TABLE `notification_vote_comment`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `order_details`
 --
 ALTER TABLE `order_details`
-  MODIFY `detail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `otp`
 --
 ALTER TABLE `otp`
-  MODIFY `otp_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `otp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `product_reviews`
 --
 ALTER TABLE `product_reviews`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `review_admin_replies`
 --
 ALTER TABLE `review_admin_replies`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `review_details`
 --
 ALTER TABLE `review_details`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `comments`
---
-ALTER TABLE `comments`
-  ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`id_article`) REFERENCES `articles` (`id_article`),
-  ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`replied`) REFERENCES `comments` (`id_comment`);
-
---
 -- Constraints for table `home_featured_products`
 --
 ALTER TABLE `home_featured_products`
   ADD CONSTRAINT `fk_featured_item` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`);
-
---
--- Constraints for table `information`
---
-ALTER TABLE `information`
-  ADD CONSTRAINT `information_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `information_ibfk_2` FOREIGN KEY (`address_id`) REFERENCES `addresses` (`address_id`);
-
---
--- Constraints for table `notifications`
---
-ALTER TABLE `notifications`
-  ADD CONSTRAINT `fk_notifications_vote_comment` FOREIGN KEY (`notification_vote_comment_id`) REFERENCES `notification_vote_comment` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`notification_comment_id`) REFERENCES `notification_comment` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `notifications_ibfk_3` FOREIGN KEY (`notification_order_id`) REFERENCES `notification_order` (`id`);
-
---
--- Constraints for table `notification_comment`
---
-ALTER TABLE `notification_comment`
-  ADD CONSTRAINT `notification_comment_ibfk_1` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id_article`),
-  ADD CONSTRAINT `notification_comment_ibfk_2` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`id_comment`) ON DELETE CASCADE,
-  ADD CONSTRAINT `notification_comment_ibfk_3` FOREIGN KEY (`replied`) REFERENCES `comments` (`replied`);
-
---
--- Constraints for table `notification_setting`
---
-ALTER TABLE `notification_setting`
-  ADD CONSTRAINT `fk_admin_user` FOREIGN KEY (`admin_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
-
---
--- Constraints for table `notification_vote_comment`
---
-ALTER TABLE `notification_vote_comment`
-  ADD CONSTRAINT `notification_vote_comment_ibfk_1` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`id_comment`) ON DELETE CASCADE,
-  ADD CONSTRAINT `notification_vote_comment_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id_article`);
-
---
--- Constraints for table `orders`
---
-ALTER TABLE `orders`
-  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table `order_details`
---
-ALTER TABLE `order_details`
-  ADD CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
-  ADD CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`);
-
---
--- Constraints for table `otp`
---
-ALTER TABLE `otp`
-  ADD CONSTRAINT `otp_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table `product_reviews`
---
-ALTER TABLE `product_reviews`
-  ADD CONSTRAINT `fk_review_item` FOREIGN KEY (`product_id`) REFERENCES `items` (`item_id`);
-
---
--- Constraints for table `review_admin_replies`
---
-ALTER TABLE `review_admin_replies`
-  ADD CONSTRAINT `fk_reply_admin` FOREIGN KEY (`admin_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `fk_reply_detail` FOREIGN KEY (`detail_id`) REFERENCES `review_details` (`id`);
-
---
--- Constraints for table `review_details`
---
-ALTER TABLE `review_details`
-  ADD CONSTRAINT `fk_detail_review` FOREIGN KEY (`review_id`) REFERENCES `product_reviews` (`id`),
-  ADD CONSTRAINT `fk_detail_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
