@@ -114,7 +114,7 @@
                                     </li>
 
                                     <li class="<?php echo ($current == 'product_list') ? 'active' : ''; ?>">
-                                        <a href="<?php echo BASE_URL; ?>admin/product">Danh sách giáo trình</a>
+                                        <a href="<?php echo BASE_URL; ?>admin/product">Danh sách sản phẩm</a>
                                     </li>
                                     <li class="<?php echo ($current == 'product_create') ? 'active' : ''; ?>">
                                         <a href="<?php echo BASE_URL; ?>admin/product/create">Thêm giáo trình mới</a>

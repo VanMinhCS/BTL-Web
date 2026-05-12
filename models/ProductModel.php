@@ -72,19 +72,45 @@ class ProductModel extends Database {
         $stmtSelect->execute([':id' => $id]);
         $product = $stmtSelect->fetch(PDO::FETCH_ASSOC);
 
+        // --- BƯỚC 1: XÓA CÁC RÀNG BUỘC KHÓA NGOẠI TRƯỚC ---
+        // 1. Xóa khỏi danh sách sản phẩm nổi bật ngoài trang chủ
+        $stmtDeleteFeatured = $this->conn->prepare("DELETE FROM home_featured_products WHERE item_id = :id");
+        $stmtDeleteFeatured->execute([':id' => $id]);
+
+        // 2. Xóa tất cả đánh giá của sản phẩm này
+        $stmtDeleteReviews = $this->conn->prepare("DELETE FROM product_reviews WHERE product_id = :id");
+        $stmtDeleteReviews->execute([':id' => $id]);
+        
+        // --- BƯỚC 2: TIẾN HÀNH XÓA SẢN PHẨM ---
         $sql = "DELETE FROM items WHERE item_id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $isDeleted = $stmt->execute();
+        
+        try {
+            $isDeleted = $stmt->execute();
 
-        if ($isDeleted && $product && !empty($product['item_image'])) {
-            $filePath = __DIR__ . '/../../public/assets/img/products/' . $product['item_image'];
-            if (file_exists($filePath)) {
-                unlink($filePath);
+            // Nếu xóa database thành công thì xóa ảnh vật lý
+            if ($isDeleted && $product && !empty($product['item_image'])) {
+                $filePath = __DIR__ . '/../../public/assets/img/products/' . $product['item_image'];
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
             }
-        }
 
-        return $isDeleted;
+            return $isDeleted;
+
+        } catch (PDOException $e) {
+            // Nếu vẫn lỗi 1451 (thường là do dính khóa ngoại ở bảng order_details)
+            // Tức là sản phẩm đã có khách đặt mua, không được phép xóa để giữ lịch sử đơn hàng
+            if ($e->getCode() == '23000') {
+                die("<div style='font-family: sans-serif; padding: 20px; text-align: center; margin-top: 50px;'>
+                        <h3 style='color: red;'>Không thể xóa sản phẩm này!</h3>
+                        <p>Sản phẩm này đã nằm trong <b>lịch sử đơn hàng</b> của khách hàng. Xóa sản phẩm sẽ làm hỏng dữ liệu doanh thu và hóa đơn.</p>
+                        <a href='" . BASE_URL . "admin/product' style='padding: 10px 20px; background: #0d6efd; color: #fff; text-decoration: none; border-radius: 5px;'>Quay lại danh sách</a>
+                     </div>");
+            }
+            throw $e;
+        }
     }
 
     // =================================================================
