@@ -258,8 +258,8 @@ class ProductModel extends Database {
                 if ($status == 3) {
                     // Trạng thái 3 (Hoàn thành): Cộng số lượng đã bán
                     $sqlUpdate = "UPDATE items SET sold_qty = sold_qty + :qty WHERE item_id = :item_id";
-                } else if ($status == 4) {
-                    // Trạng thái 4 (Hủy): Cộng trả lại tồn kho
+                } else {
+                    // Chắc chắn là Trạng thái 4 (Hủy): Cộng trả lại tồn kho
                     $sqlUpdate = "UPDATE items SET item_stock = item_stock + :qty WHERE item_id = :item_id";
                 }
 
