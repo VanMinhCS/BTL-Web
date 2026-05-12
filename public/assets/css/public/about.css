@@ -15,12 +15,6 @@ body {
     margin: 0;
 }
 
-/* KHUNG 750PX CỐ ĐỊNH CHUẨN KÍCH THƯỚC */
-.about-wrapper {
-    width: 750px; 
-    margin: 60px auto;
-}
-
 /* --- PHẦN HERO TỔNG QUAN --- */
 .hero-card {
     background: var(--bg-card);

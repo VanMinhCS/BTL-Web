@@ -90,12 +90,6 @@
                         ?>
                         <ul class="metismenu" id="menu">
                             
-                            <li class="<?php echo ($current == 'dashboard') ? 'active' : ''; ?>">
-                                <a href="<?php echo BASE_URL; ?>admin/dashboard">
-                                    <i class="ti-dashboard"></i><span>Dashboard</span>
-                                </a>
-                            </li>
-                            
                             <?php 
                             $isProduct = in_array($current, ['product_overview', 'product_order', 'product_list', 'product_create']); 
                             ?>

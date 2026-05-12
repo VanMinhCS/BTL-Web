@@ -3,18 +3,18 @@
 class ProductController extends Controller {
     
     public function __construct() {
-        // 1. Khởi tạo session nếu chưa có
+        // Khởi tạo session nếu chưa có
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
-        // 2. Kiểm tra đăng nhập
+        // Kiểm tra đăng nhập
         if (!isset($_SESSION['user_id'])) {
             header("Location: " . BASE_URL . "auth/login");
             exit;
         }
 
-        // 3. Kiểm tra quyền Admin (role = 1 trong DB bk88.sql)
+        // Kiểm tra quyền Admin
         if ($_SESSION['user_role'] !== 1) {
             header("Location: " . BASE_URL . "home");
             exit;
@@ -35,16 +35,15 @@ class ProductController extends Controller {
         $this->view('admin/product/overview', $data);
     }
 
-    // GỌI TRANG DANH SÁCH ĐƠN HÀNG (Đã được cập nhật lấy dữ liệu thật)
+    // GỌI TRANG DANH SÁCH ĐƠN HÀNG
     public function order() {
         require_once __DIR__ . '/../../models/ProductModel.php';
         $productModel = new ProductModel();
         
-        // Gọi Model để lấy toàn bộ dữ liệu đơn hàng
         $data['orders'] = $productModel->getAllOrders(); 
         
         $data['title'] = "Quản lý đơn hàng - Admin";
-        $data['currentPage'] = 'product_order'; // Giữ sáng menu Quản lý đơn hàng
+        $data['currentPage'] = 'product_order';
         
         $this->view('admin/product/order', $data);
     }
@@ -70,12 +69,12 @@ class ProductController extends Controller {
         }
 
         $data['title'] = "Chi tiết đơn hàng #" . $order_id . " - Admin";
-        $data['currentPage'] = 'product_order'; // Giữ sáng menu Quản lý Đơn hàng
+        $data['currentPage'] = 'product_order';
         
         $this->view('admin/product/orderDetail', $data);
     }
 
-    // XỬ LÝ LUỒNG TRẠNG THÁI (WORKFLOW)
+    // XỬ LÝ LUỒNG TRẠNG THÁI
     public function processOrderFlow() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['order_id']) && isset($_POST['next_status'])) {
             require_once __DIR__ . '/../../models/ProductModel.php';
@@ -108,28 +107,25 @@ class ProductController extends Controller {
     public function create() {
         $data['title'] = "Thêm giáo trình mới - Admin";
         
-        // Cắm cờ để Header biết và bật sáng menu "Thêm giáo trình mới"
         $data['currentPage'] = 'product_create'; 
         
-        // Gọi View giao diện Form
         $this->view('admin/product/create', $data);
     }
 
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // 1. Lấy dữ liệu từ Form
+            // Lấy dữ liệu từ Form
             $name = $_POST['item_name'];
             $price = $_POST['price'];
             $cost_price = $_POST['cost_price'];
             $stock = $_POST['item_stock'];
             $desc = $_POST['description'];
             
-            // 2. Xử lý Upload ảnh
+            // Xử lý Upload ảnh
             $image_name = 'default.png'; 
             if (isset($_FILES['item_image']) && $_FILES['item_image']['error'] == 0) {
                 $image_name = time() . '_' . $_FILES['item_image']['name'];
                 
-                // Khai báo đường dẫn thư mục
                 $target_dir = __DIR__ . '/../../public/assets/img/products/';
                 
                 // Nếu thư mục products chưa tồn tại thì tự động tạo mới
@@ -141,13 +137,12 @@ class ProductController extends Controller {
                 move_uploaded_file($_FILES['item_image']['tmp_name'], $target_file);
             }
 
-            // 3. Gọi Model để lưu vào DB
+            // Gọi Model để lưu vào DB
             require_once __DIR__ . '/../../models/ProductModel.php';
             $productModel = new ProductModel();
             $result = $productModel->insertProduct($name, $stock, $desc, $price, $cost_price, $image_name);
 
             if ($result) {
-                // Thành công thì quay về danh sách
                 header("Location: " . BASE_URL . "admin/product?status=success");
             } else {
                 die("Lỗi khi thêm giáo trình!");
@@ -158,14 +153,12 @@ class ProductController extends Controller {
     public function getChartData() {
         header('Content-Type: application/json');
         
-        // Nhận dải thời gian (mặc định 24h) và loại biểu đồ (mặc định revenue)
         $range = $_GET['range'] ?? '24h'; 
         $type = $_GET['type'] ?? 'revenue';
         
         require_once __DIR__ . '/../../models/ProductModel.php';
         $productModel = new ProductModel();
         
-        // Gọi hàm mới vừa tạo
         $result = $productModel->getDynamicChartData($type, $range);
         
         echo json_encode($result);
@@ -183,7 +176,7 @@ class ProductController extends Controller {
         // Lấy data sản phẩm cũ
         $data['product'] = $productModel->getProductById($_GET['id']);
         $data['title'] = "Sửa giáo trình - Admin";
-        $data['currentPage'] = 'product_list'; // Giữ sáng menu "Danh sách"
+        $data['currentPage'] = 'product_list';
         
         $this->view('admin/product/edit', $data);
     }
@@ -197,7 +190,7 @@ class ProductController extends Controller {
             $stock = $_POST['item_stock'];
             $desc = $_POST['description'];
             
-            $image_name = null; // Mặc định là null (không đổi ảnh)
+            $image_name = null;
             
             // Nếu người dùng chọn file ảnh mới
             if (isset($_FILES['item_image']) && $_FILES['item_image']['error'] == 0) {
@@ -229,9 +222,7 @@ class ProductController extends Controller {
         }
     }
 
-    // ==========================================
     // QUẢN LÝ ĐÁNH GIÁ (RATING & REVIEWS)
-    // ==========================================
 
     // Hiển thị danh sách đánh giá của 1 sản phẩm
     public function reviews() {
@@ -242,7 +233,7 @@ class ProductController extends Controller {
 
         $productId = (int)$_GET['id'];
 
-        // Lấy thông tin sản phẩm (để hiển thị tiêu đề)
+        // Lấy thông tin sản phẩm
         require_once __DIR__ . '/../../models/ProductModel.php';
         $productModel = new ProductModel();
         $data['product'] = $productModel->getProductById($productId);
@@ -263,7 +254,7 @@ class ProductController extends Controller {
         $this->view('admin/product/reviews', $data);
     }
 
-    // Xóa một bình luận (Dùng AJAX hoặc redirect)
+    // Xóa một bình luận
     public function deleteReview() {
         if (isset($_GET['id']) && isset($_GET['product_id'])) {
             $reviewId = (int)$_GET['id'];

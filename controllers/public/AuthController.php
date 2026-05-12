@@ -27,7 +27,7 @@ class AuthController extends Controller {
     }
 
     // ==========================================
-    // 2. XỬ LÝ LOGIC ĐĂNG KÝ
+    // XỬ LÝ LOGIC ĐĂNG KÝ
     // ==========================================
     public function processRegister() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -46,9 +46,7 @@ class AuthController extends Controller {
             require_once __DIR__ . '/../../models/UserModel.php';
             $userModel = new UserModel();
 
-            // ==========================================
-            // 2. CHẶN TRÙNG LẶP EMAIL VÀ SỐ ĐIỆN THOẠI Ở ĐÂY
-            // ==========================================
+            // 2. CHẶN TRÙNG LẶP EMAIL VÀ SỐ ĐIỆN THOẠI 
             $existingUser = $userModel->checkUserExists($email, $phone);
             
             if ($existingUser) {
@@ -71,13 +69,13 @@ class AuthController extends Controller {
             if ($user_id) {
                 // --- BẮT ĐẦU LUỒNG XỬ LÝ OTP ---
                 
-                // A. Tạo mã 6 số ngẫu nhiên
+                // Tạo mã 6 số ngẫu nhiên
                 $otpCode = rand(100000, 999999);
                 
-                // B. Lưu OTP vào Database
+                // Lưu OTP vào Database
                 $userModel->createOTP($user_id, $otpCode);
                 
-                // C. Gọi Bưu tá gửi Mail
+                // gửi Mail
                 require_once __DIR__ . '/../../models/MailService.php';
                 $isSent = MailService::sendOTP($email, $otpCode);
 
@@ -85,7 +83,7 @@ class AuthController extends Controller {
                     // Trả về status 'otp_required' để frontend biết đường mở popup OTP
                     echo json_encode([
                         'status' => 'otp_required', 
-                        'user_id' => $user_id, // Gửi kèm ID để lát nữa xác thực
+                        'user_id' => $user_id,
                         'email' => $email,
                         'message' => 'Đăng ký thành công! Vui lòng kiểm tra Email để lấy mã OTP.'
                     ]);
@@ -99,9 +97,8 @@ class AuthController extends Controller {
         }
     }
 
-    // ==========================================
-    // 2.5 XỬ LÝ XÁC THỰC OTP
-    // ==========================================
+    // XỬ LÝ XÁC THỰC OTP
+
     public function processVerifyOTP() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user_id = $_POST['user_id'] ?? '';
@@ -132,7 +129,7 @@ class AuthController extends Controller {
     }
 
     // ==========================================
-    // 5. HIỂN THỊ TRANG QUÊN MẬT KHẨU ĐẦY ĐỦ
+    // HIỂN THỊ TRANG QUÊN MẬT KHẨU ĐẦY ĐỦ
     // ==========================================
     public function forgot() {
         $data['title'] = "Quên mật khẩu - BK88";
@@ -140,7 +137,7 @@ class AuthController extends Controller {
     }
 
     // ==========================================
-    // 6. XỬ LÝ GỬI MÃ OTP QUÊN MẬT KHẨU
+    // XỬ LÝ GỬI MÃ OTP QUÊN MẬT KHẨU
     // ==========================================
     public function processSendResetOTP() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -167,7 +164,7 @@ class AuthController extends Controller {
     }
 
     // ==========================================
-    // 7. XỬ LÝ ĐẶT LẠI MẬT KHẨU
+    // XỬ LÝ ĐẶT LẠI MẬT KHẨU
     // ==========================================
     public function processResetPassword() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -204,7 +201,7 @@ class AuthController extends Controller {
     }
 
     // ==========================================
-    // 3. XỬ LÝ LOGIC ĐĂNG NHẬP
+    // XỬ LÝ LOGIC ĐĂNG NHẬP
     // ==========================================
     public function processLogin() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -270,7 +267,7 @@ class AuthController extends Controller {
 
 
     // ==========================================
-    // 4. ĐĂNG XUẤT
+    // ĐĂNG XUẤT
     // ==========================================
     public function logout() {
         session_destroy();
