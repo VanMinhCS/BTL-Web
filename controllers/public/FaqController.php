@@ -1,23 +1,47 @@
 <?php
-// File: controllers/public/FaqController.php
+
 
 class FaqController extends Controller {
-    
     public function index() {
-        // 1. Gọi Model
         require_once '../models/FaqModel.php';
         $faqModel = new FaqModel();
-
-        // 2. Lấy dữ liệu các câu hỏi Public
         $publicFaqs = $faqModel->getPublicFaqs();
-
-        // 3. Đóng gói dữ liệu gửi sang View
         $data = [
-            'public_faqs' => $publicFaqs
+            'public_faqs' => $publicFaqs,
+            'currentPage' => "faq"
         ];
-
-        // 4. Hiển thị giao diện
         $this->view('public/faq/index', $data);
+    }
+    public function ask() {
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: /BTL-Web/auth/login"); 
+            exit;
+        }
+        $userId = $_SESSION['user_id'];
+        require_once '../models/FaqModel.php';
+        $faqModel = new FaqModel();
+        
+        $data = [
+            'my_faqs' => $faqModel->getFaqsByUserId($userId)
+        ];
+        $this->view('public/faq/ask', $data);
+    }
+    public function submit_faq() {
+        if (!isset($_SESSION['user_id'])) {
+            echo "<script>window.location.href='" . BASE_URL . "login';</script>";
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $userId = $_SESSION['user_id'];
+            $category = $_POST['category'];
+            $question = $_POST['question'];
+            require_once '../models/FaqModel.php';
+            $faqModel = new FaqModel();
+            $faqModel->insertFaq($userId, $category, $question);
+            header("Location: " . BASE_URL . "faq/ask");
+            exit;
+        }
     }
 }
 ?>

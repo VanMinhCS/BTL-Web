@@ -169,7 +169,10 @@ class Comment extends Model {
                     ON c.id_comment = uv.comment_id 
                     AND uv.user_id = ?
             WHERE c.id_article = ?
-            GROUP BY c.id_comment
+            GROUP BY c.id_comment, c.id_article, c.id_user,
+                    i.firstname, i.lastname, u.role,
+                    c.text, c.date_modified, c.is_edited, c.replied,
+                    uv.vote
             ORDER BY c.date_modified DESC
         ");
         $stmt->execute([$userId, $articleId]);

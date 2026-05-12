@@ -146,20 +146,35 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
     <div class="card-body">
         <h4 class="header-title">Top 5 Sản phẩm bán chạy nhất</h4>
         <div class="table-responsive">
-            <table class="dbkit-table">
-                <tbody>
-                    <tr class="heading-td">
-                        <td>Tên sản phẩm</td>
-                        <td>Số lượng đã bán</td>
-                        <td>Doanh thu mang về</td>
-                        <td>Hành động</td>
+            <table class="table table-hover align-middle border-bottom" style="width: 100%; table-layout: fixed;">
+                
+                <thead class="bg-light">
+                    <tr>
+                        <th class="text-start border-bottom-0" style="width: 40%; padding: 15px;">Tên sản phẩm</th>
+                        <th class="text-center border-bottom-0" style="width: 20%;">Số lượng đã bán</th>
+                        <th class="text-end border-bottom-0" style="width: 40%; padding-right: 15px;">Tổng doanh thu</th>
                     </tr>
+                </thead>
+                <tbody>
                     <?php foreach ($topSelling as $row): ?>
                     <tr>
-                        <td class="fw-bold"><?php echo $row['item_name']; ?></td>
-                        <td><span class="badge bg-info px-3"><?php echo $row['sold_qty']; ?> cuốn</span></td>
-                        <td class="text-danger fw-bold"><?php echo number_format($row['revenue'], 0, ',', '.'); ?> ₫</td>
-                        <td><a href="<?php echo BASE_URL; ?>admin/product" class="btn btn-xs btn-outline-primary">Xem kho</a></td>
+                        <td class="text-start" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 15px;">
+                            <img src="<?php echo BASE_URL; ?>assets/img/products/<?php echo $row['item_image']; ?>" 
+                                 alt="img" style="width: 45px; height: 45px; object-fit: cover; border-radius: 4px;" class="me-3 shadow-sm">
+                            
+                            <span class="fw-bold text-dark" title="<?php echo htmlspecialchars($row['item_name']); ?>">
+                                <?php echo htmlspecialchars($row['item_name']); ?>
+                            </span>
+                        </td>
+                        
+                        <td class="text-center">
+                            <span class="badge bg-info text-dark px-3 py-2" style="font-size: 0.85rem;"><?php echo $row['sold_qty']; ?> cuốn</span>
+                        </td>
+                        
+                        <td class="text-end text-danger fw-bold fs-6" style="padding-right: 15px;">
+                            <?php echo number_format($row['revenue'], 0, ',', '.'); ?> ₫
+                        </td>
+                        
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

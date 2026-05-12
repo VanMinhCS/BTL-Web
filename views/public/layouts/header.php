@@ -7,6 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/header.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/footer.css">
+    <?php if (!empty($data['pageCss']) && is_array($data['pageCss'])): ?>
+        <?php foreach ($data['pageCss'] as $cssPath): ?>
+            <link rel="stylesheet" href="<?= BASE_URL . $cssPath ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
 
     <style>
     @media (min-width: 992px) {
@@ -59,13 +64,20 @@
 
 <body class="d-flex flex-column min-vh-100">
 
+<?php
+$siteLogo = $siteLogo ?? ($data['siteLogo'] ?? '');
+$logoSrc = !empty($siteLogo)
+    ? (BASE_URL . 'assets/img/' . $siteLogo)
+    : (BASE_URL . 'assets/img/logo88.png');
+?>
+
 <!-- ===== NAVBAR CHÍNH ===== -->
 <nav class="navbar navbar-expand-lg shadow-sm main-navbar">
     <div class="container">
 
         <!-- LOGO -->
         <a class="navbar-brand d-flex align-items-center gap-2" href="<?php echo BASE_URL; ?>home">
-            <img src="<?php echo BASE_URL; ?>assets/img/logoBK.png"
+            <img src="<?php echo $logoSrc; ?>"
                  alt="Logo"
                  height="40"
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
@@ -85,7 +97,7 @@
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($currentPage ?? '') === 'home' ? 'active' : ''; ?>"
-                       href="<?php echo BASE_URL; ?>home">HOME</a>
+                       href="<?php echo BASE_URL; ?>home">TRANG CHỦ</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($currentPage ?? '') === 'product' ? 'active' : ''; ?>"
@@ -112,11 +124,13 @@
             <!-- PHẦN PHẢI: tìm kiếm + đăng nhập -->
             <ul class="navbar-nav align-items-center gap-3">
                 
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="#" title="Tìm kiếm">
-                        <img src="<?php echo BASE_URL; ?>assets/img/search.png" alt="Search" style="width: 20px; height: 20px; filter: invert(1);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
                     </a>
-                </li>
+                </li> -->
 
                 <li class="nav-item dropdown position-relative">
                     <a class="nav-link d-flex align-items-center" href="<?php echo isset($_SESSION['user_id']) ? BASE_URL . 'profile' : BASE_URL . 'auth/login'; ?>" id="userDropdown" aria-expanded="false" style="cursor: pointer;">

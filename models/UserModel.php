@@ -205,7 +205,7 @@ class UserModel extends Database {
     }
     // 16. Lấy dữ liệu tất cả User
     public function getAllUsers() {
-        $sql = "SELECT u.user_id, u.email, u.is_banned, CONCAT(ui.firstname, ' ', ui.lastname) AS full_name 
+        $sql = "SELECT u.user_id, u.email, u.role, u.is_banned, CONCAT(ui.firstname, ' ', ui.lastname) AS full_name 
                 FROM users u
                 LEFT JOIN information ui ON u.user_id = ui.user_id
                 ORDER BY u.user_id DESC";

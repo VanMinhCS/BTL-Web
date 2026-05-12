@@ -27,7 +27,7 @@ class CartController extends Controller {
     }
 
     public function index() {
-        // 1. GỌI MODEL LẤY DỮ LIỆU TẠI ĐÂY (Chuẩn MVC)
+        // GỌI MODEL LẤY DỮ LIỆU TẠI ĐÂY (Chuẩn MVC)
         require_once __DIR__ . '/../../models/ProductModel.php';
         $productModel = new ProductModel();
         $dbProducts = $productModel->getAllProducts();
@@ -41,7 +41,7 @@ class CartController extends Controller {
         $cartItems = [];
         $totalPrice = 0;
 
-        // 2. XỬ LÝ LOGIC GIỎ HÀNG VÀ TÍNH TIỀN
+        // XỬ LÝ LOGIC GIỎ HÀNG VÀ TÍNH TIỀN
         if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             foreach ($_SESSION['cart'] as $sessionItem) {
                 $id = $sessionItem['id'];
@@ -70,7 +70,7 @@ class CartController extends Controller {
             }
         }
 
-        // 3. ĐÓNG GÓI VÀ ĐẨY SANG VIEW
+        // ĐÓNG GÓI VÀ ĐẨY SANG VIEW
         $data['title'] = "Giỏ hàng - BK88";
         $data['cartItems'] = $cartItems;
         $data['totalPrice'] = $totalPrice;
@@ -82,7 +82,7 @@ class CartController extends Controller {
         $id = $_POST['product_id'] ?? null;
         $action = $_POST['action'] ?? null;
         
-        // Hứng thêm biến quantity từ AJAX gửi lên (mặc định là 1 nếu không có)
+        // Hứng thêm biến quantity từ AJAX gửi lên
         $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
 
         if ($id && isset($_SESSION['cart'][$id])) {
@@ -98,7 +98,7 @@ class CartController extends Controller {
             }
         }
         
-        // TRẢ VỀ JSON CHO AJAX (Không tải lại trang)
+        // TRẢ VỀ JSON CHO AJAX 
         if (isset($_POST['ajax']) && $_POST['ajax'] == 1) {
             $cartCount = 0;
             if (isset($_SESSION['cart'])) {

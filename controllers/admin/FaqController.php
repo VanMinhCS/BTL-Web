@@ -15,7 +15,7 @@ class FaqController extends Controller {
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
         $answer = $_POST['answer'] ?? '';
         $status = isset($_POST['status']) ? intval($_POST['status']) : 0;
-        header('Content-Type: application/json');
+        header('Content-Type: applic6ation/json');
         if ($id > 0) {
             require_once '../models/FaqModel.php';
             $faqModel = new FaqModel();

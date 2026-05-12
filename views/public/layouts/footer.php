@@ -1,5 +1,12 @@
 </main>
 
+<?php
+$siteLogo = $siteLogo ?? ($data['siteLogo'] ?? '');
+$logoSrc = !empty($siteLogo)
+    ? (BASE_URL . 'assets/img/' . $siteLogo)
+    : (BASE_URL . 'assets/img/logo88.png');
+?>
+
 <footer class="main-footer pt-5 pb-3 mt-5">
     <div class="container">
         <div class="row g-4">
@@ -8,7 +15,7 @@
             <div class="col-12 col-md-3 mb-4">
                 <div class="d-flex align-items-center gap-2">
                     <!-- Logo ảnh -->
-                    <img src="<?php echo BASE_URL; ?>assets/img/logoBK.png"
+                    <img src="<?php echo $logoSrc; ?>"
                          alt="Logo" height="50"
                          onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                     <!-- Fallback text nếu không có logo -->
@@ -17,7 +24,7 @@
                 </div>
 
                 <p class="footer-muted mt-3 small">
-                    Chưa tới 18h30 chưa biết ai giàu hơn ai.
+                    Website cung cấp giáo trình hàng đầu.
                 </p>
             </div>
 
@@ -37,15 +44,18 @@
             <!-- CỘT 3: NEWSLETTER + MẠNG XÃ HỘI -->
             <div class="col-12 col-md-6 mb-4">
                 <h6 class="footer-heading fw-bold mb-2">NEWSLETTER</h6>
-                <p class="footer-muted small">Đăng ký nhận ưu đãi và tin tức mới nhất từ chúng tôi và biết đâu người tiếp theo trúng jackpot là bạn.</p>
+                <p class="footer-muted small">Đăng ký nhận ưu đãi và tin tức mới nhất từ chúng tôi.</p>
 
                 <!-- Form email -->
-                <div class="newsletter-form d-flex align-items-center mb-4">
-                    <input type="email"
-                           class="newsletter-input flex-grow-1"
-                           placeholder="Nhập email của bạn">
-                    <button class="newsletter-btn">→</button>
-                </div>
+                <form action="<?php echo BASE_URL; ?>contact" method="GET">
+                    <div class="newsletter-form d-flex align-items-center mb-4">
+                        <input type="email"
+                            name="email"
+                            class="newsletter-input flex-grow-1"
+                            placeholder="Nhập email của bạn">
+                        <button class="newsletter-btn" type="submit">→</button>
+                    </div>
+                </form>
 
                 <!-- MẠNG XÃ HỘI (bí quá thì bỏ :)) -->
                 <div class="social-icons d-flex gap-3">
@@ -55,8 +65,8 @@
                         </svg>
                     </a>
                     <a href="javascript:void(0)" class="social-icon" title="Twitter/X">
-                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
+                            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
                         </svg>
                     </a>
                     <a href="javascript:void(0)" class="social-icon" title="Instagram">
@@ -80,12 +90,12 @@
         <!-- BOTTOM BAR -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-2">
             <p class="footer-muted small mb-2 mb-md-0">
-                © 2026 <strong class="text-white">BK-88</strong>. Mang đến hạnh phúc cho mọi nhà.
+                © 2026 <strong class="text-white">BK-88</strong>
             </p>
             <div class="d-flex gap-2">
                 <a href="<?php echo BASE_URL; ?>contact" class="footer-link small">Liên hệ</a>
                 <span class="footer-muted">·</span>
-                <a href="#" class="footer-link small">Chính sách</a>
+                <a href="<?php echo BASE_URL; ?>about" class="footer-link small">Giới thiệu</a>
             </div>
         </div>
     </div>
@@ -93,5 +103,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?php echo BASE_URL; ?>assets/js/main.js"></script>
+<?php if (!empty($data['pageJs']) && is_array($data['pageJs'])): ?>
+    <?php foreach ($data['pageJs'] as $jsPath): ?>
+        <script src="<?= BASE_URL . $jsPath ?>"></script>
+    <?php endforeach; ?>
+<?php endif; ?>
 </body>
 </html>

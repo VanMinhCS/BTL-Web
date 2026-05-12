@@ -2,6 +2,7 @@
 session_start();
 
 require_once '../config/config.php';
+require_once '../core/model.php';
 require_once '../core/controller.php';
 require_once '../controllers/public/HomeController.php';
 require_once '../core/router.php';

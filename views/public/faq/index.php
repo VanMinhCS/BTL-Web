@@ -35,7 +35,7 @@
         <p>Gửi câu hỏi trực tiếp cho đội ngũ kỹ thuật của chúng tôi.</p>
         
         <?php if(isset($_SESSION['user_id'])): ?>
-            <a href="<?php echo BASE_URL; ?>member" class="btn-primary">Vào Khu Vực Thành Viên</a>
+            <a href="<?php echo BASE_URL; ?>faq/ask" class="btn-primary">Vào Khu Vực Thành Viên</a>
         <?php else: ?>
             <a href="<?php echo BASE_URL; ?>auth/login" class="btn-primary">Đăng Nhập Để Đặt Câu Hỏi</a>
         <?php endif; ?>

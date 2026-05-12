@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: May 09, 2026 at 10:20 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Host: localhost:3306
+-- Generation Time: May 12, 2026 at 04:31 AM
+-- Server version: 8.0.30
+-- PHP Version: 8.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,12 +28,12 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `about_content` (
-  `id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL DEFAULT 'Giới Thiệu BK88',
-  `description` text NOT NULL COMMENT 'Nội dung mô tả chi tiết',
-  `features` text DEFAULT NULL COMMENT 'Các ưu điểm nổi bật, ngăn cách bằng dấu phẩy',
-  `featured_items` varchar(255) DEFAULT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `id` int NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Giới Thiệu BK88',
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nội dung mô tả chi tiết',
+  `features` text COLLATE utf8mb4_unicode_ci COMMENT 'Các ưu điểm nổi bật, ngăn cách bằng dấu phẩy',
+  `featured_items` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `about_content` (
 --
 
 INSERT INTO `about_content` (`id`, `title`, `description`, `features`, `featured_items`, `updated_at`) VALUES
-(1, 'Chào mừng đến với BK88', 'Chúng tôi là nền tảng tiên phong trong việc cung cấp các giải pháp công nghệ và giải trí đỉnh cao. Với đội ngũ từ Bách Khoa, chúng tôi cam kết mang lại trải nghiệm tốt nhất.', 'Giao diện Kính mờ (Glassmorphism), Hệ thống bảo mật 2 lớp, Tốc độ xử lý vượt trội, 6, 8', '15,9,8,7,6', '2026-05-09 08:19:20');
+(1, 'Chào mừng đến với BK88', 'Chúng tôi là nền tảng tiên phong trong việc cung cấp các giải pháp công nghệ và giải trí đỉnh cao. Với đội ngũ từ Bách Khoa, chúng tôi cam kết mang lại trải nghiệm tốt nhất.', 'Giao diện Kính mờ (Glassmorphism), Hệ thống bảo mật 2 lớp, Tốc độ xử lý vượt trội, 6, 8', '15,9,8,7,6', '2026-05-09 01:19:20');
 
 -- --------------------------------------------------------
 
@@ -50,11 +50,11 @@ INSERT INTO `about_content` (`id`, `title`, `description`, `features`, `featured
 --
 
 CREATE TABLE `addresses` (
-  `address_id` int(11) NOT NULL,
-  `street` varchar(100) DEFAULT NULL,
-  `ward` varchar(100) DEFAULT NULL,
-  `city` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `address_id` int NOT NULL,
+  `street` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `ward` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `city` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `addresses`
@@ -77,14 +77,14 @@ INSERT INTO `addresses` (`address_id`, `street`, `ward`, `city`) VALUES
 --
 
 CREATE TABLE `articles` (
-  `id_article` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `time_modified` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `status` tinyint(1) NOT NULL DEFAULT 0,
-  `content` text NOT NULL,
-  `background` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id_article` int NOT NULL,
+  `title` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `time_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `content` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `background` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `articles`
@@ -101,14 +101,14 @@ INSERT INTO `articles` (`id_article`, `title`, `description`, `time_modified`, `
 --
 
 CREATE TABLE `comments` (
-  `id_comment` int(11) NOT NULL,
-  `id_article` int(11) NOT NULL,
-  `id_user` int(11) NOT NULL,
-  `text` text NOT NULL,
-  `date_modified` timestamp NOT NULL DEFAULT current_timestamp(),
-  `is_edited` tinyint(1) DEFAULT 0,
-  `replied` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id_comment` int NOT NULL,
+  `id_article` int NOT NULL,
+  `id_user` int NOT NULL,
+  `text` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_edited` tinyint(1) DEFAULT '0',
+  `replied` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `comments`
@@ -146,7 +146,8 @@ INSERT INTO `comments` (`id_comment`, `id_article`, `id_user`, `text`, `date_mod
 (105, 1, 6, 'đa', '2026-04-23 09:47:38', 0, NULL),
 (106, 1, 6, 'đe', '2026-04-23 09:51:10', 1, 105),
 (107, 1, 5, 'hay', '2026-04-23 12:16:38', 0, NULL),
-(108, 1, 5, 'k', '2026-05-04 08:00:28', 0, NULL);
+(108, 1, 5, 'k', '2026-05-04 08:00:28', 0, NULL),
+(109, 1, 5, 'AD', '2026-05-11 15:46:13', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -155,11 +156,11 @@ INSERT INTO `comments` (`id_comment`, `id_article`, `id_user`, `text`, `date_mod
 --
 
 CREATE TABLE `comment_votes` (
-  `id` int(11) NOT NULL,
-  `comment_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `vote` enum('like','dislike') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id` int NOT NULL,
+  `comment_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `vote` enum('like','dislike') COLLATE utf8mb3_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `comment_votes`
@@ -182,17 +183,88 @@ INSERT INTO `comment_votes` (`id`, `comment_id`, `user_id`, `vote`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `contacts`
+--
+
+CREATE TABLE `contacts` (
+  `contact_id` int NOT NULL,
+  `customer_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `subject` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `contacts`
+--
+
+INSERT INTO `contacts` (`contact_id`, `customer_name`, `customer_email`, `subject`, `message`, `status`, `created_at`) VALUES
+(1, 'Nguyễn Văn Minh', 'd@l.m', 'Quá xuất sắc', 'Quá mạnh', 0, '2026-05-03 03:11:11'),
+(2, 'Pablo Jenkins PhD', 'Kadin46@hotmail.com', 'Dynamic Infrastructure Orchestrator', 'Adipisci vitae non vacuus comparo.', 1, '2026-05-03 03:18:01'),
+(33, 'Kurt Gleichner', 'Nash.Kulas48@gmail.com', 'Customer Directives Consultant', 'Quidem abduco aegre claro repellendus unde usus callide. Crepusculum campana vox vinco conventus summopere censura. Utroque tubineus assumenda tunc approbo amitto coruscus aspicio.', 0, '2026-05-12 04:19:21'),
+(34, 'Sylvester Dare', 'Wendell.Schmeler@hotmail.com', 'Principal Assurance Manager', 'Defluo tabgo allatus quos defluo bene comes surgo tergo. Votum cupio pectus ullus clementia confido decens speculum addo tripudio. Coniuratio damnatio tot vulgus cultura turba acies abscido.', 0, '2026-05-12 04:19:21'),
+(35, 'Eugene Marvin', 'Lucius.Olson@hotmail.com', 'Lead Tactics Producer', 'Tui tredecim amitto. Defluo terga aspicio delectus. Quis tristis vociferor commodo xiphias eum utilis.', 0, '2026-05-12 04:19:21'),
+(36, 'Elizabeth Tremblay', 'Gilda.Wisozk@gmail.com', 'Internal Assurance Administrator', 'Thema tabula esse adinventitias tego itaque defungo comprehendo. Conservo communis cum. Tener incidunt textor considero.', 0, '2026-05-12 04:19:21'),
+(37, 'Chad Williamson', 'Abagail.Stroman@hotmail.com', 'Central Data Consultant', 'Solus tollo terga appello. Suffragium beatae curvo complectus umbra voluptatum accendo argentum. Cuppedia magnam canonicus aliquam dolorem antiquus vester.', 0, '2026-05-12 04:19:21'),
+(38, 'Tricia Botsford', 'Dora.Goldner81@hotmail.com', 'National Configuration Planner', 'Adamo campana benigne torrens. Sit triduana somniculosus vobis summopere decens supra succurro tubineus. Barba sunt textus umbra calcar territo tabella commodi.', 0, '2026-05-12 04:19:21'),
+(39, 'Caroline Schmitt', 'Joe.Daniel@gmail.com', 'Legacy Communications Agent', 'Volutabrum arx vulnero vos distinctio non carmen amoveo. Turbo vere vilitas. Stips cumque delectus tandem crudelis spargo auctus perferendis abbas.', 0, '2026-05-12 04:19:21'),
+(40, 'Robin Koepp', 'Lavon97@hotmail.com', 'District Paradigm Engineer', 'Numquam aeternus tum. Tabella denego cubitum. Repudiandae crebro earum curriculum averto aiunt traho cultura aestivus.', 0, '2026-05-12 04:19:21'),
+(41, 'Dexter Leuschke', 'Liam_Grant@hotmail.com', 'Investor Creative Orchestrator', 'Verbum comis tubineus cernuus compono vomer acceptus calco vado carcer. Caterva turba tendo stabilis. Quibusdam denique vigilo.', 0, '2026-05-12 04:19:21'),
+(42, 'Dr. Courtney Leffler', 'Yasmeen_Kuhic68@yahoo.com', 'Forward Marketing Planner', 'Laboriosam error damnatio. Defleo claro tepesco. Adaugeo tabula attero tutamen.', 0, '2026-05-12 04:19:21'),
+(43, 'Mrs. Caroline Kassulke', 'Freeda.OReilly15@hotmail.com', 'Lead Research Director', 'Molestiae recusandae abscido acies deprecator cado auctus. Possimus appello ait argentum bardus. Teneo cubo comparo claudeo coma.', 0, '2026-05-12 04:19:21'),
+(44, 'Patsy Schowalter II', 'Christ88@hotmail.com', 'Dynamic Identity Strategist', 'Teres considero texo arbitro. Vel eligendi defaeco vilicus accusator celo ab universe officiis aliquid. Ipsa templum hic timidus argumentum spiritus carbo solutio.', 0, '2026-05-12 04:19:21'),
+(45, 'Chris Harber', 'Oma99@hotmail.com', 'Dynamic Brand Officer', 'Accendo verbera cruciamentum spero adficio facere dolor perferendis testimonium. Voluptas beneficium denuncio corona claro. Clibanus supra acsi amaritudo annus quae.', 0, '2026-05-12 04:19:21'),
+(46, 'Christina Denesik', 'Jayde_Pouros@yahoo.com', 'Chief Accounts Strategist', 'Vesper comburo crastinus avarus curiositas statim tabesco denuncio succurro repellat. Correptius currus ancilla. Abbas socius supra voluptas.', 0, '2026-05-12 04:19:21'),
+(47, 'Dr. Viola Morissette', 'Bettie36@yahoo.com', 'Investor Markets Representative', 'Adeo adiuvo acceptus clarus vivo angustus vester explicabo. Placeat patrocinor umquam tracto amaritudo. Vis verecundia id absque angulus tristis.', 0, '2026-05-12 04:19:21'),
+(48, 'Krista Schaden', 'Brain.Wilkinson18@gmail.com', 'Product Branding Planner', 'Vivo summa rem. Tenax minus studio. Conspergo qui curto abundans.', 0, '2026-05-12 04:19:21'),
+(49, 'Ms. Bonnie Batz', 'Joelle24@gmail.com', 'Lead Interactions Analyst', 'Fugit totidem spectaculum causa supra eos cunae vesica aetas sordeo. Abeo cupressus adficio eaque suggero aspicio. Pecco ager bibo cena condico vulnero repellendus non arma solvo.', 0, '2026-05-12 04:19:21'),
+(50, 'Peter Hahn', 'Candelario_Dooley@gmail.com', 'Forward Program Consultant', 'Illum adeptio clibanus cena. Nisi capto debeo cresco circumvenio pel vesper. Contigo tribuo consectetur curto coaegresco theca despecto asper voluptas.', 0, '2026-05-12 04:19:21'),
+(51, 'Annette Heathcote', 'Kendra31@gmail.com', 'International Optimization Specialist', 'Curto provident impedit voro. Tergeo rem denique vulgus crastinus. Amor velum creator cum sopor.', 0, '2026-05-12 04:19:21'),
+(52, 'Kay Buckridge', 'Anne_Cummerata62@gmail.com', 'Senior Functionality Planner', 'Creo sed temeritas vociferor cenaculum magni distinctio. Carmen nihil tyrannus. Aestivus bos pecto.', 0, '2026-05-12 04:19:21');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contact_info_fields`
+--
+
+CREATE TABLE `contact_info_fields` (
+  `id` int NOT NULL,
+  `label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icon` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sort_order` int DEFAULT '0',
+  `is_active` tinyint(1) DEFAULT '1',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `contact_info_fields`
+--
+
+INSERT INTO `contact_info_fields` (`id`, `label`, `value`, `icon`, `sort_order`, `is_active`, `updated_at`) VALUES
+(5, 'Bruh', 'Wait for me', '', 1, 0, '2026-05-04 09:58:26'),
+(8, 'Địa chỉ', '123 Ngô Quyền', '', 0, 1, '2026-05-04 09:57:28'),
+(9, 'Số điện thoại', '19008198', '', 1, 1, '2026-05-04 09:57:46'),
+(10, 'Giờ làm việc', 'Thứ 2 - thứ 6, 7h - 16h50', '', 3, 1, '2026-05-04 09:58:22'),
+(11, 'Email', 'bk88@hcmut.edu.vn', '', 4, 1, '2026-05-11 08:01:39');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `faq`
 --
 
 CREATE TABLE `faq` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL COMMENT 'ID của người dùng từ user_table',
-  `category` varchar(100) NOT NULL,
-  `question` text NOT NULL,
-  `answer` text DEFAULT NULL,
-  `status` tinyint(1) DEFAULT 0 COMMENT '0: Chờ duyệt, 1: Đã trả lời (Hiện Public)',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int NOT NULL,
+  `user_id` int NOT NULL COMMENT 'ID của người dùng từ user_table',
+  `category` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `question` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `answer` text COLLATE utf8mb4_unicode_ci,
+  `status` tinyint(1) DEFAULT '0' COMMENT '0: Chờ duyệt, 1: Đã trả lời (Hiện Public)',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -200,21 +272,138 @@ CREATE TABLE `faq` (
 --
 
 INSERT INTO `faq` (`id`, `user_id`, `category`, `question`, `answer`, `status`, `created_at`) VALUES
-(1, 2, 'Kỹ thuật', 'hello', 'chao em nhe', 0, '2026-04-26 08:44:40'),
-(2, 2, 'Kỹ thuật', 'dung hoi nua', NULL, 0, '2026-04-26 08:46:52'),
-(3, 2, 'Kỹ thuật', 'chao ae', NULL, 0, '2026-04-26 09:41:00'),
-(4, 2, 'Kỹ thuật', 'chao ae', 'chao ban', 0, '2026-04-26 09:42:05'),
-(5, 2, 'Tài khoản', 'Làm thế nào để kích hoạt bảo mật 2 lớp (2FA) cho tài khoản?', 'Bạn vào phần Cài đặt tài khoản, chọn mục Bảo mật và quét mã QR bằng ứng dụng Google Authenticator.', 1, '2026-04-26 09:44:19'),
-(6, 2, 'Tài khoản', 'Tôi bị mất mật khẩu và không còn truy cập được Email đăng ký?', 'Vui lòng gửi yêu cầu hỗ trợ kèm theo ảnh chụp giấy tờ định danh chính chủ. Admin sẽ hỗ trợ xử lý trong 24h.', 1, '2026-04-26 09:44:19'),
-(7, 2, 'Lỗi kỹ thuật', 'Tại sao tôi không thể upload được ảnh minh họa?', 'Kiểm tra lại định dạng ảnh (.jpg, .png) và dung lượng phải dưới 5MB. Thử xóa cache trình duyệt nếu vẫn lỗi.', 1, '2026-04-26 09:44:19'),
-(8, 2, 'Lỗi kỹ thuật', 'Tôi gặp lỗi 403 Forbidden khi truy cập khu vực thành viên?', 'Lỗi này do hết hạn phiên đăng nhập. Bạn hãy đăng xuất và thực hiện đăng nhập lại để làm mới Session.', 1, '2026-04-26 09:44:19'),
-(9, 2, 'Hệ thống', 'BK88 có hỗ trợ nạp tiền qua thẻ cào không?', 'Hiện tại hệ thống hỗ trợ nạp qua tất cả các nhà mạng phổ biến. Thời gian xử lý giao dịch thường từ 1-3 phút.', 1, '2026-04-26 09:44:19'),
-(10, 2, 'Hệ thống', 'Tôi có thể đổi tên hiển thị (Username) được không?', 'Mỗi tài khoản chỉ được đổi tên hiển thị một lần duy nhất trong vòng 1 ngày tại mục Thông tin cá nhân.', 1, '2026-04-26 09:44:19'),
-(11, 2, 'Kỹ thuật', 'chao ae', 'chao ku', 0, '2026-04-27 09:43:27'),
-(12, 1, 'Kỹ thuật', 'chao eim', 'chào anh ạ', 0, '2026-04-27 14:25:32'),
-(13, 2, 'Kỹ thuật', 'chào e', 'chao ban nhe', 0, '2026-04-27 14:34:02'),
-(14, 2, 'Kỹ thuật', '1', NULL, 0, '2026-05-09 06:56:42'),
-(15, 2, 'Kỹ thuật', '1', NULL, 0, '2026-05-09 07:33:53');
+(1, 2, 'Kỹ thuật', 'hello', 'chao em nhe', 1, '2026-04-26 01:44:40'),
+(2, 2, 'Kỹ thuật', 'dung hoi nua', NULL, 0, '2026-04-26 01:46:52'),
+(3, 2, 'Kỹ thuật', 'chao ae', NULL, 0, '2026-04-26 02:41:00'),
+(4, 2, 'Kỹ thuật', 'chao ae', 'chao ban', 0, '2026-04-26 02:42:05'),
+(5, 2, 'Tài khoản', 'Làm thế nào để kích hoạt bảo mật 2 lớp (2FA) cho tài khoản?', 'Bạn vào phần Cài đặt tài khoản, chọn mục Bảo mật và quét mã QR bằng ứng dụng Google Authenticator.', 1, '2026-04-26 02:44:19'),
+(6, 2, 'Tài khoản', 'Tôi bị mất mật khẩu và không còn truy cập được Email đăng ký?', 'Vui lòng gửi yêu cầu hỗ trợ kèm theo ảnh chụp giấy tờ định danh chính chủ. Admin sẽ hỗ trợ xử lý trong 24h.', 1, '2026-04-26 02:44:19'),
+(7, 2, 'Lỗi kỹ thuật', 'Tại sao tôi không thể upload được ảnh minh họa?', 'Kiểm tra lại định dạng ảnh (.jpg, .png) và dung lượng phải dưới 5MB. Thử xóa cache trình duyệt nếu vẫn lỗi.', 1, '2026-04-26 02:44:19'),
+(8, 2, 'Lỗi kỹ thuật', 'Tôi gặp lỗi 403 Forbidden khi truy cập khu vực thành viên?', 'Lỗi này do hết hạn phiên đăng nhập. Bạn hãy đăng xuất và thực hiện đăng nhập lại để làm mới Session.', 1, '2026-04-26 02:44:19'),
+(9, 2, 'Hệ thống', 'BK88 có hỗ trợ nạp tiền qua thẻ cào không?', 'Hiện tại hệ thống hỗ trợ nạp qua tất cả các nhà mạng phổ biến. Thời gian xử lý giao dịch thường từ 1-3 phút.', 1, '2026-04-26 02:44:19'),
+(10, 2, 'Hệ thống', 'Tôi có thể đổi tên hiển thị (Username) được không?', 'Mỗi tài khoản chỉ được đổi tên hiển thị một lần duy nhất trong vòng 1 ngày tại mục Thông tin cá nhân.', 1, '2026-04-26 02:44:19');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `home_featured_products`
+--
+
+CREATE TABLE `home_featured_products` (
+  `id` int NOT NULL,
+  `item_id` int NOT NULL,
+  `sort_order` int DEFAULT '0',
+  `is_active` tinyint(1) DEFAULT '1',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `home_featured_products`
+--
+
+INSERT INTO `home_featured_products` (`id`, `item_id`, `sort_order`, `is_active`, `updated_at`) VALUES
+(1, 1, 1, 1, '2026-05-04 08:11:56'),
+(2, 2, 2, 1, '2026-05-04 08:11:56'),
+(3, 3, 3, 1, '2026-05-04 08:11:56'),
+(4, 4, 4, 1, '2026-05-04 08:11:56'),
+(6, 7, 5, 1, '2026-05-04 08:59:07');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `home_quotes`
+--
+
+CREATE TABLE `home_quotes` (
+  `id` int NOT NULL,
+  `quote_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `author` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sort_order` int DEFAULT '0',
+  `is_active` tinyint(1) DEFAULT '1',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `home_quotes`
+--
+
+INSERT INTO `home_quotes` (`id`, `quote_text`, `author`, `image`, `sort_order`, `is_active`, `updated_at`) VALUES
+(1, 'Sách là nguồn tri thức vô tận.', 'Nguyễn Văn Minh - Co-founder của BK88', 'avt/nvm.png', 1, 1, '2026-05-04 09:43:04'),
+(2, 'Đầu tư vào kiến thức là khoản đầu tư lãi nhất.', 'Hồ Ngọc Anh Tuấn - Co-founder của BK88', 'avt/HNAT.png', 2, 1, '2026-05-04 09:43:10'),
+(3, 'Kiến thức dẫn lối con người.', 'Nông Văn Trung - Co-founder của BK88', 'avt/Trung Nông.png', 3, 1, '2026-05-04 09:42:13'),
+(4, 'Kiến thức là kết tinh của tạo hóa.', 'Phan Huy Trung - Co-founder của BK88', 'avt/Trung Phan.png', 4, 1, '2026-05-04 09:42:52');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `home_reasons`
+--
+
+CREATE TABLE `home_reasons` (
+  `id` int NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `sort_order` int DEFAULT '0',
+  `is_active` tinyint(1) DEFAULT '1',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `home_reasons`
+--
+
+INSERT INTO `home_reasons` (`id`, `title`, `description`, `sort_order`, `is_active`, `updated_at`) VALUES
+(1, 'Giáo trình chất lượng', 'Cung cấp các bộ giáo trình được biên soạn và kiểm duyệt kỹ lưỡng bởi các chuyên gia hàng đầu trong ngành.', 1, 1, '2026-05-04 08:11:56'),
+(3, 'Hỗ trợ 24/7', 'Đội ngũ hỗ trợ chuyên nghiệp luôn sẵn sàng giải đáp mọi thắc mắc của bạn mọi lúc, mọi nơi.', 2, 1, '2026-05-04 09:45:13'),
+(6, 'Lắng nghe', 'Luôn luôn lắng nghe, lâu lâu mới hiểu', 3, 0, '2026-05-11 07:59:15'),
+(7, 'Giá rẻ', 'Rẻ', 5, 0, '2026-05-12 04:30:25'),
+(8, 'Giá cả phải chăng', 'Chúng tôi mang đến giáo trình chất lượng với giá cả tốt nhất', 5, 1, '2026-05-12 04:30:21'),
+(9, 'Cập nhật liên tục', 'Chúng tôi luôn luôn cập nhật mới giáo trình để bắt kịp kiến thức mới mỗi ngày.', 6, 1, '2026-05-12 04:30:48');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `home_sections`
+--
+
+CREATE TABLE `home_sections` (
+  `id` int NOT NULL,
+  `section_key` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subtitle` text COLLATE utf8mb4_unicode_ci,
+  `is_active` tinyint(1) DEFAULT '1',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `home_sections`
+--
+
+INSERT INTO `home_sections` (`id`, `section_key`, `title`, `subtitle`, `is_active`, `updated_at`) VALUES
+(1, 'quote', 'Quote', NULL, 1, '2026-05-04 08:11:56'),
+(2, 'reason', 'Tại sao lại chọn chúng tôi?', 'Những giá trị cốt lõi mà BK88 mang lại cho bạn.', 1, '2026-05-04 09:02:51'),
+(3, 'product', 'Một số sản phẩm tiêu biểu', 'Tham khảo một số giáo trình tiêu biểu của chúng tôi', 1, '2026-05-04 08:11:56');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `home_settings`
+--
+
+CREATE TABLE `home_settings` (
+  `id` int NOT NULL,
+  `setting_key` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `setting_value` text COLLATE utf8mb4_unicode_ci,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `home_settings`
+--
+
+INSERT INTO `home_settings` (`id`, `setting_key`, `setting_value`, `updated_at`) VALUES
+(1, 'site_logo', 'logo88.png', '2026-05-12 04:18:45');
 
 -- --------------------------------------------------------
 
@@ -223,12 +412,12 @@ INSERT INTO `faq` (`id`, `user_id`, `category`, `question`, `answer`, `status`, 
 --
 
 CREATE TABLE `information` (
-  `info_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `address_id` int(11) NOT NULL,
-  `firstname` varchar(50) DEFAULT NULL,
-  `lastname` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `info_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `address_id` int NOT NULL,
+  `firstname` varchar(50) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `lastname` varchar(50) COLLATE utf8mb3_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `information`
@@ -251,31 +440,32 @@ INSERT INTO `information` (`info_id`, `user_id`, `address_id`, `firstname`, `las
 --
 
 CREATE TABLE `items` (
-  `item_id` int(11) NOT NULL,
-  `item_name` varchar(100) NOT NULL,
-  `item_stock` int(11) DEFAULT 0,
-  `description` text DEFAULT NULL,
+  `item_id` int NOT NULL,
+  `item_name` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `item_stock` int DEFAULT '0',
+  `sold_qty` int DEFAULT '0',
+  `description` text COLLATE utf8mb3_unicode_ci,
   `price` decimal(10,2) NOT NULL,
-  `cost_price` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `item_image` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `cost_price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `item_image` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `description`, `price`, `cost_price`, `item_image`) VALUES
-(1, 'Giải tích 1', 87, 'Giáo trình Giải tích 1', 75000.00, 61000.00, '1777112063_gt1.png'),
-(2, 'Giải tích 2', 98, 'Giáo trình Giải tích 2', 75000.00, 60000.00, '1777212188_gt2.png'),
-(3, 'Đại số tuyến tính', 97, 'Giáo trình Đại số tuyến tính', 85000.00, 70000.00, '1777212218_dstt.png'),
-(4, 'Hóa đại cương', 100, 'Giáo trình Hóa đại cương', 100000.00, 85000.00, '1777212252_hdc.png'),
-(5, 'Kỹ thuật Lập trình', 98, 'Giáo trình Kỹ thuật Lập trình', 150000.00, 135000.00, '1777212284_ktlt.png'),
-(6, 'Cấu trúc dữ liệu & Giải thuật', 99, 'Giáo trình CTDL&GT', 100000.00, 80000.00, '1777212312_ctdlgt.png'),
-(7, 'Triết học Mác - Lênin', 100, 'Giáo trình Triết học Mác - Lênin', 85000.00, 70000.00, '1777212345_triethoc.png'),
-(8, 'Kinh tế chính trị Mác - Lênin', 100, 'Giáo trình Kinh tế chính trị Mác - Lênin', 72000.00, 60000.00, '1777212383_ktct.png'),
-(9, 'Chủ nghĩa Xã hội Khoa học', 100, 'Giáo trình CNXHKH', 77000.00, 60000.00, '1777212448_cnxhkh.png'),
-(11, 'Lịch sử Đảng Cộng sản Việt Nam', 0, 'Giáo trình LSĐCSVN', 75000.00, 60000.00, '1777213030_lsd.png'),
-(15, 'Tư tưởng Hồ Chí Minh', 98, 'Giáo trình TTHCM', 80000.00, 65000.00, '1777521969_tthcm.png');
+INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `sold_qty`, `description`, `price`, `cost_price`, `item_image`) VALUES
+(1, 'Giải tích 1', 88, 3, 'Giáo trình Giải tích 1', 75000.00, 61000.00, '1777112063_gt1.png'),
+(2, 'Giải tích 2', 98, 0, 'Giáo trình Giải tích 2', 75000.00, 60000.00, '1777212188_gt2.png'),
+(3, 'Đại số tuyến tính', 97, 2, 'Giáo trình Đại số tuyến tính', 85000.00, 70000.00, '1777212218_dstt.png'),
+(4, 'Hóa đại cương', 100, 0, 'Giáo trình Hóa đại cương', 100000.00, 85000.00, '1777212252_hdc.png'),
+(5, 'Kỹ thuật Lập trình', 98, 1, 'Giáo trình Kỹ thuật Lập trình', 150000.00, 135000.00, '1777212284_ktlt.png'),
+(6, 'Cấu trúc dữ liệu & Giải thuật', 99, 0, 'Giáo trình CTDL&GT', 100000.00, 80000.00, '1777212312_ctdlgt.png'),
+(7, 'Triết học Mác - Lênin', 100, 0, 'Giáo trình Triết học Mác - Lênin', 85000.00, 70000.00, '1777212345_triethoc.png'),
+(8, 'Kinh tế chính trị Mác - Lênin', 100, 0, 'Giáo trình Kinh tế chính trị Mác - Lênin', 72000.00, 60000.00, '1777212383_ktct.png'),
+(9, 'Chủ nghĩa Xã hội Khoa học', 100, 0, 'Giáo trình CNXHKH', 77000.00, 60000.00, '1777212448_cnxhkh.png'),
+(11, 'Lịch sử Đảng Cộng sản Việt Nam', 0, 0, 'Giáo trình LSĐCSVN', 75000.00, 60000.00, '1777213030_lsd.png'),
+(15, 'Tư tưởng Hồ Chí Minh', 98, 0, 'Giáo trình TTHCM', 80000.00, 65000.00, '1777521969_tthcm.png');
 
 -- --------------------------------------------------------
 
@@ -284,15 +474,15 @@ INSERT INTO `items` (`item_id`, `item_name`, `item_stock`, `description`, `price
 --
 
 CREATE TABLE `notifications` (
-  `id` int(11) NOT NULL,
-  `type` varchar(50) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `notification_comment_id` int(11) DEFAULT NULL,
-  `is_read` tinyint(1) DEFAULT 0,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `notification_vote_comment_id` int(11) DEFAULT NULL,
-  `notification_order_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id` int NOT NULL,
+  `type` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `user_id` int NOT NULL,
+  `notification_comment_id` int DEFAULT NULL,
+  `is_read` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `notification_vote_comment_id` int DEFAULT NULL,
+  `notification_order_id` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `notifications`
@@ -364,7 +554,8 @@ INSERT INTO `notifications` (`id`, `type`, `user_id`, `notification_comment_id`,
 (68, 'comment', 5, 18, 1, '2026-05-04 08:00:28', NULL, NULL),
 (69, 'order', 10, NULL, 1, '2026-05-04 08:06:51', NULL, 3),
 (70, 'order', 10, NULL, 1, '2026-05-04 08:07:23', NULL, 4),
-(71, 'order', 10, NULL, 1, '2026-05-04 12:53:32', NULL, 5);
+(71, 'order', 10, NULL, 1, '2026-05-04 12:53:32', NULL, 5),
+(72, 'comment', 5, 19, 0, '2026-05-11 15:46:13', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -373,13 +564,13 @@ INSERT INTO `notifications` (`id`, `type`, `user_id`, `notification_comment_id`,
 --
 
 CREATE TABLE `notification_comment` (
-  `id` int(11) NOT NULL,
-  `article_id` int(11) NOT NULL,
-  `comment_id` int(11) NOT NULL,
-  `content` text NOT NULL,
-  `replied` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id` int NOT NULL,
+  `article_id` int NOT NULL,
+  `comment_id` int NOT NULL,
+  `content` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `replied` int DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `notification_comment`
@@ -399,7 +590,8 @@ INSERT INTO `notification_comment` (`id`, `article_id`, `comment_id`, `content`,
 (15, 1, 106, 'de', 105, '2026-04-23 09:49:24'),
 (16, 1, 106, 'đe', 105, '2026-04-23 09:51:10'),
 (17, 1, 107, 'hay', NULL, '2026-04-23 12:16:38'),
-(18, 1, 108, 'k', NULL, '2026-05-04 08:00:28');
+(18, 1, 108, 'k', NULL, '2026-05-04 08:00:28'),
+(19, 1, 109, 'AD', NULL, '2026-05-11 15:46:13');
 
 -- --------------------------------------------------------
 
@@ -408,10 +600,10 @@ INSERT INTO `notification_comment` (`id`, `article_id`, `comment_id`, `content`,
 --
 
 CREATE TABLE `notification_order` (
-  `id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `order_status` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int NOT NULL,
+  `order_id` int NOT NULL,
+  `order_status` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -432,15 +624,15 @@ INSERT INTO `notification_order` (`id`, `order_id`, `order_status`, `created_at`
 --
 
 CREATE TABLE `notification_setting` (
-  `setting_id` int(11) NOT NULL,
-  `admin_id` int(11) NOT NULL,
-  `is_enabled` tinyint(1) NOT NULL DEFAULT 1,
-  `enable_comment` tinyint(1) DEFAULT 1,
-  `enable_reply` tinyint(1) DEFAULT 1,
-  `enable_edit` tinyint(1) DEFAULT 1,
-  `enable_vote` tinyint(1) DEFAULT 1,
-  `enable_order` tinyint(1) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `setting_id` int NOT NULL,
+  `admin_id` int NOT NULL,
+  `is_enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `enable_comment` tinyint(1) DEFAULT '1',
+  `enable_reply` tinyint(1) DEFAULT '1',
+  `enable_edit` tinyint(1) DEFAULT '1',
+  `enable_vote` tinyint(1) DEFAULT '1',
+  `enable_order` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `notification_setting`
@@ -472,12 +664,12 @@ DELIMITER ;
 --
 
 CREATE TABLE `notification_vote_comment` (
-  `id` int(11) NOT NULL,
-  `comment_id` int(11) NOT NULL,
-  `article_id` int(11) NOT NULL,
-  `vote_type` enum('like','dislike') NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id` int NOT NULL,
+  `comment_id` int NOT NULL,
+  `article_id` int NOT NULL,
+  `vote_type` enum('like','dislike') COLLATE utf8mb3_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `notification_vote_comment`
@@ -539,14 +731,14 @@ INSERT INTO `notification_vote_comment` (`id`, `comment_id`, `article_id`, `vote
 --
 
 CREATE TABLE `orders` (
-  `order_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `status` tinyint(1) DEFAULT 0,
-  `is_paid` tinyint(1) DEFAULT 0,
-  `shipping_fee` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `note` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `order_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `order_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` tinyint(1) DEFAULT '0',
+  `is_paid` tinyint(1) DEFAULT '0',
+  `shipping_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `note` text COLLATE utf8mb3_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `orders`
@@ -566,7 +758,7 @@ INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `status`, `is_paid`, 
 (11, 10, '2026-05-02 14:41:34', 1, 0, 22000.00, NULL),
 (12, 10, '2026-05-02 14:45:23', 1, 0, 0.00, NULL),
 (13, 10, '2026-05-02 14:56:58', 1, 0, 22000.00, NULL),
-(14, 10, '2026-05-02 15:18:59', 1, 0, 22000.00, NULL),
+(14, 10, '2026-05-02 15:18:59', 4, 0, 22000.00, NULL),
 (15, 10, '2026-05-02 15:19:18', 3, 1, 22000.00, NULL),
 (16, 10, '2026-05-02 15:28:22', 3, 1, 22000.00, 'ABC'),
 (17, 10, '2026-05-03 08:52:27', 0, 0, 0.00, ''),
@@ -583,12 +775,12 @@ INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `status`, `is_paid`, 
 --
 
 CREATE TABLE `order_details` (
-  `detail_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `item_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
+  `detail_id` int NOT NULL,
+  `order_id` int NOT NULL,
+  `item_id` int NOT NULL,
+  `quantity` int NOT NULL,
   `price` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `order_details`
@@ -627,12 +819,12 @@ INSERT INTO `order_details` (`detail_id`, `order_id`, `item_id`, `quantity`, `pr
 --
 
 CREATE TABLE `otp` (
-  `otp_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `code` char(6) NOT NULL,
-  `time_expire` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `is_active` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `otp_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `code` char(6) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `time_expire` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_active` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `otp`
@@ -656,14 +848,14 @@ INSERT INTO `otp` (`otp_id`, `user_id`, `code`, `time_expire`, `is_active`) VALU
 --
 
 CREATE TABLE `product_reviews` (
-  `id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `rating` tinyint(1) NOT NULL DEFAULT 5 COMMENT 'Từ 1 đến 5 sao',
-  `comment` text DEFAULT NULL COMMENT 'Nội dung bình luận, có thể để trống',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `rating` tinyint(1) NOT NULL DEFAULT '5' COMMENT 'Từ 1 đến 5 sao',
+  `comment` text COLLATE utf8mb3_unicode_ci COMMENT 'Nội dung bình luận, có thể để trống',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `product_reviews`
@@ -680,12 +872,12 @@ INSERT INTO `product_reviews` (`id`, `product_id`, `user_id`, `rating`, `comment
 --
 
 CREATE TABLE `review_admin_replies` (
-  `id` int(11) NOT NULL,
-  `detail_id` int(11) NOT NULL,
-  `admin_id` int(11) NOT NULL,
-  `reply_content` text NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id` int NOT NULL,
+  `detail_id` int NOT NULL,
+  `admin_id` int NOT NULL,
+  `reply_content` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -694,13 +886,13 @@ CREATE TABLE `review_admin_replies` (
 --
 
 CREATE TABLE `review_details` (
-  `id` int(11) NOT NULL,
-  `review_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `content` text NOT NULL,
-  `rating` tinyint(4) NOT NULL CHECK (`rating` between 1 and 5),
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `id` int NOT NULL,
+  `review_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `content` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `rating` tinyint NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ;
 
 -- --------------------------------------------------------
 
@@ -709,14 +901,14 @@ CREATE TABLE `review_details` (
 --
 
 CREATE TABLE `users` (
-  `user_id` int(11) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` tinyint(1) DEFAULT 0,
-  `phone` varchar(20) DEFAULT NULL,
-  `is_verified` tinyint(1) DEFAULT 0,
-  `is_banned` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `user_id` int NOT NULL,
+  `email` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `role` tinyint(1) DEFAULT '0',
+  `phone` varchar(20) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `is_verified` tinyint(1) DEFAULT '0',
+  `is_banned` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `users`
@@ -724,7 +916,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `email`, `password`, `role`, `phone`, `is_verified`, `is_banned`) VALUES
 (1, 'newmail@example.com', '1', 1, '0909123456', 1, 0),
-(2, 'user@example.com', '1', 0, '0912345678', 1, 1),
+(2, 'user@example.com', '1', 0, '0912345678', 1, 0),
 (3, 'test@example.com', '$2y$10$bCcrrIMwvAzNm9CPBd7QF.mvlC53Z1rv5V5JS.17CROJwA1CMU1o.', 0, '0909123456', 1, 0),
 (4, 'test@example.com', '$2y$10$4kPsaF0qN6uyNwsQ9lGVr.5vdG0nW0JLKOA/EajQEHy9QJaP/AXSy', 0, '0909123456', 1, 0),
 (5, '1@gmail.com', '$2y$10$ATPBYZkLnUraXPXIYs5nVeU8ZBqfn3srgpCe77Y7PrO8DOjL/T4QW', 1, '1234567891', 1, 0),
@@ -773,10 +965,55 @@ ALTER TABLE `comment_votes`
   ADD UNIQUE KEY `unique_vote` (`comment_id`,`user_id`);
 
 --
+-- Indexes for table `contacts`
+--
+ALTER TABLE `contacts`
+  ADD PRIMARY KEY (`contact_id`);
+
+--
+-- Indexes for table `contact_info_fields`
+--
+ALTER TABLE `contact_info_fields`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `faq`
 --
 ALTER TABLE `faq`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `home_featured_products`
+--
+ALTER TABLE `home_featured_products`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_home_featured_item` (`item_id`);
+
+--
+-- Indexes for table `home_quotes`
+--
+ALTER TABLE `home_quotes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `home_reasons`
+--
+ALTER TABLE `home_reasons`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `home_sections`
+--
+ALTER TABLE `home_sections`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `section_key` (`section_key`);
+
+--
+-- Indexes for table `home_settings`
+--
+ALTER TABLE `home_settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `setting_key` (`setting_key`);
 
 --
 -- Indexes for table `information`
@@ -799,7 +1036,8 @@ ALTER TABLE `notifications`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `notifications_ibfk_2` (`notification_comment_id`),
-  ADD KEY `fk_notifications_vote_comment` (`notification_vote_comment_id`);
+  ADD KEY `fk_notifications_vote_comment` (`notification_vote_comment_id`),
+  ADD KEY `notification_order_id` (`notification_order_id`);
 
 --
 -- Indexes for table `notification_comment`
@@ -890,121 +1128,163 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `about_content`
 --
 ALTER TABLE `about_content`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `addresses`
 --
 ALTER TABLE `addresses`
-  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `address_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `articles`
 --
 ALTER TABLE `articles`
-  MODIFY `id_article` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_article` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id_comment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
+  MODIFY `id_comment` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
 --
 -- AUTO_INCREMENT for table `comment_votes`
 --
 ALTER TABLE `comment_votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+
+--
+-- AUTO_INCREMENT for table `contacts`
+--
+ALTER TABLE `contacts`
+  MODIFY `contact_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+
+--
+-- AUTO_INCREMENT for table `contact_info_fields`
+--
+ALTER TABLE `contact_info_fields`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `faq`
 --
 ALTER TABLE `faq`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `home_featured_products`
+--
+ALTER TABLE `home_featured_products`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `home_quotes`
+--
+ALTER TABLE `home_quotes`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `home_reasons`
+--
+ALTER TABLE `home_reasons`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `home_sections`
+--
+ALTER TABLE `home_sections`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `home_settings`
+--
+ALTER TABLE `home_settings`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `information`
 --
 ALTER TABLE `information`
-  MODIFY `info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `info_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `item_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `notification_comment`
 --
 ALTER TABLE `notification_comment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `notification_order`
 --
 ALTER TABLE `notification_order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `notification_setting`
 --
 ALTER TABLE `notification_setting`
-  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `setting_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `notification_vote_comment`
 --
 ALTER TABLE `notification_vote_comment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `order_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `order_details`
 --
 ALTER TABLE `order_details`
-  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `detail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `otp`
 --
 ALTER TABLE `otp`
-  MODIFY `otp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `otp_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `product_reviews`
 --
 ALTER TABLE `product_reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `review_admin_replies`
 --
 ALTER TABLE `review_admin_replies`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `review_details`
 --
 ALTER TABLE `review_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
@@ -1019,6 +1299,12 @@ ALTER TABLE `comments`
   ADD CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`replied`) REFERENCES `comments` (`id_comment`);
 
 --
+-- Constraints for table `home_featured_products`
+--
+ALTER TABLE `home_featured_products`
+  ADD CONSTRAINT `fk_featured_item` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`);
+
+--
 -- Constraints for table `information`
 --
 ALTER TABLE `information`
@@ -1031,7 +1317,8 @@ ALTER TABLE `information`
 ALTER TABLE `notifications`
   ADD CONSTRAINT `fk_notifications_vote_comment` FOREIGN KEY (`notification_vote_comment_id`) REFERENCES `notification_vote_comment` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`notification_comment_id`) REFERENCES `notification_comment` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`notification_comment_id`) REFERENCES `notification_comment` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `notifications_ibfk_3` FOREIGN KEY (`notification_order_id`) REFERENCES `notification_order` (`id`);
 
 --
 -- Constraints for table `notification_comment`

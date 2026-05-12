@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const searchBtn = document.getElementById("adminSearchBtn");
     
     // Lưu trữ toàn bộ dữ liệu (tất cả các thẻ tr)
-    const allRows = Array.from(orderList.getElementsByClassName("admin-order-row"));
+    let allRows = Array.from(orderList.getElementsByClassName("admin-order-row"));
     let filteredRows = [...allRows];
     
     const itemsPerPage = 10; // Hiện 10 đơn hàng trên 1 trang
@@ -207,7 +207,59 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+    
+    // --- BẮT ĐẦU: AJAX XỬ LÝ ĐƠN HÀNG KHÔNG CẦN F5 ---
+    orderList.addEventListener("submit", async function(e) {
+        // Kiểm tra xem form được submit có phải là form xử lý đơn hàng không
+        if (e.target && e.target.tagName === 'FORM' && e.target.action.includes('processOrderFlow')) {
+            e.preventDefault(); // Chặn đứng việc F5 trang
 
+            const form = e.target;
+            const formData = new FormData(form);
+            const submitter = e.submitter; // Lấy cái nút vừa được bấm (VD: nút Chuẩn bị hàng)
+
+            // Đưa giá trị của nút vào FormData
+            if (submitter && submitter.name) {
+                formData.append(submitter.name, submitter.value);
+            }
+
+            // Đổi giao diện nút thành trạng thái Loading
+            const originalText = submitter.innerHTML;
+            submitter.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Đang xử lý...';
+            submitter.disabled = true;
+
+            try {
+                // 1. Gửi lệnh cập nhật trạng thái ngầm lên Controller
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // 2. Lấy HTML của toàn bộ trang hiện tại một cách âm thầm
+                    const htmlResponse = await fetch(window.location.href).then(res => res.text());
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlResponse, 'text/html');
+
+                    // 3. Trích xuất đúng cái bảng <tbody> mới và đắp vào bảng cũ
+                    const newOrderList = doc.getElementById('adminOrderList');
+                    if (newOrderList) {
+                        orderList.innerHTML = newOrderList.innerHTML;
+                        
+                        // 4. Cập nhật lại mảng dữ liệu và render lại (giữ nguyên phân trang và tìm kiếm)
+                        allRows = Array.from(orderList.getElementsByClassName("admin-order-row"));
+                        filterTable(); 
+                    }
+                }
+            } catch (error) {
+                alert('Có lỗi kết nối xảy ra!');
+                submitter.innerHTML = originalText;
+                submitter.disabled = false;
+            }
+        }
+    });
+    // --- KẾT THÚC AJAX ---
+    
     // Chạy lần đầu
     renderTable();
 });

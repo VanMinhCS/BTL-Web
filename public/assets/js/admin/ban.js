@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const actionText = currentStatus == 1 ? "KHÓA" : "MỞ KHÓA";
             const confirmBtn = document.getElementById('btn-confirm-action');
             
-            document.getElementById('confirmBanMessage').innerHTML = `Bạn có chắc chắn muốn <strong class="${currentStatus == 1 ? 'text-danger' : 'text-success'}">${actionText}</strong> tài khoản ID: ${currentUserId} này không?`;
+            document.getElementById('confirmBanMessage').innerHTML = `Bạn có chắc chắn muốn <strong class="${currentStatus == 1 ? 'text-danger' : 'text-success'}">${actionText}</strong> tài khoản này không?`;
             
             if (currentStatus == 1) {
                 confirmBtn.className = "btn btn-danger px-4";
@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
         this.innerText = "Đang xử lý...";
         this.disabled = true;
 
-        // Sử dụng biến APP_BASE_URL được truyền từ file PHP sang
         fetch(APP_BASE_URL + 'admin/user/toggleBan', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
